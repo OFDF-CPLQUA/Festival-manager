@@ -8,17 +8,17 @@
 <style>
 :root{--bg:#0a0a0a;--surface:#1a1a1a;--surface2:#2a2a2a;--border:#333;--text:#f0ece4;--muted:#888;--accent:#E8730A;--accent2:#F5B800;--danger:#C8281E;--success:#2D8C3E}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px}
-.container{background:#1a1a1a;border-radius:8px;max-width:500px;width:100%;overflow:hidden;border:1px solid #333;box-shadow:0 4px 20px rgba(0,0,0,.5)}
-.digicode-screen{padding:40px 30px 50px;text-align:center}
+body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);min-height:100vh;height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;overflow:auto}
+.container{background:#1a1a1a;border-radius:8px;max-width:500px;width:90%;max-height:90vh;overflow-y:auto;border:1px solid #333;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.digicode-screen{padding:5vh 5vw;text-align:center;min-height:60vh;display:flex;flex-direction:column;justify-content:center}
 .login-logo{margin-bottom:20px;padding:15px;background:#0a0a0a;border-radius:6px;display:inline-block}
-.login-logo img{max-width:280px;width:100%;display:block}
-.pin-display{display:flex;gap:12px;justify-content:center;margin:25px 0}
-.pin-dot{width:14px;height:14px;border:2px solid #444;border-radius:50%;transition:all .2s;background:transparent}
+.login-logo img{max-width:min(280px, 60vw);max-height:15vh;width:100%;height:auto;display:block;object-fit:contain}
+.pin-display{display:flex;gap:min(12px,3vw);justify-content:center;margin:3vh 0}
+.pin-dot{width:min(14px,3vw);height:min(14px,3vw);border:2px solid #444;border-radius:50%;transition:all .2s;background:transparent}
 .pin-dot.filled{background:var(--accent);border-color:var(--accent);box-shadow:0 0 8px rgba(232,115,10,.6)}
 .pin-dot.error{background:var(--danger);border-color:var(--danger)}
-.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:240px;margin:0 auto 20px}
-.key{background:#0f0f0f;border:1px solid #333;border-radius:6px;padding:18px;font-size:1.4rem;font-weight:600;color:var(--text);cursor:pointer;transition:all .15s;font-family:'IBM Plex Mono',monospace}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:min(10px,2vw);max-width:min(240px,70vw);margin:0 auto 20px}
+.key{background:#0f0f0f;border:1px solid #333;border-radius:6px;padding:min(18px,4vw);font-size:clamp(1rem,4vw,1.4rem);font-weight:600;color:var(--text);cursor:pointer;transition:all .15s;font-family:'IBM Plex Mono',monospace}
 .key:hover{background:#252525;border-color:#555;transform:translateY(-1px)}
 .key:active{transform:scale(.95)}
 .key.del{font-size:1.2rem;color:var(--muted)}
@@ -26,8 +26,8 @@ body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);
 .editor-link{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--accent);font-size:.85rem;text-decoration:none;margin-top:15px;opacity:.8;transition:opacity .2s}
 .editor-link:hover{opacity:1}
 .emoji{font-size:1.1rem}
-.main-app{display:none}
-.main-app.active{display:block}
+.main-app{display:none;width:100%;max-width:100vw;height:100vh;max-height:100vh;overflow:hidden}
+.main-app.active{display:flex;flex-direction:column}
 .app-header{background:#0f0f0f;color:var(--text);padding:25px 30px;border-bottom:2px solid var(--accent)}
 .app-header-logo{max-width:180px;margin-bottom:12px}
 .app-header h1{font-size:1.6rem;margin-bottom:5px;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;color:var(--accent)}
@@ -43,14 +43,14 @@ body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);
 .tab{flex:1;padding:16px;background:none;border:none;font-size:.85rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;font-family:'IBM Plex Mono',monospace;border-bottom:3px solid transparent}
 .tab.active{color:var(--accent);background:#1a1a1a;border-bottom-color:var(--accent)}
 .tab:hover:not(.active){color:var(--text);background:#151515}
-.tab-content{padding:25px;background:#0a0a0a}
+.tab-content{padding:25px;background:#0a0a0a;flex:1;overflow-y:auto;height:calc(100vh - 200px)}
 .tab-pane{display:none}
 .tab-pane.active{display:block}
 .search-bar{width:100%;padding:12px 16px;border:1px solid #333;background:#1a1a1a;border-radius:6px;font-size:.9rem;margin-bottom:20px;transition:all .2s;color:var(--text);font-family:'IBM Plex Mono',monospace}
 .search-bar:focus{outline:none;border-color:var(--accent);background:#252525}
 .search-bar::placeholder{color:var(--muted)}
-.card{background:#1a1a1a;border-radius:6px;margin-bottom:12px;border:1px solid #333;transition:all .3s;overflow:hidden}
-.card:hover{box-shadow:0 2px 12px rgba(232,115,10,.1);border-color:#444}
+.card{background:#1a1a1a;border-radius:6px;margin-bottom:12px;border:2px solid var(--accent);transition:all .3s;overflow:hidden}
+.card:hover{box-shadow:0 2px 12px rgba(232,115,10,.1);border-color:var(--accent2)}
 .card-header{padding:16px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none}
 .card-header:hover{background:#1f1f1f}
 .edit-mode .card-header{cursor:default}
@@ -73,7 +73,7 @@ body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);
 .procedure-steps li{counter-increment:step-counter;padding:12px 12px 12px 48px;position:relative;margin-bottom:8px;background:#0f0f0f;border-radius:4px;border:1px solid #333;color:var(--text);line-height:1.5;font-size:.9rem}
 .procedure-steps li::before{content:counter(step-counter);position:absolute;left:12px;top:50%;transform:translateY(-50%);background:var(--accent);color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:.85rem}
 .category-tag{display:inline-block;padding:4px 10px;background:rgba(232,115,10,.15);color:var(--accent);border-radius:4px;font-size:.7rem;margin-bottom:8px;font-weight:600;letter-spacing:.5px;border:1px solid rgba(232,115,10,.3)}
-.emergency{border-left:3px solid var(--danger)}
+.emergency{border-color:var(--danger)}
 .emergency .category-tag{background:rgba(200,40,30,.15);color:var(--danger);border-color:rgba(200,40,30,.3)}
 .edit-mode .card h3:hover,.edit-mode .card-subtitle:hover,.edit-mode .contact-name:hover,.edit-mode .contact-role:hover,.edit-mode .contact-phone:hover,.edit-mode .procedure-steps li:hover,.edit-mode .category-tag:hover{border:1px dashed var(--accent2);background:rgba(245,184,0,.1)}
 [contenteditable="true"]{outline:none;cursor:text}
@@ -87,7 +87,27 @@ body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);
 .cancel-btn:hover{background:#a81f18;transform:translateY(-2px)}
 .export-btn{background:var(--accent);color:#fff}
 .export-btn:hover{background:var(--accent2);transform:translateY(-2px)}
-@media (max-width:600px){.digicode-screen{padding:30px 20px 40px}.login-logo img{max-width:200px}.tab-content{padding:20px}.contact-item{flex-direction:column;align-items:flex-start;gap:10px}.contact-phone{width:100%;text-align:center}.app-header{padding:20px}.app-header-logo{max-width:140px}.card-header{padding:12px 16px}.edit-actions{bottom:20px;right:20px;flex-direction:column}}
+@media (max-width:600px){.digicode-screen{padding:3vh 5vw;min-height:70vh}.container{width:95%;max-height:95vh}.login-logo img{max-width:min(200px,70vw);max-height:12vh}.keypad{max-width:80vw}.tab-content{padding:15px;height:calc(100vh - 180px)}.contact-item{flex-direction:column;align-items:flex-start;gap:10px}.contact-phone{width:100%;text-align:center}.app-header{padding:20px}.app-header-logo{max-width:140px}.card-header{padding:12px 16px}.edit-actions{bottom:20px;right:20px;flex-direction:column}}
+.add-card-btn{display:none;width:100%;padding:15px;border:2px dashed var(--accent);background:transparent;color:var(--accent);border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;margin-top:10px;transition:all .2s;font-family:'IBM Plex Mono',monospace}
+.add-card-btn:hover{background:rgba(232,115,10,.1)}
+.edit-mode .add-card-btn{display:block}
+.card-delete-btn{display:none;background:var(--danger);color:#fff;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:.75rem;margin-left:8px;transition:all .2s}
+.card-delete-btn:hover{background:#a81f18}
+.edit-mode .card-delete-btn{display:inline-block}
+.color-picker{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1a1a1a;padding:25px;border-radius:8px;border:2px solid var(--accent);z-index:2000;box-shadow:0 10px 40px rgba(0,0,0,.7)}
+.color-picker.active{display:block}
+.color-picker h3{color:var(--accent);margin-bottom:15px;font-family:'Bebas Neue',sans-serif}
+.color-row{margin-bottom:15px}
+.color-row label{display:block;color:var(--text);margin-bottom:8px;font-size:.85rem}
+.color-row input[type="color"]{width:100%;height:40px;border:1px solid #333;border-radius:4px;cursor:pointer;background:#0f0f0f}
+.color-picker-buttons{display:flex;gap:8px;margin-top:20px}
+.color-picker-buttons button{flex:1;padding:10px;border:none;border-radius:4px;cursor:pointer;font-weight:600;transition:all .2s;font-family:'IBM Plex Mono',monospace}
+.btn-apply-colors{background:var(--success);color:#fff}
+.btn-apply-colors:hover{background:#25723a}
+.btn-close-colors{background:var(--danger);color:#fff}
+.btn-close-colors:hover{background:#a81f18}
+.color-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:1999}
+.color-overlay.active{display:block}
 </style>
 </head>
 <body>
@@ -122,22 +142,24 @@ body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);
 <div class="app-header">
 <img src="LOGO_PLW_WHITE.png" alt="Plein Les Watts" class="app-header-logo">
 <h1>PLEIN-LES-W'APP</h1>
-<p>Base de données des procédures et contacts</p>
+<p contenteditable="false" id="headerSubtitle">Base de données des procédures et contacts</p>
 <div class="header-buttons">
+<button class="edit-btn" onclick="openColorPicker()" id="colorBtn" style="display:none;">🎨 COULEURS</button>
 <button class="edit-btn" onclick="toggleEditMode()" id="editBtn">MODE EDITION</button>
 <button class="logout-btn" onclick="logout()">VERROUILLER</button>
 </div>
 </div>
 <div class="tabs">
-<button class="tab active" onclick="switchTab('procedures')">PROCEDURES</button>
-<button class="tab" onclick="switchTab('contacts')">CONTACTS</button>
+<button class="tab active" onclick="switchTab('procedures')">Infos Gen</button>
+<button class="tab" onclick="switchTab('urgence')">Urgence</button>
+<button class="tab" onclick="switchTab('contacts')">Contact</button>
 </div>
 <div class="tab-content">
 <div class="tab-pane active" id="procedures">
 <input type="text" class="search-bar" id="searchProcedures" placeholder="Rechercher une procedure..." onkeyup="filterProcedures()">
 <div id="proceduresList">
 <div class="card emergency" data-keywords="urgence accident blessure medical secours" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><span class="category-tag">URGENCE</span><h3>Accident / Urgence Medicale</h3><div class="card-subtitle">Procedure d'intervention en cas d'accident</div></div><span class="expand-icon">▼</span></div>
+<div class="card-header"><div class="card-header-left"><span class="category-tag">URGENCE</span><h3>Accident / Urgence Medicale</h3><div class="card-subtitle">Procedure d'intervention en cas d'accident</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button></div>
 <div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
 <li>Securiser la zone et eloigner le public si necessaire</li>
 <li>Appeler immediatement le poste de secours (voir contacts)</li>
@@ -147,7 +169,7 @@ body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);
 </ol></div></div>
 </div>
 <div class="card" data-keywords="perte enfant perdu famille" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><span class="category-tag">SECURITE</span><h3>Enfant Perdu</h3><div class="card-subtitle">Gestion des enfants separes de leurs parents</div></div><span class="expand-icon">▼</span></div>
+<div class="card-header"><div class="card-header-left"><span class="category-tag">SECURITE</span><h3>Enfant Perdu</h3><div class="card-subtitle">Gestion des enfants separes de leurs parents</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button></div>
 <div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
 <li>Rester avec l'enfant, le rassurer</li>
 <li>Contacter le poste de securite</li>
@@ -157,7 +179,7 @@ body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);
 </ol></div></div>
 </div>
 <div class="card emergency" data-keywords="incendie feu fumee evacuation" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><span class="category-tag">URGENCE</span><h3>Debut d'Incendie</h3><div class="card-subtitle">Protocole en cas de depart de feu</div></div><span class="expand-icon">▼</span></div>
+<div class="card-header"><div class="card-header-left"><span class="category-tag">URGENCE</span><h3>Debut d'Incendie</h3><div class="card-subtitle">Protocole en cas de depart de feu</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button></div>
 <div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
 <li>Declencher l'alarme la plus proche</li>
 <li>Appeler les pompiers (18) et le poste securite</li>
@@ -167,7 +189,7 @@ body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);
 </ol></div></div>
 </div>
 <div class="card" data-keywords="bagarre violence conflit agression" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><span class="category-tag">SECURITE</span><h3>Bagarre / Conflit</h3><div class="card-subtitle">Intervention lors de conflits entre festivaliers</div></div><span class="expand-icon">▼</span></div>
+<div class="card-header"><div class="card-header-left"><span class="category-tag">SECURITE</span><h3>Bagarre / Conflit</h3><div class="card-subtitle">Intervention lors de conflits entre festivaliers</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button></div>
 <div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
 <li>Ne PAS intervenir physiquement seul</li>
 <li>Appeler immediatement la securite</li>
@@ -177,7 +199,7 @@ body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);
 </ol></div></div>
 </div>
 <div class="card" data-keywords="technique panne electricite son lumiere" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><span class="category-tag">TECHNIQUE</span><h3>Panne Technique (Son/Lumiere)</h3><div class="card-subtitle">Resolution des problemes techniques</div></div><span class="expand-icon">▼</span></div>
+<div class="card-header"><div class="card-header-left"><span class="category-tag">TECHNIQUE</span><h3>Panne Technique (Son/Lumiere)</h3><div class="card-subtitle">Resolution des problemes techniques</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button></div>
 <div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
 <li>Identifier la nature de la panne</li>
 <li>Contacter le regisseur technique de scene</li>
@@ -187,7 +209,7 @@ body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);
 </ol></div></div>
 </div>
 <div class="card emergency" data-keywords="meteo orage pluie vent evacuation" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><span class="category-tag">METEO</span><h3>Alerte Meteo (Orage/Vent fort)</h3><div class="card-subtitle">Actions en cas de conditions meteo dangereuses</div></div><span class="expand-icon">▼</span></div>
+<div class="card-header"><div class="card-header-left"><span class="category-tag">METEO</span><h3>Alerte Meteo (Orage/Vent fort)</h3><div class="card-subtitle">Actions en cas de conditions meteo dangereuses</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button></div>
 <div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
 <li>Surveiller l'application meteo et les alertes</li>
 <li>Informer le directeur du festival</li>
@@ -197,7 +219,7 @@ body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);
 </ol></div></div>
 </div>
 <div class="card" data-keywords="accreditation badge acces controle" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><span class="category-tag">ACCES</span><h3>Probleme d'Accreditation</h3><div class="card-subtitle">Verification et gestion des acces</div></div><span class="expand-icon">▼</span></div>
+<div class="card-header"><div class="card-header-left"><span class="category-tag">ACCES</span><h3>Probleme d'Accreditation</h3><div class="card-subtitle">Verification et gestion des acces</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button></div>
 <div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
 <li>Verifier l'identite de la personne</li>
 <li>Consulter la liste officielle des accredites</li>
@@ -207,12 +229,19 @@ body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);
 </ol></div></div>
 </div>
 </div>
+<button class="add-card-btn" onclick="addCard(\'procedures\')" id="addProceduresBtn">+ Ajouter une vignette</button>
+</div>
+<div class="tab-pane" id="urgence">
+<input type="text" class="search-bar" id="searchUrgence" placeholder="Rechercher..." onkeyup="filterUrgence()">
+<div id="urgenceList">
+</div>
+<button class="add-card-btn" onclick="addCard(\'urgence\')" id="addUrgenceBtn">+ Ajouter une vignette</button>
 </div>
 <div class="tab-pane" id="contacts">
 <input type="text" class="search-bar" id="searchContacts" placeholder="Rechercher un contact..." onkeyup="filterContacts()">
 <div id="contactsList">
 <div class="card emergency" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><h3>URGENCES</h3><div class="card-subtitle">Numeros d'urgence nationaux</div></div><span class="expand-icon">▼</span></div>
+<div class="card-header"><div class="card-header-left"><h3>URGENCES</h3><div class="card-subtitle">Numeros d'urgence nationaux</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button></div>
 <div class="card-content"><div class="card-content-inner">
 <div class="contact-item"><div><div class="contact-name">SAMU</div><div class="contact-role">Urgences medicales</div></div><a href="tel:15" class="contact-phone">15</a></div>
 <div class="contact-item"><div><div class="contact-name">Pompiers</div><div class="contact-role">Incendie / Secours</div></div><a href="tel:18" class="contact-phone">18</a></div>
@@ -221,14 +250,14 @@ body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);
 </div></div>
 </div>
 <div class="card" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><h3>DIRECTION FESTIVAL</h3><div class="card-subtitle">Equipe de direction</div></div><span class="expand-icon">▼</span></div>
+<div class="card-header"><div class="card-header-left"><h3>DIRECTION FESTIVAL</h3><div class="card-subtitle">Equipe de direction</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button></div>
 <div class="card-content"><div class="card-content-inner">
 <div class="contact-item"><div><div class="contact-name">Marie Dupont</div><div class="contact-role">Directrice du Festival</div></div><a href="tel:0601020304" class="contact-phone">06 01 02 03 04</a></div>
 <div class="contact-item"><div><div class="contact-name">Thomas Martin</div><div class="contact-role">Regisseur General</div></div><a href="tel:0602030405" class="contact-phone">06 02 03 04 05</a></div>
 </div></div>
 </div>
 <div class="card" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><h3>EQUIPE TECHNIQUE</h3><div class="card-subtitle">Regisseurs son, lumiere, plateau</div></div><span class="expand-icon">▼</span></div>
+<div class="card-header"><div class="card-header-left"><h3>EQUIPE TECHNIQUE</h3><div class="card-subtitle">Regisseurs son, lumiere, plateau</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button></div>
 <div class="card-content"><div class="card-content-inner">
 <div class="contact-item"><div><div class="contact-name">Lucas Bernard</div><div class="contact-role">Regisseur Son</div></div><a href="tel:0603040506" class="contact-phone">06 03 04 05 06</a></div>
 <div class="contact-item"><div><div class="contact-name">Sophie Petit</div><div class="contact-role">Regisseur Lumiere</div></div><a href="tel:0604050607" class="contact-phone">06 04 05 06 07</a></div>
@@ -236,36 +265,53 @@ body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);
 </div></div>
 </div>
 <div class="card" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><h3>SECURITE</h3><div class="card-subtitle">Equipe de securite du festival</div></div><span class="expand-icon">▼</span></div>
+<div class="card-header"><div class="card-header-left"><h3>SECURITE</h3><div class="card-subtitle">Equipe de securite du festival</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button></div>
 <div class="card-content"><div class="card-content-inner">
 <div class="contact-item"><div><div class="contact-name">David Rousseau</div><div class="contact-role">Chef de la Securite</div></div><a href="tel:0606070809" class="contact-phone">06 06 07 08 09</a></div>
 <div class="contact-item"><div><div class="contact-name">Poste Central Securite</div><div class="contact-role">PC Securite</div></div><a href="tel:0607080910" class="contact-phone">06 07 08 09 10</a></div>
 </div></div>
 </div>
 <div class="card" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><h3>SECOURS & SANTE</h3><div class="card-subtitle">Equipe medicale et poste de secours</div></div><span class="expand-icon">▼</span></div>
+<div class="card-header"><div class="card-header-left"><h3>SECOURS & SANTE</h3><div class="card-subtitle">Equipe medicale et poste de secours</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button></div>
 <div class="card-content"><div class="card-content-inner">
 <div class="contact-item"><div><div class="contact-name">Dr. Julie Laurent</div><div class="contact-role">Medecin du Festival</div></div><a href="tel:0608091011" class="contact-phone">06 08 09 10 11</a></div>
 <div class="contact-item"><div><div class="contact-name">Poste de Secours</div><div class="contact-role">Infirmerie</div></div><a href="tel:0609101112" class="contact-phone">06 09 10 11 12</a></div>
 </div></div>
 </div>
 <div class="card" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><h3>BILLETTERIE & ACCUEIL</h3><div class="card-subtitle">Accueil et gestion des entrees</div></div><span class="expand-icon">▼</span></div>
+<div class="card-header"><div class="card-header-left"><h3>BILLETTERIE & ACCUEIL</h3><div class="card-subtitle">Accueil et gestion des entrees</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button></div>
 <div class="card-content"><div class="card-content-inner">
 <div class="contact-item"><div><div class="contact-name">Emma Dubois</div><div class="contact-role">Responsable Billetterie</div></div><a href="tel:0610111213" class="contact-phone">06 10 11 12 13</a></div>
 <div class="contact-item"><div><div class="contact-name">Pierre Leroy</div><div class="contact-role">Accreditations</div></div><a href="tel:0611121314" class="contact-phone">06 11 12 13 14</a></div>
 </div></div>
 </div>
 <div class="card" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><h3>RESTAURATION & LOGISTIQUE</h3><div class="card-subtitle">Catering et logistique generale</div></div><span class="expand-icon">▼</span></div>
+<div class="card-header"><div class="card-header-left"><h3>RESTAURATION & LOGISTIQUE</h3><div class="card-subtitle">Catering et logistique generale</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button></div>
 <div class="card-content"><div class="card-content-inner">
 <div class="contact-item"><div><div class="contact-name">Camille Girard</div><div class="contact-role">Responsable Restauration</div></div><a href="tel:0612131415" class="contact-phone">06 12 13 14 15</a></div>
 <div class="contact-item"><div><div class="contact-name">Nicolas Simon</div><div class="contact-role">Logistique</div></div><a href="tel:0613141516" class="contact-phone">06 13 14 15 16</a></div>
 </div></div>
 </div>
 </div>
+<button class="add-card-btn" onclick="addCard(\'contacts\')" id="addContactsBtn">+ Ajouter une vignette</button>
 </div>
 </div>
+</div>
+</div>
+<div class="color-overlay" id="colorOverlay" onclick="closeColorPicker()"></div>
+<div class="color-picker" id="colorPicker">
+<h3>CHOISIR LES COULEURS</h3>
+<div class="color-row">
+<label>Couleur principale (bordures):</label>
+<input type="color" id="primaryColor" value="#E8730A">
+</div>
+<div class="color-row">
+<label>Couleur urgence:</label>
+<input type="color" id="dangerColor" value="#C8281E">
+</div>
+<div class="color-picker-buttons">
+<button class="btn-apply-colors" onclick="applyColors()">Appliquer</button>
+<button class="btn-close-colors" onclick="closeColorPicker()">Fermer</button>
 </div>
 </div>
 <div class="edit-actions">
@@ -373,12 +419,16 @@ function toggleEditMode(){
         t.classList.add('edit-mode');
         e.classList.add('active');
         e.textContent='MODE EDITION ACTIF';
+        document.getElementById('colorBtn').style.display='inline-block';
+        document.getElementById('headerSubtitle').contentEditable='true';
         document.querySelectorAll('.card').forEach(card=>card.classList.add('expanded'));
         makeEditable();
     }else{
         t.classList.remove('edit-mode');
         e.classList.remove('active');
         e.textContent='MODE EDITION';
+        document.getElementById('colorBtn').style.display='none';
+        document.getElementById('headerSubtitle').contentEditable='false';
         removeEditable();
     }
 }
@@ -455,7 +505,81 @@ function filterContacts(){
     });
 }
 
+
+
+function openColorPicker(){
+    document.getElementById('colorPicker').classList.add('active');
+    document.getElementById('colorOverlay').classList.add('active');
+}
+
+function closeColorPicker(){
+    document.getElementById('colorPicker').classList.remove('active');
+    document.getElementById('colorOverlay').classList.remove('active');
+}
+
+function applyColors(){
+    const primaryColor=document.getElementById('primaryColor').value;
+    const dangerColor=document.getElementById('dangerColor').value;
+    document.documentElement.style.setProperty('--accent',primaryColor);
+    document.documentElement.style.setProperty('--danger',dangerColor);
+    localStorage.setItem('primaryColor',primaryColor);
+    localStorage.setItem('dangerColor',dangerColor);
+    closeColorPicker();
+    alert('Couleurs appliquees avec succes !');
+}
+
+function addCard(tabName){
+    const container=document.getElementById(tabName+'List');
+    if(!container)return;
+    const isEmergency=tabName==='urgence';
+    const newCard=document.createElement('div');
+    newCard.className=isEmergency?'card emergency':'card';
+    newCard.setAttribute('onclick','toggleCard(this)');
+    newCard.innerHTML=`
+        <div class="card-header">
+            <div class="card-header-left">
+                <span class="category-tag">${tabName.toUpperCase()}</span>
+                <h3 contenteditable="true">Nouvelle vignette</h3>
+                <div class="card-subtitle" contenteditable="true">Description...</div>
+            </div>
+            <span class="expand-icon">▼</span>
+            <button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button>
+        </div>
+        <div class="card-content">
+            <div class="card-content-inner" contenteditable="true">
+                <p>Contenu à modifier...</p>
+            </div>
+        </div>
+    `;
+    container.appendChild(newCard);
+}
+
+function deleteCard(btn){
+    if(confirm('Supprimer cette vignette ?')){
+        btn.closest('.card').remove();
+    }
+}
+
+function filterUrgence(){
+    const t=document.getElementById('searchUrgence').value.toLowerCase();
+    document.querySelectorAll('#urgenceList .card').forEach(e=>{
+        const n=((e.querySelector('h3').textContent+(e.querySelector('.card-subtitle')?.textContent||'')+(e.querySelector('.card-content-inner')?.textContent||'')||'')).toLowerCase();
+        e.style.display=n.includes(t)?'block':'none';
+    });
+}
+
+
 window.addEventListener('load',()=>{
+    const savedPrimaryColor=localStorage.getItem('primaryColor');
+    const savedDangerColor=localStorage.getItem('dangerColor');
+    if(savedPrimaryColor){
+        document.documentElement.style.setProperty('--accent',savedPrimaryColor);
+        document.getElementById('primaryColor').value=savedPrimaryColor;
+    }
+    if(savedDangerColor){
+        document.documentElement.style.setProperty('--danger',savedDangerColor);
+        document.getElementById('dangerColor').value=savedDangerColor;
+    }
     if('true'===sessionStorage.getItem('authenticated')){
         document.getElementById('digicodeScreen').style.display='none';
         document.getElementById('mainApp').classList.add('active');
