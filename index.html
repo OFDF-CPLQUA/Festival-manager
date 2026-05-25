@@ -7,19 +7,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0a0a0a;--surface:#1a1a1a;--surface2:#2a2a2a;--border:#333;--text:#f0ece4;--muted:#888;--accent:#E8730A;--accent2:#F5B800;--danger:#C8281E;--success:#2D8C3E}
+body.light-mode{--bg:#e8e8e8;--surface:#f5f5f5;--surface2:#fafafa;--border:#c0c0c0;--text:#3a3a3a;--muted:#666;--accent:#E8730A;--accent2:#F5B800;--danger:#C8281E;--success:#2D8C3E}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);min-height:100vh;height:100vh;display:flex;justify-content:center;align-items:center;padding:0;overflow:auto}
-.container{background:#1a1a1a;border-radius:8px;max-width:900px;width:100%;max-height:100vh;overflow-y:auto;border:1px solid #333;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text);min-height:100vh;height:100vh;display:flex;justify-content:center;align-items:center;padding:0;overflow:auto;transition:background .3s,color .3s}
+.container{background:var(--surface);border-radius:8px;max-width:900px;width:100%;max-height:100vh;overflow-y:auto;border:1px solid var(--border);box-shadow:0 4px 20px rgba(0,0,0,.5);transition:background .3s,border-color .3s}
 .digicode-screen{padding:5vh 5vw;text-align:center;min-height:60vh;display:flex;flex-direction:column;justify-content:center}
 .login-logo{margin-bottom:20px;padding:15px;display:flex;justify-content:center;align-items:center;width:100%}
 .login-logo img{max-width:min(280px, 60vw);max-height:15vh;width:100%;height:auto;display:block;object-fit:contain}
 .pin-display{display:flex;gap:min(12px,3vw);justify-content:center;margin:3vh 0}
-.pin-dot{width:min(14px,3vw);height:min(14px,3vw);border:2px solid #444;border-radius:50%;transition:all .2s;background:transparent}
+.pin-dot{width:min(14px,3vw);height:min(14px,3vw);border:2px solid var(--border);border-radius:50%;transition:all .2s;background:transparent}
 .pin-dot.filled{background:var(--accent);border-color:var(--accent);box-shadow:0 0 8px rgba(232,115,10,.6)}
 .pin-dot.error{background:var(--danger);border-color:var(--danger)}
 .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:min(15px,3vw);max-width:min(400px,90vw);margin:0 auto 20px}
-.key{background:#0f0f0f;border:1px solid #333;border-radius:6px;padding:0;min-height:70px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;font-size:clamp(1.8rem,7vw,2.4rem);font-weight:600;color:var(--text);cursor:pointer;transition:all .15s;font-family:'IBM Plex Mono',monospace}
-.key:hover{background:#252525;border-color:#555;transform:translateY(-1px)}
+.key{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:0;min-height:70px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;font-size:clamp(1.8rem,7vw,2.4rem);font-weight:600;color:var(--text);cursor:pointer;transition:all .15s;font-family:'IBM Plex Mono',monospace}
+.key:hover{background:var(--surface);border-color:var(--muted);transform:translateY(-1px)}
 .key:active{transform:scale(.95)}
 .key.del{font-size:1.2rem;color:var(--muted)}
 .error-message{color:var(--danger);margin-top:15px;font-weight:500;min-height:20px;font-size:.8rem}
@@ -28,31 +29,32 @@ body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);
 .emoji{font-size:1.1rem}
 .main-app{display:none;width:100%;max-width:100vw;height:100vh;max-height:100vh;overflow:hidden}
 .main-app.active{display:flex;flex-direction:column;width:100vw;height:100vh}
-.app-header{background:#0f0f0f;color:var(--text);padding:25px 30px;border-bottom:2px solid var(--accent);position:sticky;top:0;z-index:101}
-.app-header-logo{max-width:180px;margin-bottom:12px}
-.app-header h1{font-size:1.6rem;margin-bottom:5px;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;color:var(--accent)}
-.app-header p{opacity:.7;font-size:.85rem}
-.header-buttons{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-.logout-btn,.edit-btn{background:#252525;border:1px solid #333;color:var(--text);padding:8px 16px;border-radius:4px;cursor:pointer;font-size:.8rem;transition:all .2s;font-family:'IBM Plex Mono',monospace}
+.app-header{background:var(--surface2);color:var(--text);padding:25px 30px;border-bottom:2px solid var(--accent);position:sticky;top:0;z-index:101;text-align:center;display:flex;flex-direction:column;align-items:center;transition:background .3s}
+.app-header-logo{max-width:250px;margin-bottom:15px;cursor:pointer;transition:transform .3s}
+.app-header-logo:hover{transform:scale(1.05)}
+.app-header h1{font-size:1.8rem;margin-bottom:8px;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;color:var(--accent)}
+.app-header p{opacity:.7;font-size:.9rem;margin-bottom:12px}
+.header-buttons{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.logout-btn,.edit-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 16px;border-radius:4px;cursor:pointer;font-size:.8rem;transition:all .2s;font-family:'IBM Plex Mono',monospace}
 .logout-btn:hover{background:var(--danger);border-color:var(--danger);color:#fff}
 .edit-btn{background:var(--accent);border-color:var(--accent);color:#fff}
 .edit-btn:hover{background:var(--accent2);border-color:var(--accent2)}
 .edit-btn.active{background:var(--success);border-color:var(--success)}
 @media (max-width:768px){.edit-btn{display:none}}
-.tabs{display:flex;background:#0f0f0f;border-bottom:1px solid #333;position:sticky;top:0;z-index:100}
+.tabs{display:flex;background:var(--surface2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;transition:background .3s,border-color .3s}
 .tab{flex:1;padding:16px;background:none;border:none;font-size:.85rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;font-family:'IBM Plex Mono',monospace;border-bottom:3px solid transparent}
-.tab.active{color:var(--accent);background:#1a1a1a;border-bottom-color:var(--accent)}
-.tab:hover:not(.active){color:var(--text);background:#151515}
-.tab-content{padding:25px;background:#0a0a0a;flex:1;overflow-y:auto;height:calc(100vh - 200px)}
+.tab.active{color:var(--accent);background:var(--surface);border-bottom-color:var(--accent)}
+.tab:hover:not(.active){color:var(--text);background:var(--surface)}
+.tab-content{padding:25px;background:var(--bg);flex:1;overflow-y:auto;height:calc(100vh - 200px);transition:background .3s}
 .tab-pane{display:none}
 .tab-pane.active{display:block}
-.search-bar{width:100%;padding:12px 16px;border:1px solid #333;background:#1a1a1a;border-radius:6px;font-size:.9rem;margin-bottom:20px;transition:all .2s;color:var(--text);font-family:'IBM Plex Mono',monospace}
-.search-bar:focus{outline:none;border-color:var(--accent);background:#252525}
+.search-bar{width:100%;padding:12px 16px;border:1px solid var(--border);background:var(--surface);border-radius:6px;font-size:.9rem;margin-bottom:20px;transition:all .2s;color:var(--text);font-family:'IBM Plex Mono',monospace}
+.search-bar:focus{outline:none;border-color:var(--accent);background:var(--surface2)}
 .search-bar::placeholder{color:var(--muted)}
-.card{background:#1a1a1a;border-radius:6px;margin-bottom:12px;border:2px solid var(--accent);transition:all .3s;overflow:hidden}
-.card:hover{box-shadow:0 2px 12px rgba(232,115,10,.1);border-color:var(--accent2)}
-.card-header{padding:16px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none}
-.card-header:hover{background:#1f1f1f}
+.card{background:var(--surface);border-radius:6px;margin-bottom:12px;border:2px solid var(--accent);transition:all .3s;overflow:hidden}
+.card:hover{box-shadow:0 2px 12px rgba(232,115,10,.2);border-color:var(--accent2)}
+.card-header{padding:16px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;transition:background .2s}
+.card-header:hover{background:var(--surface2)}
 .edit-mode .card-header{cursor:default}
 .edit-mode .card-header:hover{background:transparent}
 .card-header-left{flex:1}
@@ -62,15 +64,15 @@ body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);
 .card.expanded .expand-icon{transform:rotate(180deg)}
 .card-content{max-height:0;overflow:hidden;transition:max-height .3s ease;padding:0 20px}
 .card.expanded .card-content{max-height:2000px;padding:0 20px 20px}
-.card-content-inner{color:var(--muted);line-height:1.6;padding-top:12px;border-top:1px solid #333;font-size:.9rem}
-.contact-item{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#0f0f0f;border-radius:4px;margin-bottom:8px;border:1px solid #333;transition:all .2s}
-.contact-item:hover{background:#151515;border-color:#444}
+.card-content-inner{color:var(--muted);line-height:1.6;padding-top:12px;border-top:1px solid var(--border);font-size:.9rem}
+.contact-item{display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--surface2);border-radius:4px;margin-bottom:8px;border:1px solid var(--border);transition:all .2s}
+.contact-item:hover{background:var(--surface);border-color:var(--muted)}
 .contact-name{font-weight:600;color:var(--text);font-size:.9rem}
 .contact-role{color:var(--muted);font-size:.8rem;margin-top:3px}
 .contact-phone{background:var(--accent);color:#fff;padding:6px 14px;border-radius:4px;text-decoration:none;font-weight:600;transition:all .2s;font-size:.85rem}
 .contact-phone:hover{background:var(--accent2);transform:scale(1.05)}
 .procedure-steps{list-style:none;counter-reset:step-counter}
-.procedure-steps li{counter-increment:step-counter;padding:12px 12px 12px 48px;position:relative;margin-bottom:8px;background:#0f0f0f;border-radius:4px;border:1px solid #333;color:var(--text);line-height:1.5;font-size:.9rem}
+.procedure-steps li{counter-increment:step-counter;padding:12px 12px 12px 48px;position:relative;margin-bottom:8px;background:var(--surface2);border-radius:4px;border:1px solid var(--border);color:var(--text);line-height:1.5;font-size:.9rem;transition:all .2s}
 .procedure-steps li::before{content:counter(step-counter);position:absolute;left:12px;top:50%;transform:translateY(-50%);background:var(--accent);color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:.85rem}
 .category-tag{display:inline-block;padding:4px 10px;background:rgba(232,115,10,.15);color:var(--accent);border-radius:4px;font-size:.7rem;margin-bottom:8px;font-weight:600;letter-spacing:.5px;border:1px solid rgba(232,115,10,.3)}
 .emergency{border-color:var(--danger)}
@@ -94,12 +96,12 @@ body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);
 .card-delete-btn{display:none;background:var(--danger);color:#fff;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:.75rem;margin-left:8px;transition:all .2s}
 .card-delete-btn:hover{background:#a81f18}
 .edit-mode .card-delete-btn{display:inline-block}
-.color-picker{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1a1a1a;padding:25px;border-radius:8px;border:2px solid var(--accent);z-index:2000;box-shadow:0 10px 40px rgba(0,0,0,.7)}
+.color-picker{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--surface);padding:25px;border-radius:8px;border:2px solid var(--accent);z-index:2000;box-shadow:0 10px 40px rgba(0,0,0,.7);transition:background .3s}
 .color-picker.active{display:block}
 .color-picker h3{color:var(--accent);margin-bottom:15px;font-family:'Bebas Neue',sans-serif}
 .color-row{margin-bottom:15px}
 .color-row label{display:block;color:var(--text);margin-bottom:8px;font-size:.85rem}
-.color-row input[type="color"]{width:100%;height:40px;border:1px solid #333;border-radius:4px;cursor:pointer;background:#0f0f0f}
+.color-row input[type="color"]{width:100%;height:40px;border:1px solid var(--border);border-radius:4px;cursor:pointer;background:var(--surface2);transition:background .3s,border-color .3s}
 .color-picker-buttons{display:flex;gap:8px;margin-top:20px}
 .color-picker-buttons button{flex:1;padding:10px;border:none;border-radius:4px;cursor:pointer;font-weight:600;transition:all .2s;font-family:'IBM Plex Mono',monospace}
 .btn-apply-colors{background:var(--success);color:#fff}
@@ -140,13 +142,12 @@ body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);
 </div>
 <div class="main-app" id="mainApp">
 <div class="app-header">
-<img src="LOGO_PLW_WHITE.png" alt="Plein Les Watts" class="app-header-logo">
+<img src="LOGO_PLW_WHITE.png" alt="Plein Les Watts" class="app-header-logo" onclick="toggleDarkMode()">
 <h1>PLEIN-LES-W'APP</h1>
 <p contenteditable="false" id="headerSubtitle">Base de données des procédures et contacts</p>
 <div class="header-buttons">
 <button class="edit-btn" onclick="openColorPicker()" id="colorBtn" style="display:none;">🎨 COULEURS</button>
 <button class="edit-btn" onclick="toggleEditMode()" id="editBtn">MODE EDITION</button>
-<button class="logout-btn" onclick="logout()">VERROUILLER</button>
 </div>
 </div>
 <div class="tabs">
@@ -433,6 +434,12 @@ function toggleEditMode(){
     }
 }
 
+function toggleDarkMode(){
+    document.body.classList.toggle('light-mode');
+    const isLight=document.body.classList.contains('light-mode');
+    localStorage.setItem('theme',isLight?'light':'dark');
+}
+
 function makeEditable(){
     document.querySelectorAll('.card h3, .card-subtitle, .category-tag, .contact-name, .contact-role, .contact-phone, .procedure-steps li').forEach(t=>t.setAttribute('contenteditable','true'));
     document.querySelectorAll('.contact-phone').forEach(t=>t.addEventListener('click',function(e){if(isEditMode)e.preventDefault()}));
@@ -570,6 +577,10 @@ function filterUrgence(){
 
 
 window.addEventListener('load',()=>{
+    const savedTheme=localStorage.getItem('theme');
+    if(savedTheme==='light'){
+        document.body.classList.add('light-mode');
+    }
     const savedPrimaryColor=localStorage.getItem('primaryColor');
     const savedDangerColor=localStorage.getItem('dangerColor');
     if(savedPrimaryColor){
