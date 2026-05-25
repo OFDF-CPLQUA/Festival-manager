@@ -2,14 +2,14 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>PLEIN-LES-W'APP</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0a0a0a;--surface:#1a1a1a;--surface2:#2a2a2a;--border:#333;--text:#f0ece4;--muted:#888;--accent:#E8730A;--accent2:#F5B800;--danger:#C8281E;--success:#2D8C3E}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);min-height:100vh;height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;overflow:auto}
-.container{background:#1a1a1a;border-radius:8px;max-width:900px;width:95%;max-height:90vh;overflow-y:auto;border:1px solid #333;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);min-height:100vh;height:100vh;display:flex;justify-content:center;align-items:center;padding:0;overflow:auto}
+.container{background:#1a1a1a;border-radius:8px;max-width:900px;width:100%;max-height:100vh;overflow-y:auto;border:1px solid #333;box-shadow:0 4px 20px rgba(0,0,0,.5)}
 .digicode-screen{padding:5vh 5vw;text-align:center;min-height:60vh;display:flex;flex-direction:column;justify-content:center}
 .login-logo{margin-bottom:20px;padding:15px;display:flex;justify-content:center;align-items:center;width:100%}
 .login-logo img{max-width:min(280px, 60vw);max-height:15vh;width:100%;height:auto;display:block;object-fit:contain}
@@ -27,7 +27,7 @@ body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);
 .editor-link:hover{opacity:1}
 .emoji{font-size:1.1rem}
 .main-app{display:none;width:100%;max-width:100vw;height:100vh;max-height:100vh;overflow:hidden}
-.main-app.active{display:flex;flex-direction:column}
+.main-app.active{display:flex;flex-direction:column;width:100vw;height:100vh}
 .app-header{background:#0f0f0f;color:var(--text);padding:25px 30px;border-bottom:2px solid var(--accent);position:sticky;top:0;z-index:101}
 .app-header-logo{max-width:180px;margin-bottom:12px}
 .app-header h1{font-size:1.6rem;margin-bottom:5px;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;color:var(--accent)}
@@ -87,7 +87,7 @@ body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);
 .cancel-btn:hover{background:#a81f18;transform:translateY(-2px)}
 .export-btn{background:var(--accent);color:#fff}
 .export-btn:hover{background:var(--accent2);transform:translateY(-2px)}
-@media (max-width:600px){html{font-size:14px}.digicode-screen{padding:3vh 5vw;min-height:70vh}.container{width:95%;max-height:95vh}.login-logo img{max-width:min(200px,70vw);max-height:12vh}.keypad{max-width:80vw}.tab-content{padding:15px;height:calc(100vh - 180px)}.contact-item{flex-direction:column;align-items:flex-start;gap:10px}.contact-phone{width:100%;text-align:center}.app-header{padding:15px}.app-header h1{font-size:1.3rem}.app-header p{font-size:.75rem}.app-header-logo{max-width:120px}.card h3{font-size:1rem}.card-subtitle{font-size:.75rem}.card-header{padding:12px 16px}.card-content-inner{font-size:.85rem}.procedure-steps li{font-size:.85rem;padding:10px 10px 10px 40px}.procedure-steps li::before{width:22px;height:22px;font-size:.75rem}.contact-name{font-size:.85rem}.contact-role{font-size:.75rem}.search-bar{font-size:.85rem;padding:10px 14px}.tab{font-size:.8rem;padding:12px}.edit-actions{bottom:20px;right:20px;flex-direction:column}}
+@media (max-width:600px){html{font-size:14px}.container{width:100%;max-height:100vh;border-radius:0;border:none}.main-app.active{border-radius:0}.digicode-screen{padding:3vh 5vw;min-height:70vh}.login-logo img{max-width:min(200px,70vw);max-height:12vh}.keypad{max-width:80vw}.tab-content{padding:15px;height:calc(100vh - 180px)}.contact-item{flex-direction:column;align-items:flex-start;gap:10px}.contact-phone{width:100%;text-align:center}.app-header{padding:15px}.app-header h1{font-size:1.3rem}.app-header p{font-size:.75rem}.app-header-logo{max-width:120px}.card h3{font-size:1rem}.card-subtitle{font-size:.75rem}.card-header{padding:12px 16px}.card-content-inner{font-size:.85rem}.procedure-steps li{font-size:.85rem;padding:10px 10px 10px 40px}.procedure-steps li::before{width:22px;height:22px;font-size:.75rem}.contact-name{font-size:.85rem}.contact-role{font-size:.75rem}.search-bar{font-size:.85rem;padding:10px 14px}.tab{font-size:.8rem;padding:12px}.edit-actions{bottom:20px;right:20px;flex-direction:column}}
 .add-card-btn{display:none;width:100%;padding:15px;border:2px dashed var(--accent);background:transparent;color:var(--accent);border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;margin-top:10px;transition:all .2s;font-family:'IBM Plex Mono',monospace}
 .add-card-btn:hover{background:rgba(232,115,10,.1)}
 .edit-mode .add-card-btn{display:block}
