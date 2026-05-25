@@ -1,776 +1,474 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Festival Manager - Procédures & Contacts</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 900px;
-            width: 100%;
-            overflow: hidden;
-        }
-
-        /* Digicode Screen */
-        .digicode-screen {
-            padding: 60px 40px;
-            text-align: center;
-        }
-
-        .digicode-screen h1 {
-            color: #667eea;
-            margin-bottom: 10px;
-            font-size: 2rem;
-        }
-
-        .digicode-screen p {
-            color: #666;
-            margin-bottom: 40px;
-        }
-
-        .pin-display {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-bottom: 40px;
-        }
-
-        .pin-dot {
-            width: 20px;
-            height: 20px;
-            border: 3px solid #667eea;
-            border-radius: 50%;
-            transition: all 0.2s;
-        }
-
-        .pin-dot.filled {
-            background: #667eea;
-        }
-
-        .keypad {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            max-width: 300px;
-            margin: 0 auto;
-        }
-
-        .key {
-            background: #f7f7f7;
-            border: none;
-            border-radius: 12px;
-            padding: 20px;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #333;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .key:hover {
-            background: #667eea;
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .key:active {
-            transform: translateY(0);
-        }
-
-        .error-message {
-            color: #e74c3c;
-            margin-top: 20px;
-            font-weight: 500;
-            min-height: 24px;
-        }
-
-        /* Main App Screen */
-        .main-app {
-            display: none;
-        }
-
-        .main-app.active {
-            display: block;
-        }
-
-        .app-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px 40px;
-        }
-
-        .app-header h1 {
-            font-size: 1.8rem;
-            margin-bottom: 5px;
-        }
-
-        .app-header p {
-            opacity: 0.9;
-        }
-
-        .logout-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            margin-top: 15px;
-            font-size: 0.9rem;
-        }
-
-        .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .tabs {
-            display: flex;
-            background: #f7f7f7;
-            border-bottom: 2px solid #e0e0e0;
-        }
-
-        .tab {
-            flex: 1;
-            padding: 20px;
-            background: none;
-            border: none;
-            font-size: 1rem;
-            font-weight: 600;
-            color: #666;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .tab.active {
-            color: #667eea;
-            background: white;
-            border-bottom: 3px solid #667eea;
-        }
-
-        .tab-content {
-            padding: 40px;
-        }
-
-        .tab-pane {
-            display: none;
-        }
-
-        .tab-pane.active {
-            display: block;
-        }
-
-        /* Search Bar */
-        .search-bar {
-            width: 100%;
-            padding: 15px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            font-size: 1rem;
-            margin-bottom: 30px;
-            transition: border 0.2s;
-        }
-
-        .search-bar:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        /* Cards */
-        .card {
-            background: #f9f9f9;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 20px;
-            border-left: 4px solid #667eea;
-            transition: all 0.2s;
-        }
-
-        .card:hover {
-            transform: translateX(5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .card h3 {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-        }
-
-        .card-content {
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .contact-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            background: white;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-
-        .contact-name {
-            font-weight: 600;
-            color: #333;
-        }
-
-        .contact-role {
-            color: #888;
-            font-size: 0.9rem;
-        }
-
-        .contact-phone {
-            background: #667eea;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .contact-phone:hover {
-            background: #764ba2;
-            transform: scale(1.05);
-        }
-
-        .procedure-steps {
-            list-style: none;
-            counter-reset: step-counter;
-        }
-
-        .procedure-steps li {
-            counter-increment: step-counter;
-            padding: 15px 15px 15px 60px;
-            position: relative;
-            margin-bottom: 10px;
-            background: white;
-            border-radius: 8px;
-        }
-
-        .procedure-steps li::before {
-            content: counter(step-counter);
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: #667eea;
-            color: white;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        .category-tag {
-            display: inline-block;
-            padding: 5px 12px;
-            background: #e3f2fd;
-            color: #1976d2;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            margin-bottom: 10px;
-        }
-
-        .emergency {
-            border-left-color: #e74c3c;
-        }
-
-        .emergency .category-tag {
-            background: #ffebee;
-            color: #c62828;
-        }
-
-        @media (max-width: 600px) {
-            .digicode-screen {
-                padding: 40px 20px;
-            }
-
-            .tab-content {
-                padding: 20px;
-            }
-
-            .contact-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PLEIN-LES-W'APP</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0a;--surface:#1a1a1a;--surface2:#2a2a2a;--border:#333;--text:#f0ece4;--muted:#888;--accent:#E8730A;--accent2:#F5B800;--danger:#C8281E;--success:#2D8C3E}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'IBM Plex Mono',monospace;background:#0a0a0a;color:var(--text);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px}
+.container{background:#1a1a1a;border-radius:8px;max-width:500px;width:100%;overflow:hidden;border:1px solid #333;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.digicode-screen{padding:40px 30px 50px;text-align:center}
+.login-logo{margin-bottom:20px;padding:15px;background:#0a0a0a;border-radius:6px;display:inline-block}
+.login-logo img{max-width:280px;width:100%;display:block}
+.pin-display{display:flex;gap:12px;justify-content:center;margin:25px 0}
+.pin-dot{width:14px;height:14px;border:2px solid #444;border-radius:50%;transition:all .2s;background:transparent}
+.pin-dot.filled{background:var(--accent);border-color:var(--accent);box-shadow:0 0 8px rgba(232,115,10,.6)}
+.pin-dot.error{background:var(--danger);border-color:var(--danger)}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:240px;margin:0 auto 20px}
+.key{background:#0f0f0f;border:1px solid #333;border-radius:6px;padding:18px;font-size:1.4rem;font-weight:600;color:var(--text);cursor:pointer;transition:all .15s;font-family:'IBM Plex Mono',monospace}
+.key:hover{background:#252525;border-color:#555;transform:translateY(-1px)}
+.key:active{transform:scale(.95)}
+.key.del{font-size:1.2rem;color:var(--muted)}
+.error-message{color:var(--danger);margin-top:15px;font-weight:500;min-height:20px;font-size:.8rem}
+.editor-link{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--accent);font-size:.85rem;text-decoration:none;margin-top:15px;opacity:.8;transition:opacity .2s}
+.editor-link:hover{opacity:1}
+.emoji{font-size:1.1rem}
+.main-app{display:none}
+.main-app.active{display:block}
+.app-header{background:#0f0f0f;color:var(--text);padding:25px 30px;border-bottom:2px solid var(--accent)}
+.app-header-logo{max-width:180px;margin-bottom:12px}
+.app-header h1{font-size:1.6rem;margin-bottom:5px;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;color:var(--accent)}
+.app-header p{opacity:.7;font-size:.85rem}
+.header-buttons{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.logout-btn,.edit-btn{background:#252525;border:1px solid #333;color:var(--text);padding:8px 16px;border-radius:4px;cursor:pointer;font-size:.8rem;transition:all .2s;font-family:'IBM Plex Mono',monospace}
+.logout-btn:hover{background:var(--danger);border-color:var(--danger);color:#fff}
+.edit-btn{background:var(--accent);border-color:var(--accent);color:#fff}
+.edit-btn:hover{background:var(--accent2);border-color:var(--accent2)}
+.edit-btn.active{background:var(--success);border-color:var(--success)}
+@media (max-width:768px){.edit-btn{display:none}}
+.tabs{display:flex;background:#0f0f0f;border-bottom:1px solid #333}
+.tab{flex:1;padding:16px;background:none;border:none;font-size:.85rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;font-family:'IBM Plex Mono',monospace;border-bottom:3px solid transparent}
+.tab.active{color:var(--accent);background:#1a1a1a;border-bottom-color:var(--accent)}
+.tab:hover:not(.active){color:var(--text);background:#151515}
+.tab-content{padding:25px;background:#0a0a0a}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+.search-bar{width:100%;padding:12px 16px;border:1px solid #333;background:#1a1a1a;border-radius:6px;font-size:.9rem;margin-bottom:20px;transition:all .2s;color:var(--text);font-family:'IBM Plex Mono',monospace}
+.search-bar:focus{outline:none;border-color:var(--accent);background:#252525}
+.search-bar::placeholder{color:var(--muted)}
+.card{background:#1a1a1a;border-radius:6px;margin-bottom:12px;border:1px solid #333;transition:all .3s;overflow:hidden}
+.card:hover{box-shadow:0 2px 12px rgba(232,115,10,.1);border-color:#444}
+.card-header{padding:16px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.card-header:hover{background:#1f1f1f}
+.edit-mode .card-header{cursor:default}
+.edit-mode .card-header:hover{background:transparent}
+.card-header-left{flex:1}
+.card h3{color:var(--text);font-size:1.1rem;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;margin-bottom:4px}
+.card-subtitle{color:var(--muted);font-size:.8rem;margin-top:4px}
+.expand-icon{color:var(--accent);font-size:1.3rem;transition:transform .3s;margin-left:12px}
+.card.expanded .expand-icon{transform:rotate(180deg)}
+.card-content{max-height:0;overflow:hidden;transition:max-height .3s ease;padding:0 20px}
+.card.expanded .card-content{max-height:2000px;padding:0 20px 20px}
+.card-content-inner{color:var(--muted);line-height:1.6;padding-top:12px;border-top:1px solid #333;font-size:.9rem}
+.contact-item{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#0f0f0f;border-radius:4px;margin-bottom:8px;border:1px solid #333;transition:all .2s}
+.contact-item:hover{background:#151515;border-color:#444}
+.contact-name{font-weight:600;color:var(--text);font-size:.9rem}
+.contact-role{color:var(--muted);font-size:.8rem;margin-top:3px}
+.contact-phone{background:var(--accent);color:#fff;padding:6px 14px;border-radius:4px;text-decoration:none;font-weight:600;transition:all .2s;font-size:.85rem}
+.contact-phone:hover{background:var(--accent2);transform:scale(1.05)}
+.procedure-steps{list-style:none;counter-reset:step-counter}
+.procedure-steps li{counter-increment:step-counter;padding:12px 12px 12px 48px;position:relative;margin-bottom:8px;background:#0f0f0f;border-radius:4px;border:1px solid #333;color:var(--text);line-height:1.5;font-size:.9rem}
+.procedure-steps li::before{content:counter(step-counter);position:absolute;left:12px;top:50%;transform:translateY(-50%);background:var(--accent);color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:.85rem}
+.category-tag{display:inline-block;padding:4px 10px;background:rgba(232,115,10,.15);color:var(--accent);border-radius:4px;font-size:.7rem;margin-bottom:8px;font-weight:600;letter-spacing:.5px;border:1px solid rgba(232,115,10,.3)}
+.emergency{border-left:3px solid var(--danger)}
+.emergency .category-tag{background:rgba(200,40,30,.15);color:var(--danger);border-color:rgba(200,40,30,.3)}
+.edit-mode .card h3:hover,.edit-mode .card-subtitle:hover,.edit-mode .contact-name:hover,.edit-mode .contact-role:hover,.edit-mode .contact-phone:hover,.edit-mode .procedure-steps li:hover,.edit-mode .category-tag:hover{border:1px dashed var(--accent2);background:rgba(245,184,0,.1)}
+[contenteditable="true"]{outline:none;cursor:text}
+[contenteditable="true"]:focus{border:1px solid var(--accent2)!important;background:rgba(245,184,0,.15)!important}
+.edit-actions{position:fixed;bottom:25px;right:25px;display:none;gap:8px;z-index:1000}
+.edit-mode .edit-actions{display:flex}
+.save-btn,.cancel-btn,.export-btn{padding:10px 20px;border:none;border-radius:6px;font-weight:600;cursor:pointer;transition:all .2s;font-size:.85rem;box-shadow:0 4px 12px rgba(0,0,0,.3);font-family:'IBM Plex Mono',monospace}
+.save-btn{background:var(--success);color:#fff}
+.save-btn:hover{background:#25723a;transform:translateY(-2px)}
+.cancel-btn{background:var(--danger);color:#fff}
+.cancel-btn:hover{background:#a81f18;transform:translateY(-2px)}
+.export-btn{background:var(--accent);color:#fff}
+.export-btn:hover{background:var(--accent2);transform:translateY(-2px)}
+@media (max-width:600px){.digicode-screen{padding:30px 20px 40px}.login-logo img{max-width:200px}.tab-content{padding:20px}.contact-item{flex-direction:column;align-items:flex-start;gap:10px}.contact-phone{width:100%;text-align:center}.app-header{padding:20px}.app-header-logo{max-width:140px}.card-header{padding:12px 16px}.edit-actions{bottom:20px;right:20px;flex-direction:column}}
+</style>
 </head>
 <body>
-    <div class="container">
-        <!-- Écran Digicode -->
-        <div class="digicode-screen" id="digicodeScreen">
-            <h1>🎵 Festival Manager</h1>
-            <p>Entrez le code PIN pour accéder</p>
-            
-            <div class="pin-display">
-                <div class="pin-dot" id="dot1"></div>
-                <div class="pin-dot" id="dot2"></div>
-                <div class="pin-dot" id="dot3"></div>
-                <div class="pin-dot" id="dot4"></div>
-            </div>
+<div class="container">
+<div class="digicode-screen" id="digicodeScreen">
+<div class="login-logo"><img src="LOGO_PLW_WHITE.png" alt="Plein Les Watts Festival"></div>
+<div class="pin-display">
+<div class="pin-dot" id="dot1"></div>
+<div class="pin-dot" id="dot2"></div>
+<div class="pin-dot" id="dot3"></div>
+<div class="pin-dot" id="dot4"></div>
+<div class="pin-dot" id="dot5"></div>
+<div class="pin-dot" id="dot6"></div>
+</div>
+<div class="keypad">
+<button class="key" onclick="addDigit('1')">1</button>
+<button class="key" onclick="addDigit('2')">2</button>
+<button class="key" onclick="addDigit('3')">3</button>
+<button class="key" onclick="addDigit('4')">4</button>
+<button class="key" onclick="addDigit('5')">5</button>
+<button class="key" onclick="addDigit('6')">6</button>
+<button class="key" onclick="addDigit('7')">7</button>
+<button class="key" onclick="addDigit('8')">8</button>
+<button class="key" onclick="addDigit('9')">9</button>
+<button class="key" onclick="addDigit('0')">0</button>
+<button class="key del" onclick="deleteDigit()">⌫</button>
+</div>
+<div class="error-message" id="errorMessage"></div>
+<a href="#" class="editor-link" onclick="showEditPrompt(); return false;"><span class="emoji">✏️</span> EDITEUR</a>
+</div>
+<div class="main-app" id="mainApp">
+<div class="app-header">
+<img src="LOGO_PLW_WHITE.png" alt="Plein Les Watts" class="app-header-logo">
+<h1>PLEIN-LES-W'APP</h1>
+<p>Base de données des procédures et contacts</p>
+<div class="header-buttons">
+<button class="edit-btn" onclick="toggleEditMode()" id="editBtn">MODE EDITION</button>
+<button class="logout-btn" onclick="logout()">VERROUILLER</button>
+</div>
+</div>
+<div class="tabs">
+<button class="tab active" onclick="switchTab('procedures')">PROCEDURES</button>
+<button class="tab" onclick="switchTab('contacts')">CONTACTS</button>
+</div>
+<div class="tab-content">
+<div class="tab-pane active" id="procedures">
+<input type="text" class="search-bar" id="searchProcedures" placeholder="Rechercher une procedure..." onkeyup="filterProcedures()">
+<div id="proceduresList">
+<div class="card emergency" data-keywords="urgence accident blessure medical secours" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><span class="category-tag">URGENCE</span><h3>Accident / Urgence Medicale</h3><div class="card-subtitle">Procedure d'intervention en cas d'accident</div></div><span class="expand-icon">▼</span></div>
+<div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
+<li>Securiser la zone et eloigner le public si necessaire</li>
+<li>Appeler immediatement le poste de secours (voir contacts)</li>
+<li>Ne pas deplacer la victime sauf danger imminent</li>
+<li>Informer le regisseur general</li>
+<li>Remplir le formulaire d'incident apres intervention</li>
+</ol></div></div>
+</div>
+<div class="card" data-keywords="perte enfant perdu famille" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><span class="category-tag">SECURITE</span><h3>Enfant Perdu</h3><div class="card-subtitle">Gestion des enfants separes de leurs parents</div></div><span class="expand-icon">▼</span></div>
+<div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
+<li>Rester avec l'enfant, le rassurer</li>
+<li>Contacter le poste de securite</li>
+<li>Noter l'heure et le lieu de prise en charge</li>
+<li>Accompagner l'enfant au point d'accueil famille</li>
+<li>Remplir la fiche de signalement</li>
+</ol></div></div>
+</div>
+<div class="card emergency" data-keywords="incendie feu fumee evacuation" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><span class="category-tag">URGENCE</span><h3>Debut d'Incendie</h3><div class="card-subtitle">Protocole en cas de depart de feu</div></div><span class="expand-icon">▼</span></div>
+<div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
+<li>Declencher l'alarme la plus proche</li>
+<li>Appeler les pompiers (18) et le poste securite</li>
+<li>Si le feu est petit, utiliser l'extincteur approprie</li>
+<li>Evacuer la zone calmement</li>
+<li>Guider le public vers les sorties de secours</li>
+</ol></div></div>
+</div>
+<div class="card" data-keywords="bagarre violence conflit agression" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><span class="category-tag">SECURITE</span><h3>Bagarre / Conflit</h3><div class="card-subtitle">Intervention lors de conflits entre festivaliers</div></div><span class="expand-icon">▼</span></div>
+<div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
+<li>Ne PAS intervenir physiquement seul</li>
+<li>Appeler immediatement la securite</li>
+<li>Eloigner le public de la zone</li>
+<li>Observer et memoriser les details (nombre de personnes, description)</li>
+<li>Rediger un rapport d'incident</li>
+</ol></div></div>
+</div>
+<div class="card" data-keywords="technique panne electricite son lumiere" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><span class="category-tag">TECHNIQUE</span><h3>Panne Technique (Son/Lumiere)</h3><div class="card-subtitle">Resolution des problemes techniques</div></div><span class="expand-icon">▼</span></div>
+<div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
+<li>Identifier la nature de la panne</li>
+<li>Contacter le regisseur technique de scene</li>
+<li>Informer l'artiste et le public si necessaire</li>
+<li>Mettre en place une solution temporaire</li>
+<li>Logger l'incident dans le cahier technique</li>
+</ol></div></div>
+</div>
+<div class="card emergency" data-keywords="meteo orage pluie vent evacuation" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><span class="category-tag">METEO</span><h3>Alerte Meteo (Orage/Vent fort)</h3><div class="card-subtitle">Actions en cas de conditions meteo dangereuses</div></div><span class="expand-icon">▼</span></div>
+<div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
+<li>Surveiller l'application meteo et les alertes</li>
+<li>Informer le directeur du festival</li>
+<li>Preparer l'evacuation des structures temporaires</li>
+<li>Couper l'alimentation electrique des zones a risque</li>
+<li>Guider le public vers les zones securisees</li>
+</ol></div></div>
+</div>
+<div class="card" data-keywords="accreditation badge acces controle" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><span class="category-tag">ACCES</span><h3>Probleme d'Accreditation</h3><div class="card-subtitle">Verification et gestion des acces</div></div><span class="expand-icon">▼</span></div>
+<div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
+<li>Verifier l'identite de la personne</li>
+<li>Consulter la liste officielle des accredites</li>
+<li>Contacter le responsable accreditations</li>
+<li>En cas de doute, refuser l'acces poliment</li>
+<li>Orienter vers le bureau accreditations</li>
+</ol></div></div>
+</div>
+</div>
+</div>
+<div class="tab-pane" id="contacts">
+<input type="text" class="search-bar" id="searchContacts" placeholder="Rechercher un contact..." onkeyup="filterContacts()">
+<div id="contactsList">
+<div class="card emergency" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><h3>URGENCES</h3><div class="card-subtitle">Numeros d'urgence nationaux</div></div><span class="expand-icon">▼</span></div>
+<div class="card-content"><div class="card-content-inner">
+<div class="contact-item"><div><div class="contact-name">SAMU</div><div class="contact-role">Urgences medicales</div></div><a href="tel:15" class="contact-phone">15</a></div>
+<div class="contact-item"><div><div class="contact-name">Pompiers</div><div class="contact-role">Incendie / Secours</div></div><a href="tel:18" class="contact-phone">18</a></div>
+<div class="contact-item"><div><div class="contact-name">Police / Gendarmerie</div><div class="contact-role">Urgences securite</div></div><a href="tel:17" class="contact-phone">17</a></div>
+<div class="contact-item"><div><div class="contact-name">Numero d'urgence europeen</div><div class="contact-role">Toutes urgences</div></div><a href="tel:112" class="contact-phone">112</a></div>
+</div></div>
+</div>
+<div class="card" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><h3>DIRECTION FESTIVAL</h3><div class="card-subtitle">Equipe de direction</div></div><span class="expand-icon">▼</span></div>
+<div class="card-content"><div class="card-content-inner">
+<div class="contact-item"><div><div class="contact-name">Marie Dupont</div><div class="contact-role">Directrice du Festival</div></div><a href="tel:0601020304" class="contact-phone">06 01 02 03 04</a></div>
+<div class="contact-item"><div><div class="contact-name">Thomas Martin</div><div class="contact-role">Regisseur General</div></div><a href="tel:0602030405" class="contact-phone">06 02 03 04 05</a></div>
+</div></div>
+</div>
+<div class="card" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><h3>EQUIPE TECHNIQUE</h3><div class="card-subtitle">Regisseurs son, lumiere, plateau</div></div><span class="expand-icon">▼</span></div>
+<div class="card-content"><div class="card-content-inner">
+<div class="contact-item"><div><div class="contact-name">Lucas Bernard</div><div class="contact-role">Regisseur Son</div></div><a href="tel:0603040506" class="contact-phone">06 03 04 05 06</a></div>
+<div class="contact-item"><div><div class="contact-name">Sophie Petit</div><div class="contact-role">Regisseur Lumiere</div></div><a href="tel:0604050607" class="contact-phone">06 04 05 06 07</a></div>
+<div class="contact-item"><div><div class="contact-name">Alex Moreau</div><div class="contact-role">Regisseur Plateau</div></div><a href="tel:0605060708" class="contact-phone">06 05 06 07 08</a></div>
+</div></div>
+</div>
+<div class="card" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><h3>SECURITE</h3><div class="card-subtitle">Equipe de securite du festival</div></div><span class="expand-icon">▼</span></div>
+<div class="card-content"><div class="card-content-inner">
+<div class="contact-item"><div><div class="contact-name">David Rousseau</div><div class="contact-role">Chef de la Securite</div></div><a href="tel:0606070809" class="contact-phone">06 06 07 08 09</a></div>
+<div class="contact-item"><div><div class="contact-name">Poste Central Securite</div><div class="contact-role">PC Securite</div></div><a href="tel:0607080910" class="contact-phone">06 07 08 09 10</a></div>
+</div></div>
+</div>
+<div class="card" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><h3>SECOURS & SANTE</h3><div class="card-subtitle">Equipe medicale et poste de secours</div></div><span class="expand-icon">▼</span></div>
+<div class="card-content"><div class="card-content-inner">
+<div class="contact-item"><div><div class="contact-name">Dr. Julie Laurent</div><div class="contact-role">Medecin du Festival</div></div><a href="tel:0608091011" class="contact-phone">06 08 09 10 11</a></div>
+<div class="contact-item"><div><div class="contact-name">Poste de Secours</div><div class="contact-role">Infirmerie</div></div><a href="tel:0609101112" class="contact-phone">06 09 10 11 12</a></div>
+</div></div>
+</div>
+<div class="card" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><h3>BILLETTERIE & ACCUEIL</h3><div class="card-subtitle">Accueil et gestion des entrees</div></div><span class="expand-icon">▼</span></div>
+<div class="card-content"><div class="card-content-inner">
+<div class="contact-item"><div><div class="contact-name">Emma Dubois</div><div class="contact-role">Responsable Billetterie</div></div><a href="tel:0610111213" class="contact-phone">06 10 11 12 13</a></div>
+<div class="contact-item"><div><div class="contact-name">Pierre Leroy</div><div class="contact-role">Accreditations</div></div><a href="tel:0611121314" class="contact-phone">06 11 12 13 14</a></div>
+</div></div>
+</div>
+<div class="card" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><h3>RESTAURATION & LOGISTIQUE</h3><div class="card-subtitle">Catering et logistique generale</div></div><span class="expand-icon">▼</span></div>
+<div class="card-content"><div class="card-content-inner">
+<div class="contact-item"><div><div class="contact-name">Camille Girard</div><div class="contact-role">Responsable Restauration</div></div><a href="tel:0612131415" class="contact-phone">06 12 13 14 15</a></div>
+<div class="contact-item"><div><div class="contact-name">Nicolas Simon</div><div class="contact-role">Logistique</div></div><a href="tel:0613141516" class="contact-phone">06 13 14 15 16</a></div>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="edit-actions">
+<button class="export-btn" onclick="exportHTML()">EXPORTER HTML</button>
+<button class="export-btn" onclick="exportData()">BACKUP JSON</button>
+<button class="save-btn" onclick="saveChanges()">ENREGISTRER</button>
+<button class="cancel-btn" onclick="cancelEdit()">ANNULER</button>
+</div>
+<script>
+const CORRECT_PIN='123456';
+const EDIT_PIN='999999';
+let currentPin='',isEditMode=!1,originalContent='';
 
-            <div class="keypad">
-                <button class="key" onclick="addDigit('1')">1</button>
-                <button class="key" onclick="addDigit('2')">2</button>
-                <button class="key" onclick="addDigit('3')">3</button>
-                <button class="key" onclick="addDigit('4')">4</button>
-                <button class="key" onclick="addDigit('5')">5</button>
-                <button class="key" onclick="addDigit('6')">6</button>
-                <button class="key" onclick="addDigit('7')">7</button>
-                <button class="key" onclick="addDigit('8')">8</button>
-                <button class="key" onclick="addDigit('9')">9</button>
-                <button class="key" onclick="clearPin()">✕</button>
-                <button class="key" onclick="addDigit('0')">0</button>
-                <button class="key" onclick="deleteDigit()">←</button>
-            </div>
+function addDigit(t){
+    if(currentPin.length<6){
+        currentPin+=t;
+        updatePinDisplay();
+        if(currentPin.length===6)checkPin();
+    }
+}
 
-            <div class="error-message" id="errorMessage"></div>
-        </div>
+function deleteDigit(){
+    currentPin=currentPin.slice(0,-1);
+    updatePinDisplay();
+    document.getElementById('errorMessage').textContent='';
+}
 
-        <!-- Application Principale -->
-        <div class="main-app" id="mainApp">
-            <div class="app-header">
-                <h1>Festival Manager</h1>
-                <p>Base de données des procédures et contacts</p>
-                <button class="logout-btn" onclick="logout()">🔒 Verrouiller</button>
-            </div>
-
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('procedures')">📋 Procédures</button>
-                <button class="tab" onclick="switchTab('contacts')">📞 Contacts</button>
-            </div>
-
-            <div class="tab-content">
-                <!-- Onglet Procédures -->
-                <div class="tab-pane active" id="procedures">
-                    <input type="text" class="search-bar" id="searchProcedures" placeholder="🔍 Rechercher une procédure..." onkeyup="filterProcedures()">
-                    
-                    <div id="proceduresList">
-                        <div class="card emergency" data-keywords="urgence accident blessure médical secours">
-                            <span class="category-tag">🚨 URGENCE</span>
-                            <h3>Accident / Urgence Médicale</h3>
-                            <div class="card-content">
-                                <ol class="procedure-steps">
-                                    <li>Sécuriser la zone et éloigner le public si nécessaire</li>
-                                    <li>Appeler immédiatement le poste de secours (voir contacts)</li>
-                                    <li>Ne pas déplacer la victime sauf danger imminent</li>
-                                    <li>Informer le régisseur général</li>
-                                    <li>Remplir le formulaire d'incident après intervention</li>
-                                </ol>
-                            </div>
-                        </div>
-
-                        <div class="card" data-keywords="perte enfant perdu famille">
-                            <span class="category-tag">👶 Sécurité</span>
-                            <h3>Enfant Perdu</h3>
-                            <div class="card-content">
-                                <ol class="procedure-steps">
-                                    <li>Rester avec l'enfant, le rassurer</li>
-                                    <li>Contacter le poste de sécurité</li>
-                                    <li>Noter l'heure et le lieu de prise en charge</li>
-                                    <li>Accompagner l'enfant au point d'accueil famille</li>
-                                    <li>Remplir la fiche de signalement</li>
-                                </ol>
-                            </div>
-                        </div>
-
-                        <div class="card" data-keywords="incendie feu fumée évacuation">
-                            <span class="category-tag">🔥 Urgence</span>
-                            <h3>Début d'Incendie</h3>
-                            <div class="card-content">
-                                <ol class="procedure-steps">
-                                    <li>Déclencher l'alarme la plus proche</li>
-                                    <li>Appeler les pompiers (18) et le poste sécurité</li>
-                                    <li>Si le feu est petit, utiliser l'extincteur approprié</li>
-                                    <li>Évacuer la zone calmement</li>
-                                    <li>Guider le public vers les sorties de secours</li>
-                                </ol>
-                            </div>
-                        </div>
-
-                        <div class="card" data-keywords="bagarre violence conflit agression">
-                            <span class="category-tag">⚠️ Sécurité</span>
-                            <h3>Bagarre / Conflit</h3>
-                            <div class="card-content">
-                                <ol class="procedure-steps">
-                                    <li>Ne PAS intervenir physiquement seul</li>
-                                    <li>Appeler immédiatement la sécurité</li>
-                                    <li>Éloigner le public de la zone</li>
-                                    <li>Observer et mémoriser les détails (nombre de personnes, description)</li>
-                                    <li>Rédiger un rapport d'incident</li>
-                                </ol>
-                            </div>
-                        </div>
-
-                        <div class="card" data-keywords="technique panne électricité son lumière">
-                            <span class="category-tag">🔧 Technique</span>
-                            <h3>Panne Technique (Son/Lumière)</h3>
-                            <div class="card-content">
-                                <ol class="procedure-steps">
-                                    <li>Identifier la nature de la panne</li>
-                                    <li>Contacter le régisseur technique de scène</li>
-                                    <li>Informer l'artiste et le public si nécessaire</li>
-                                    <li>Mettre en place une solution temporaire</li>
-                                    <li>Logger l'incident dans le cahier technique</li>
-                                </ol>
-                            </div>
-                        </div>
-
-                        <div class="card" data-keywords="météo orage pluie vent évacuation">
-                            <span class="category-tag">🌩️ Météo</span>
-                            <h3>Alerte Météo (Orage/Vent fort)</h3>
-                            <div class="card-content">
-                                <ol class="procedure-steps">
-                                    <li>Surveiller l'application météo et les alertes</li>
-                                    <li>Informer le directeur du festival</li>
-                                    <li>Préparer l'évacuation des structures temporaires</li>
-                                    <li>Couper l'alimentation électrique des zones à risque</li>
-                                    <li>Guider le public vers les zones sécurisées</li>
-                                </ol>
-                            </div>
-                        </div>
-
-                        <div class="card" data-keywords="accréditation badge accès contrôle">
-                            <span class="category-tag">🎫 Accès</span>
-                            <h3>Problème d'Accréditation</h3>
-                            <div class="card-content">
-                                <ol class="procedure-steps">
-                                    <li>Vérifier l'identité de la personne</li>
-                                    <li>Consulter la liste officielle des accrédités</li>
-                                    <li>Contacter le responsable accréditations</li>
-                                    <li>En cas de doute, refuser l'accès poliment</li>
-                                    <li>Orienter vers le bureau accréditations</li>
-                                </ol>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Onglet Contacts -->
-                <div class="tab-pane" id="contacts">
-                    <input type="text" class="search-bar" id="searchContacts" placeholder="🔍 Rechercher un contact..." onkeyup="filterContacts()">
-                    
-                    <div id="contactsList">
-                        <div class="card emergency">
-                            <h3>🚨 Urgences</h3>
-                            <div class="card-content">
-                                <div class="contact-item" data-keywords="samu urgence médical">
-                                    <div>
-                                        <div class="contact-name">SAMU</div>
-                                        <div class="contact-role">Urgences médicales</div>
-                                    </div>
-                                    <a href="tel:15" class="contact-phone">15</a>
-                                </div>
-                                <div class="contact-item" data-keywords="pompiers feu incendie">
-                                    <div>
-                                        <div class="contact-name">Pompiers</div>
-                                        <div class="contact-role">Incendie / Secours</div>
-                                    </div>
-                                    <a href="tel:18" class="contact-phone">18</a>
-                                </div>
-                                <div class="contact-item" data-keywords="police gendarmerie urgence">
-                                    <div>
-                                        <div class="contact-name">Police / Gendarmerie</div>
-                                        <div class="contact-role">Urgences sécurité</div>
-                                    </div>
-                                    <a href="tel:17" class="contact-phone">17</a>
-                                </div>
-                                <div class="contact-item" data-keywords="urgence numéro unique">
-                                    <div>
-                                        <div class="contact-name">Numéro d'urgence européen</div>
-                                        <div class="contact-role">Toutes urgences</div>
-                                    </div>
-                                    <a href="tel:112" class="contact-phone">112</a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <h3>👔 Direction Festival</h3>
-                            <div class="card-content">
-                                <div class="contact-item" data-keywords="directeur direction responsable chef">
-                                    <div>
-                                        <div class="contact-name">Marie Dupont</div>
-                                        <div class="contact-role">Directrice du Festival</div>
-                                    </div>
-                                    <a href="tel:0601020304" class="contact-phone">06 01 02 03 04</a>
-                                </div>
-                                <div class="contact-item" data-keywords="régisseur général production">
-                                    <div>
-                                        <div class="contact-name">Thomas Martin</div>
-                                        <div class="contact-role">Régisseur Général</div>
-                                    </div>
-                                    <a href="tel:0602030405" class="contact-phone">06 02 03 04 05</a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <h3>🔧 Équipe Technique</h3>
-                            <div class="card-content">
-                                <div class="contact-item" data-keywords="son audio technique">
-                                    <div>
-                                        <div class="contact-name">Lucas Bernard</div>
-                                        <div class="contact-role">Régisseur Son</div>
-                                    </div>
-                                    <a href="tel:0603040506" class="contact-phone">06 03 04 05 06</a>
-                                </div>
-                                <div class="contact-item" data-keywords="lumière éclairage technique">
-                                    <div>
-                                        <div class="contact-name">Sophie Petit</div>
-                                        <div class="contact-role">Régisseur Lumière</div>
-                                    </div>
-                                    <a href="tel:0604050607" class="contact-phone">06 04 05 06 07</a>
-                                </div>
-                                <div class="contact-item" data-keywords="scène plateau backline">
-                                    <div>
-                                        <div class="contact-name">Alex Moreau</div>
-                                        <div class="contact-role">Régisseur Plateau</div>
-                                    </div>
-                                    <a href="tel:0605060708" class="contact-phone">06 05 06 07 08</a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <h3>🛡️ Sécurité</h3>
-                            <div class="card-content">
-                                <div class="contact-item" data-keywords="sécurité chef responsable">
-                                    <div>
-                                        <div class="contact-name">David Rousseau</div>
-                                        <div class="contact-role">Chef de la Sécurité</div>
-                                    </div>
-                                    <a href="tel:0606070809" class="contact-phone">06 06 07 08 09</a>
-                                </div>
-                                <div class="contact-item" data-keywords="poste sécurité pc">
-                                    <div>
-                                        <div class="contact-name">Poste Central Sécurité</div>
-                                        <div class="contact-role">PC Sécurité</div>
-                                    </div>
-                                    <a href="tel:0607080910" class="contact-phone">06 07 08 09 10</a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <h3>⚕️ Secours & Santé</h3>
-                            <div class="card-content">
-                                <div class="contact-item" data-keywords="médecin docteur santé">
-                                    <div>
-                                        <div class="contact-name">Dr. Julie Laurent</div>
-                                        <div class="contact-role">Médecin du Festival</div>
-                                    </div>
-                                    <a href="tel:0608091011" class="contact-phone">06 08 09 10 11</a>
-                                </div>
-                                <div class="contact-item" data-keywords="secours poste infirmerie">
-                                    <div>
-                                        <div class="contact-name">Poste de Secours</div>
-                                        <div class="contact-role">Infirmerie</div>
-                                    </div>
-                                    <a href="tel:0609101112" class="contact-phone">06 09 10 11 12</a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <h3>🎫 Billetterie & Accueil</h3>
-                            <div class="card-content">
-                                <div class="contact-item" data-keywords="accueil billetterie accès">
-                                    <div>
-                                        <div class="contact-name">Emma Dubois</div>
-                                        <div class="contact-role">Responsable Billetterie</div>
-                                    </div>
-                                    <a href="tel:0610111213" class="contact-phone">06 10 11 12 13</a>
-                                </div>
-                                <div class="contact-item" data-keywords="accréditation badge presse">
-                                    <div>
-                                        <div class="contact-name">Pierre Leroy</div>
-                                        <div class="contact-role">Accréditations</div>
-                                    </div>
-                                    <a href="tel:0611121314" class="contact-phone">06 11 12 13 14</a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <h3>🍔 Restauration & Logistique</h3>
-                            <div class="card-content">
-                                <div class="contact-item" data-keywords="restauration catering nourriture">
-                                    <div>
-                                        <div class="contact-name">Camille Girard</div>
-                                        <div class="contact-role">Responsable Restauration</div>
-                                    </div>
-                                    <a href="tel:0612131415" class="contact-phone">06 12 13 14 15</a>
-                                </div>
-                                <div class="contact-item" data-keywords="logistique transport matériel">
-                                    <div>
-                                        <div class="contact-name">Nicolas Simon</div>
-                                        <div class="contact-role">Logistique</div>
-                                    </div>
-                                    <a href="tel:0613141516" class="contact-phone">06 13 14 15 16</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Configuration
-        const CORRECT_PIN = '1234'; // Changez ce code PIN selon vos besoins
-        let currentPin = '';
-
-        // Gestion du digicode
-        function addDigit(digit) {
-            if (currentPin.length < 4) {
-                currentPin += digit;
-                updatePinDisplay();
-                
-                if (currentPin.length === 4) {
-                    checkPin();
-                }
-            }
+function updatePinDisplay(){
+    for(let t=1;t<=6;t++){
+        const e=document.getElementById('dot'+t);
+        if(t<=currentPin.length){
+            e.classList.add('filled');
+            e.classList.remove('error');
+        }else{
+            e.classList.remove('filled','error');
         }
+    }
+}
 
-        function deleteDigit() {
-            currentPin = currentPin.slice(0, -1);
-            updatePinDisplay();
-            document.getElementById('errorMessage').textContent = '';
+function checkPin(){
+    if(currentPin===CORRECT_PIN){
+        document.getElementById('digicodeScreen').style.display='none';
+        document.getElementById('mainApp').classList.add('active');
+        sessionStorage.setItem('authenticated','true');
+    }else{
+        document.getElementById('errorMessage').textContent='CODE INCORRECT';
+        for(let t=1;t<=6;t++)document.getElementById('dot'+t).classList.add('error');
+        setTimeout(()=>{currentPin='';updatePinDisplay();},1000);
+    }
+}
+
+function showEditPrompt(){
+    const editCode=prompt('Entrez le code pour le mode edition:');
+    if(editCode===EDIT_PIN){
+        document.getElementById('digicodeScreen').style.display='none';
+        document.getElementById('mainApp').classList.add('active');
+        sessionStorage.setItem('authenticated','true');
+        setTimeout(()=>toggleEditMode(),100);
+    }else if(editCode){
+        alert('Code incorrect !');
+    }
+}
+
+function logout(){
+    if(isEditMode&&!confirm('Vous etes en mode edition. Voulez-vous vraiment quitter sans sauvegarder?'))return;
+    sessionStorage.removeItem('authenticated');
+    document.getElementById('digicodeScreen').style.display='block';
+    document.getElementById('mainApp').classList.remove('active');
+    currentPin='';
+    updatePinDisplay();
+    if(isEditMode)cancelEdit();
+}
+
+function switchTab(t){
+    document.querySelectorAll('.tab').forEach(tab=>tab.classList.remove('active'));
+    event.target.classList.add('active');
+    document.querySelectorAll('.tab-pane').forEach(pane=>pane.classList.remove('active'));
+    document.getElementById(t).classList.add('active');
+}
+
+function toggleCard(t){
+    if(isEditMode){
+        event.stopPropagation();
+        return;
+    }
+    if(event.target.closest('.contact-phone')){
+        event.stopPropagation();
+        return;
+    }
+    t.classList.toggle('expanded');
+}
+
+function toggleEditMode(){
+    if(!isEditMode){
+        const editCode=prompt('Entrez le code pour le mode edition:');
+        if(editCode!==EDIT_PIN){
+            alert('Code incorrect !');
+            return;
         }
+    }
+    isEditMode=!isEditMode;
+    const t=document.getElementById('mainApp'),e=document.getElementById('editBtn');
+    if(isEditMode){
+        originalContent=t.innerHTML;
+        t.classList.add('edit-mode');
+        e.classList.add('active');
+        e.textContent='MODE EDITION ACTIF';
+        document.querySelectorAll('.card').forEach(card=>card.classList.add('expanded'));
+        makeEditable();
+    }else{
+        t.classList.remove('edit-mode');
+        e.classList.remove('active');
+        e.textContent='MODE EDITION';
+        removeEditable();
+    }
+}
 
-        function clearPin() {
-            currentPin = '';
-            updatePinDisplay();
-            document.getElementById('errorMessage').textContent = '';
-        }
+function makeEditable(){
+    document.querySelectorAll('.card h3, .card-subtitle, .category-tag, .contact-name, .contact-role, .contact-phone, .procedure-steps li').forEach(t=>t.setAttribute('contenteditable','true'));
+    document.querySelectorAll('.contact-phone').forEach(t=>t.addEventListener('click',function(e){if(isEditMode)e.preventDefault()}));
+}
 
-        function updatePinDisplay() {
-            for (let i = 1; i <= 4; i++) {
-                const dot = document.getElementById(`dot${i}`);
-                if (i <= currentPin.length) {
-                    dot.classList.add('filled');
-                } else {
-                    dot.classList.remove('filled');
-                }
-            }
-        }
+function removeEditable(){
+    document.querySelectorAll('[contenteditable]').forEach(t=>t.removeAttribute('contenteditable'));
+}
 
-        function checkPin() {
-            if (currentPin === CORRECT_PIN) {
-                document.getElementById('digicodeScreen').style.display = 'none';
-                document.getElementById('mainApp').classList.add('active');
-                sessionStorage.setItem('authenticated', 'true');
-            } else {
-                document.getElementById('errorMessage').textContent = '❌ Code incorrect';
-                setTimeout(() => {
-                    clearPin();
-                }, 1000);
-            }
-        }
+function saveChanges(){
+    const t={procedures:document.getElementById('proceduresList').innerHTML,contacts:document.getElementById('contactsList').innerHTML};
+    localStorage.setItem('festivalData',JSON.stringify(t));
+    alert('Modifications enregistrees avec succes !');
+    toggleEditMode();
+}
 
-        function logout() {
-            sessionStorage.removeItem('authenticated');
-            document.getElementById('digicodeScreen').style.display = 'block';
-            document.getElementById('mainApp').classList.remove('active');
-            clearPin();
-        }
+function cancelEdit(){
+    if(confirm('Annuler toutes les modifications?')){
+        const t=document.getElementById('mainApp');
+        t.innerHTML=originalContent;
+        isEditMode=!1;
+        t.classList.remove('edit-mode');
+        document.getElementById('editBtn').classList.remove('active');
+        document.getElementById('editBtn').textContent='MODE EDITION';
+        reattachEvents();
+    }
+}
 
-        // Gestion des onglets
-        function switchTab(tabName) {
-            // Mise à jour des boutons
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            event.target.classList.add('active');
+function exportData(){
+    const t={procedures:document.getElementById('proceduresList').innerHTML,contacts:document.getElementById('contactsList').innerHTML,exportDate:(new Date).toISOString()};
+    const e=new Blob([JSON.stringify(t,null,2)],{type:'application/json'});
+    const n=URL.createObjectURL(e);
+    const o=document.createElement('a');
+    o.href=n;
+    o.download='plw-festival-backup-'+(new Date).toISOString().split('T')[0]+'.json';
+    o.click();
+    URL.revokeObjectURL(n);
+    alert('Backup JSON exporte !');
+}
 
-            // Mise à jour du contenu
-            document.querySelectorAll('.tab-pane').forEach(pane => {
-                pane.classList.remove('active');
-            });
-            document.getElementById(tabName).classList.add('active');
-        }
+function exportHTML(){
+    const currentHTML=document.documentElement.outerHTML;
+    const blob=new Blob([currentHTML],{type:'text/html'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download='plein-les-wapp-'+(new Date).toISOString().split('T')[0]+'.html';
+    a.click();
+    URL.revokeObjectURL(url);
+    alert('Fichier HTML exporte avec toutes vos modifications !');
+}
 
-        // Filtrage des procédures
-        function filterProcedures() {
-            const searchTerm = document.getElementById('searchProcedures').value.toLowerCase();
-            const cards = document.querySelectorAll('#proceduresList .card');
+function reattachEvents(){
+    document.querySelectorAll('.card').forEach(card=>card.onclick=function(){toggleCard(this)});
+}
 
-            cards.forEach(card => {
-                const title = card.querySelector('h3').textContent.toLowerCase();
-                const content = card.querySelector('.card-content').textContent.toLowerCase();
-                const keywords = card.getAttribute('data-keywords') || '';
-                
-                if (title.includes(searchTerm) || content.includes(searchTerm) || keywords.includes(searchTerm)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
+function filterProcedures(){
+    const t=document.getElementById('searchProcedures').value.toLowerCase();
+    document.querySelectorAll('#proceduresList .card').forEach(e=>{
+        const n=((e.querySelector('h3').textContent+(e.querySelector('.card-subtitle')?.textContent||'')+(e.querySelector('.card-content-inner')?.textContent||'')+e.getAttribute('data-keywords'))||'').toLowerCase();
+        e.style.display=n.includes(t)?'block':'none';
+    });
+}
 
-        // Filtrage des contacts
-        function filterContacts() {
-            const searchTerm = document.getElementById('searchContacts').value.toLowerCase();
-            const cards = document.querySelectorAll('#contactsList .card');
+function filterContacts(){
+    const t=document.getElementById('searchContacts').value.toLowerCase();
+    document.querySelectorAll('#contactsList .card').forEach(e=>{
+        const n=((e.querySelector('h3').textContent+(e.querySelector('.card-subtitle')?.textContent||'')+(e.querySelector('.card-content-inner')?.textContent||'')||'')).toLowerCase();
+        e.style.display=n.includes(t)?'block':'none';
+    });
+}
 
-            cards.forEach(card => {
-                const title = card.querySelector('h3').textContent.toLowerCase();
-                const items = card.querySelectorAll('.contact-item');
-                let hasMatch = false;
-
-                items.forEach(item => {
-                    const name = item.querySelector('.contact-name').textContent.toLowerCase();
-                    const role = item.querySelector('.contact-role').textContent.toLowerCase();
-                    const keywords = item.getAttribute('data-keywords') || '';
-                    
-                    if (name.includes(searchTerm) || role.includes(searchTerm) || keywords.includes(searchTerm) || title.includes(searchTerm)) {
-                        item.style.display = 'flex';
-                        hasMatch = true;
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-
-                card.style.display = hasMatch ? 'block' : 'none';
-            });
-        }
-
-        // Vérifier si déjà authentifié au chargement
-        window.addEventListener('load', () => {
-            if (sessionStorage.getItem('authenticated') === 'true') {
-                document.getElementById('digicodeScreen').style.display = 'none';
-                document.getElementById('mainApp').classList.add('active';
-            }
-        });
-    </script>
+window.addEventListener('load',()=>{
+    if('true'===sessionStorage.getItem('authenticated')){
+        document.getElementById('digicodeScreen').style.display='none';
+        document.getElementById('mainApp').classList.add('active');
+    }
+    if(localStorage.getItem('festivalData')){
+        try{
+            const t=JSON.parse(localStorage.getItem('festivalData'));
+            if(t.procedures)document.getElementById('proceduresList').innerHTML=t.procedures;
+            if(t.contacts)document.getElementById('contactsList').innerHTML=t.contacts;
+            reattachEvents();
+        }catch(t){console.error('Erreur:',t)}
+    }
+});
+</script>
 </body>
 </html>
