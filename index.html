@@ -16,7 +16,7 @@
 body.light-mode{--bg:#e8e8e8;--surface:#f5f5f5;--surface2:#fafafa;--border:#c0c0c0;--text:#3a3a3a;--muted:#666;--accent:#E8730A;--accent2:#F5B800;--danger:#C8281E;--success:#2D8C3E}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text);min-height:100vh;height:100vh;display:flex;justify-content:center;align-items:stretch;padding:0;margin:0;overflow:hidden;transition:background .3s,color .3s}
-.container{background:var(--surface);border-radius:0;max-width:900px;width:100%;height:100vh;max-height:100vh;overflow-y:auto;border:none;box-shadow:none;transition:background .3s,border-color .3s}
+.container{background:var(--surface);border-radius:0;width:100%;height:100vh;max-height:100vh;overflow-y:auto;border:none;box-shadow:none;transition:background .3s,border-color .3s}
 .digicode-screen{padding:5vh 5vw;text-align:center;min-height:100vh;height:100vh;display:flex;flex-direction:column;justify-content:center}
 .login-logo{margin-bottom:20px;padding:15px;display:flex;justify-content:center;align-items:center;width:100%}
 .login-logo img{max-width:min(350px, 70vw);max-height:20vh;width:100%;height:auto;display:block;object-fit:contain;transition:transform .3s}
@@ -66,7 +66,13 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 .card-header:hover{background:var(--surface2)}
 .edit-mode .card-header{cursor:default}
 .edit-mode .card-header:hover{background:transparent}
-.card-header-left{flex:1}
+.card-actions{display:none;gap:5px;align-items:center;margin-left:10px}
+.edit-mode .card-actions{display:flex}
+.card-color-btn{width:30px;height:30px;border:2px solid var(--border);border-radius:50%;cursor:pointer;transition:all .2s;position:relative}
+.card-color-btn:hover{transform:scale(1.1)}
+.card-move-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:4px;cursor:pointer;font-size:.9rem;transition:all .2s}
+.card-move-btn:hover{background:var(--accent);color:#fff}
+.card-header-left{flex:1;text-align:center}
 .card h3{color:var(--text);font-size:1.1rem;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;margin-bottom:4px}
 .card-subtitle{color:var(--muted);font-size:.8rem;margin-top:4px}
 .expand-icon{color:var(--accent);font-size:1.3rem;transition:transform .3s;margin-left:12px}
@@ -83,6 +89,16 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 .procedure-steps{list-style:none;counter-reset:step-counter}
 .procedure-steps li{counter-increment:step-counter;padding:12px 12px 12px 48px;position:relative;margin-bottom:8px;background:var(--surface2);border-radius:4px;border:1px solid var(--border);color:var(--text);line-height:1.5;font-size:.9rem;transition:all .2s}
 .procedure-steps li::before{content:counter(step-counter);position:absolute;left:12px;top:50%;transform:translateY(-50%);background:var(--accent);color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:.85rem}
+.edit-mode .procedure-steps li{padding-right:100px}
+.step-actions{display:none;position:absolute;right:8px;top:50%;transform:translateY(-50%);gap:4px}
+.edit-mode .step-actions{display:flex}
+.step-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:4px;cursor:pointer;font-size:.75rem;transition:all .2s}
+.step-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.step-btn.delete{background:var(--danger);color:#fff;border-color:var(--danger)}
+.step-btn.delete:hover{background:#a81f18}
+.add-step-btn{display:none;width:100%;padding:10px;border:1px dashed var(--accent);background:transparent;color:var(--accent);border-radius:4px;font-size:.85rem;cursor:pointer;margin-top:8px;transition:all .2s}
+.add-step-btn:hover{background:rgba(232,115,10,.1)}
+.edit-mode .add-step-btn{display:block}
 .category-tag{display:inline-block;padding:4px 10px;background:rgba(232,115,10,.15);color:var(--accent);border-radius:4px;font-size:.7rem;margin-bottom:8px;font-weight:600;letter-spacing:.5px;border:1px solid rgba(232,115,10,.3)}
 .emergency{border-color:var(--danger)}
 .emergency .category-tag{background:rgba(200,40,30,.15);color:var(--danger);border-color:rgba(200,40,30,.3)}
@@ -102,6 +118,13 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 .add-card-btn{display:none;width:100%;padding:15px;border:2px dashed var(--accent);background:transparent;color:var(--accent);border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;margin-top:10px;transition:all .2s;font-family:'IBM Plex Mono',monospace}
 .add-card-btn:hover{background:rgba(232,115,10,.1)}
 .edit-mode .add-card-btn{display:block}
+.document-link-section{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.document-input{flex:1;padding:10px;border:1px solid var(--border);background:var(--surface2);border-radius:4px;font-size:.85rem;color:var(--text);font-family:'IBM Plex Mono',monospace}
+.document-input:focus{outline:none;border-color:var(--accent)}
+.document-input[readonly]{background:var(--surface);cursor:not-allowed;opacity:0.8}
+.document-open-btn{background:var(--accent);color:#fff;padding:10px 20px;border:none;border-radius:4px;cursor:pointer;font-size:.85rem;font-weight:600;text-decoration:none;transition:all .2s;display:inline-block;font-family:'IBM Plex Mono',monospace}
+.document-open-btn:hover{background:var(--accent2);transform:scale(1.05)}
+.document-info{margin-top:10px;font-size:.75rem;color:var(--muted);font-style:italic}
 .card-delete-btn{display:none;background:var(--danger);color:#fff;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:.75rem;margin-left:8px;transition:all .2s}
 .card-delete-btn:hover{background:#a81f18}
 .edit-mode .card-delete-btn{display:inline-block}
@@ -163,6 +186,7 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 <button class="tab active" onclick="switchTab('procedures')">Infos Gen</button>
 <button class="tab" onclick="switchTab('urgence')">Urgence</button>
 <button class="tab" onclick="switchTab('contacts')">Contact</button>
+<button class="tab" onclick="switchTab('documents')">Documents</button>
 </div>
 <div class="tab-content">
 <div class="tab-pane active" id="procedures">
@@ -240,12 +264,14 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 </div>
 </div>
 <button class="add-card-btn" onclick="addCard(\'procedures\')" id="addProceduresBtn">+ Ajouter une vignette</button>
+<button class="add-card-btn" onclick="addDocumentToTab(\'procedures\')" id="addProceduresDocBtn">📄 Ajouter un document</button>
 </div>
 <div class="tab-pane" id="urgence">
 <input type="text" class="search-bar" id="searchUrgence" placeholder="Rechercher..." onkeyup="filterUrgence()">
 <div id="urgenceList">
 </div>
 <button class="add-card-btn" onclick="addCard(\'urgence\')" id="addUrgenceBtn">+ Ajouter une vignette</button>
+<button class="add-card-btn" onclick="addDocumentToTab(\'urgence\')" id="addUrgenceDocBtn">📄 Ajouter un document</button>
 </div>
 <div class="tab-pane" id="contacts">
 <input type="text" class="search-bar" id="searchContacts" placeholder="Rechercher un contact..." onkeyup="filterContacts()">
@@ -304,6 +330,33 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 </div>
 </div>
 <button class="add-card-btn" onclick="addCard(\'contacts\')" id="addContactsBtn">+ Ajouter une vignette</button>
+<button class="add-card-btn" onclick="addDocumentToTab(\'contacts\')" id="addContactsDocBtn">📄 Ajouter un document</button>
+</div>
+<div class="tab-pane" id="documents">
+<input type="text" class="search-bar" id="searchDocuments" placeholder="Rechercher un document..." onkeyup="filterDocuments()">
+<div id="documentsList">
+<div class="card document-card">
+<div class="card-header" onclick="toggleCard(this.parentElement)">
+<div class="card-header-left">
+<span class="category-tag">DOCUMENT</span>
+<h3 contenteditable="false">Plan du site</h3>
+<div class="card-subtitle" contenteditable="false">Carte détaillée du festival</div>
+</div>
+<span class="expand-icon">▼</span>
+<button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button>
+</div>
+<div class="card-content">
+<div class="card-content-inner">
+<div class="document-link-section">
+<input type="text" class="document-input" placeholder="Nom du fichier (ex: plan-site.pdf)" value="plan-site.pdf" readonly>
+<button class="document-open-btn" onclick="openDocument(this)">📄 Ouvrir</button>
+</div>
+<p class="document-info">Placez le fichier avec ce nom exact dans votre dépôt GitHub</p>
+</div>
+</div>
+</div>
+</div>
+<button class="add-card-btn" onclick="addDocumentCard()" id="addDocumentsBtn">+ Ajouter un document</button>
 </div>
 </div>
 </div>
@@ -325,10 +378,10 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 </div>
 </div>
 <div class="edit-actions">
-<button class="export-btn" onclick="exportHTML()">EXPORTER HTML</button>
-<button class="export-btn" onclick="exportData()">BACKUP JSON</button>
-<button class="save-btn" onclick="saveChanges()">ENREGISTRER</button>
-<button class="cancel-btn" onclick="cancelEdit()">ANNULER</button>
+<button class="export-btn" onclick="exportHTML()">📥 EXPORTER POUR GITHUB</button>
+<button class="export-btn" onclick="exportData()">💾 BACKUP JSON</button>
+<button class="save-btn" onclick="saveChanges()">✓ ENREGISTRER</button>
+<button class="cancel-btn" onclick="cancelEdit()">✕ ANNULER</button>
 </div>
 <script>
 const CORRECT_PIN='072026';
@@ -460,16 +513,77 @@ function toggleDarkMode(){
 function makeEditable(){
     document.querySelectorAll('.card h3, .card-subtitle, .category-tag, .contact-name, .contact-role, .contact-phone, .procedure-steps li').forEach(t=>t.setAttribute('contenteditable','true'));
     document.querySelectorAll('.contact-phone').forEach(t=>t.addEventListener('click',function(e){if(isEditMode)e.preventDefault()}));
+    document.querySelectorAll('.document-input').forEach(input=>input.removeAttribute('readonly'));
+    
+    // Ajouter les boutons de gestion des cartes
+    document.querySelectorAll('.card').forEach(card=>{
+        if(!card.querySelector('.card-actions')){
+            const header=card.querySelector('.card-header');
+            const expandIcon=header.querySelector('.expand-icon');
+            
+            // Obtenir la couleur de bordure actuelle
+            const currentColor=card.style.borderColor||getComputedStyle(card).borderColor||'#E8730A';
+            const rgbToHex=(rgb)=>{
+                const match=rgb.match(/\d+/g);
+                if(!match)return '#E8730A';
+                return '#'+match.slice(0,3).map(x=>parseInt(x).toString(16).padStart(2,'0')).join('');
+            };
+            const hexColor=currentColor.startsWith('rgb')?rgbToHex(currentColor):currentColor;
+            
+            const actionsDiv=document.createElement('div');
+            actionsDiv.className='card-actions';
+            actionsDiv.innerHTML=`
+                <input type="color" class="card-color-btn" value="${hexColor}" onchange="changeCardColor(this)" title="Changer la couleur">
+                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
+                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
+            `;
+            header.insertBefore(actionsDiv,expandIcon);
+        }
+    });
+    
+    // Ajouter les boutons de gestion des points de liste
+    document.querySelectorAll('.procedure-steps li').forEach(li=>{
+        if(!li.querySelector('.step-actions')){
+            const actionsDiv=document.createElement('div');
+            actionsDiv.className='step-actions';
+            actionsDiv.innerHTML=`
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            `;
+            li.appendChild(actionsDiv);
+        }
+    });
+    
+    // Ajouter le bouton "Ajouter un point" après chaque liste
+    document.querySelectorAll('.procedure-steps').forEach(list=>{
+        if(!list.nextElementSibling||!list.nextElementSibling.classList.contains('add-step-btn')){
+            const addBtn=document.createElement('button');
+            addBtn.className='add-step-btn';
+            addBtn.textContent='+ Ajouter un point';
+            addBtn.onclick=function(){addStep(this)};
+            list.parentNode.insertBefore(addBtn,list.nextSibling);
+        }
+    });
 }
 
 function removeEditable(){
     document.querySelectorAll('[contenteditable]').forEach(t=>t.removeAttribute('contenteditable'));
+    document.querySelectorAll('.document-input').forEach(input=>input.setAttribute('readonly','readonly'));
+    document.querySelectorAll('.card-actions').forEach(actions=>actions.remove());
+    document.querySelectorAll('.step-actions').forEach(actions=>actions.remove());
+    document.querySelectorAll('.add-step-btn').forEach(btn=>btn.remove());
 }
 
 function saveChanges(){
-    const t={procedures:document.getElementById('proceduresList').innerHTML,contacts:document.getElementById('contactsList').innerHTML};
+    const t={
+        procedures:document.getElementById('proceduresList').innerHTML,
+        contacts:document.getElementById('contactsList').innerHTML,
+        documents:document.getElementById('documentsList').innerHTML,
+        urgence:document.getElementById('urgenceList').innerHTML
+    };
     localStorage.setItem('festivalData',JSON.stringify(t));
-    alert('Modifications enregistrees avec succes !');
+    alert('✅ Modifications enregistrées !\n\n💡 N\'oubliez pas d\'exporter le HTML pour mettre à jour GitHub.');
     toggleEditMode();
 }
 
@@ -498,15 +612,26 @@ function exportData(){
 }
 
 function exportHTML(){
+    // Sauvegarder d'abord les modifications
+    const data={
+        procedures:document.getElementById('proceduresList').innerHTML,
+        contacts:document.getElementById('contactsList').innerHTML,
+        documents:document.getElementById('documentsList').innerHTML,
+        urgence:document.getElementById('urgenceList').innerHTML
+    };
+    localStorage.setItem('festivalData',JSON.stringify(data));
+    
+    // Exporter le HTML complet
     const currentHTML=document.documentElement.outerHTML;
-    const blob=new Blob([currentHTML],{type:'text/html'});
+    const blob=new Blob([currentHTML],{type:'text/html;charset=utf-8'});
     const url=URL.createObjectURL(blob);
     const a=document.createElement('a');
     a.href=url;
-    a.download='plein-les-wapp-'+(new Date).toISOString().split('T')[0]+'.html';
+    a.download='index.html';
     a.click();
     URL.revokeObjectURL(url);
-    alert('Fichier HTML exporte avec toutes vos modifications !');
+    
+    alert('✅ Fichier index.html exporté !\n\n📝 Étapes suivantes :\n1. Remplacez index.html sur GitHub\n2. Uploadez vos fichiers de documents avec les noms exacts\n3. Vos modifications seront en ligne !');
 }
 
 function reattachEvents(){
@@ -527,6 +652,128 @@ function filterContacts(){
         const n=((e.querySelector('h3').textContent+(e.querySelector('.card-subtitle')?.textContent||'')+(e.querySelector('.card-content-inner')?.textContent||'')||'')).toLowerCase();
         e.style.display=n.includes(t)?'block':'none';
     });
+}
+
+function filterDocuments(){
+    const t=document.getElementById('searchDocuments').value.toLowerCase();
+    document.querySelectorAll('#documentsList .card').forEach(e=>{
+        const n=((e.querySelector('h3').textContent+(e.querySelector('.card-subtitle')?.textContent||'')||'')).toLowerCase();
+        e.style.display=n.includes(t)?'block':'none';
+    });
+}
+
+function addDocumentCard(){
+    const container=document.getElementById('documentsList');
+    const newCard=document.createElement('div');
+    newCard.className='card document-card';
+    newCard.innerHTML=`
+        <div class="card-header" onclick="toggleCard(this.parentElement)">
+            <div class="card-header-left">
+                <span class="category-tag">DOCUMENT</span>
+                <h3 contenteditable="true">Nouveau document</h3>
+                <div class="card-subtitle" contenteditable="true">Description...</div>
+            </div>
+            <span class="expand-icon">▼</span>
+            <button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button>
+        </div>
+        <div class="card-content">
+            <div class="card-content-inner">
+                <div class="document-link-section">
+                    <input type="text" class="document-input" placeholder="Nom du fichier (ex: mon-document.pdf)" value="" readonly>
+                    <button class="document-open-btn" onclick="openDocument(this)">📄 Ouvrir</button>
+                </div>
+                <p class="document-info">Placez le fichier avec ce nom exact dans votre dépôt GitHub</p>
+            </div>
+        </div>
+    `;
+    container.appendChild(newCard);
+}
+
+function openDocument(btn){
+    const card=btn.closest('.card-content-inner');
+    const input=card.querySelector('.document-input');
+    const filename=input.value.trim();
+    
+    if(!filename){
+        alert('Veuillez entrer un nom de fichier');
+        return;
+    }
+    
+    window.open(filename,'_blank');
+}
+
+function changeCardColor(input){
+    const card=input.closest('.card');
+    const color=input.value;
+    card.style.borderColor=color;
+    
+    // Changer aussi la couleur du tag si c'est une carte d'urgence
+    const tag=card.querySelector('.category-tag');
+    if(card.classList.contains('emergency')){
+        tag.style.background=color+'26';
+        tag.style.color=color;
+        tag.style.borderColor=color+'4D';
+    }
+}
+
+function moveCard(btn,direction){
+    const card=btn.closest('.card');
+    const container=card.parentElement;
+    
+    if(direction==='up'){
+        const prev=card.previousElementSibling;
+        if(prev&&prev.classList.contains('card')){
+            container.insertBefore(card,prev);
+        }
+    }else if(direction==='down'){
+        const next=card.nextElementSibling;
+        if(next&&next.classList.contains('card')){
+            container.insertBefore(next,card);
+        }
+    }
+}
+
+function moveStep(btn,direction){
+    const li=btn.closest('li');
+    const list=li.parentElement;
+    
+    if(direction==='up'){
+        const prev=li.previousElementSibling;
+        if(prev){
+            list.insertBefore(li,prev);
+        }
+    }else if(direction==='down'){
+        const next=li.nextElementSibling;
+        if(next){
+            list.insertBefore(next,li);
+        }
+    }
+}
+
+function deleteStep(btn){
+    if(confirm('Supprimer ce point ?')){
+        btn.closest('li').remove();
+    }
+}
+
+function addStep(btn){
+    const list=btn.previousElementSibling;
+    const newLi=document.createElement('li');
+    newLi.contentEditable='true';
+    newLi.textContent='Nouveau point à modifier...';
+    
+    // Ajouter les boutons de gestion
+    const actionsDiv=document.createElement('div');
+    actionsDiv.className='step-actions';
+    actionsDiv.innerHTML=`
+        <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+        <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+        <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+    `;
+    newLi.appendChild(actionsDiv);
+    
+    list.appendChild(newLi);
+    newLi.focus();
 }
 
 
@@ -578,6 +825,35 @@ function addCard(tabName){
     container.appendChild(newCard);
 }
 
+function addDocumentToTab(tabName){
+    const container=document.getElementById(tabName+'List');
+    if(!container)return;
+    const isEmergency=tabName==='urgence';
+    const newCard=document.createElement('div');
+    newCard.className=isEmergency?'card emergency document-card':'card document-card';
+    newCard.innerHTML=`
+        <div class="card-header" onclick="toggleCard(this.parentElement)">
+            <div class="card-header-left">
+                <span class="category-tag">📄 DOCUMENT</span>
+                <h3 contenteditable="true">Nouveau document</h3>
+                <div class="card-subtitle" contenteditable="true">Description...</div>
+            </div>
+            <span class="expand-icon">▼</span>
+            <button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button>
+        </div>
+        <div class="card-content">
+            <div class="card-content-inner">
+                <div class="document-link-section">
+                    <input type="text" class="document-input" placeholder="Nom du fichier (ex: mon-document.pdf)" value="" readonly>
+                    <button class="document-open-btn" onclick="openDocument(this)">📄 Ouvrir</button>
+                </div>
+                <p class="document-info">Placez le fichier avec ce nom exact dans votre dépôt GitHub</p>
+            </div>
+        </div>
+    `;
+    container.appendChild(newCard);
+}
+
 function deleteCard(btn){
     if(confirm('Supprimer cette vignette ?')){
         btn.closest('.card').remove();
@@ -622,6 +898,8 @@ window.addEventListener('load',()=>{
             const t=JSON.parse(localStorage.getItem('festivalData'));
             if(t.procedures)document.getElementById('proceduresList').innerHTML=t.procedures;
             if(t.contacts)document.getElementById('contactsList').innerHTML=t.contacts;
+            if(t.documents)document.getElementById('documentsList').innerHTML=t.documents;
+            if(t.urgence)document.getElementById('urgenceList').innerHTML=t.urgence;
             reattachEvents();
         }catch(t){console.error('Erreur:',t)}
     }
