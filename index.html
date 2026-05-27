@@ -129,9 +129,10 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 .document-input[readonly]{background:var(--surface);cursor:not-allowed;opacity:0.8}
 .document-open-btn{background:var(--accent);color:#fff;padding:10px 20px;border:none;border-radius:4px;cursor:pointer;font-size:.85rem;font-weight:600;text-decoration:none;transition:all .2s;display:inline-block;font-family:'IBM Plex Mono',monospace}
 .document-open-btn:hover{background:var(--accent2);transform:scale(1.05)}
-.document-viewer{display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000;z-index:9999;flex-direction:column}
+.document-viewer{display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000;z-index:9999;flex-direction:column;align-items:center;justify-content:center}
 .document-viewer.active{display:flex}
 .document-viewer iframe{width:100%;height:calc(100vh - 60px);border:none;background:#fff;flex:1}
+.document-viewer img#documentImage{display:none;width:100%;max-width:100vw;height:calc(100vh - 60px);object-fit:contain;object-position:center}
 .document-viewer-back{position:fixed;bottom:0;left:0;width:100%;padding:18px;background:var(--accent);color:#fff;border:none;font-size:1.1rem;font-weight:700;cursor:pointer;font-family:'IBM Plex Mono',monospace;letter-spacing:1px;transition:background .2s;z-index:10000;height:60px}
 .document-viewer-back:hover{background:var(--accent2)}
 .document-info{margin-top:10px;font-size:.75rem;color:var(--muted);font-style:italic}
@@ -358,7 +359,7 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 <div class="card-content">
 <div class="card-content-inner">
 <div class="document-link-section">
-<input type="text" class="document-input" placeholder="Nom du fichier (ex: plan-site.pdf)" value="IMG_5325.png" readonly>
+<input type="text" class="document-input" placeholder="Nom du fichier (ex: plan-site.pdf)" value="plan-site.pdf" readonly>
 <button class="document-open-btn" onclick="openDocument(this)">📄 Ouvrir</button>
 </div>
 <p class="document-info">Placez le fichier avec ce nom exact dans votre dépôt GitHub</p>
@@ -373,6 +374,7 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 </div>
 <div class="document-viewer" id="documentViewer">
 <iframe id="documentFrame" src=""></iframe>
+<img id="documentImage" src="" alt="Document">
 <button class="document-viewer-back" onclick="closeDocumentViewer()">← RETOUR</button>
 </div>
 <div class="color-overlay" id="colorOverlay" onclick="closeColorPicker()"></div>
@@ -713,13 +715,26 @@ function openDocument(btn){
         return;
     }
     
-    document.getElementById('documentFrame').src=filename;
+    const isImage=/\.(png|jpg|jpeg|gif|webp|svg)$/i.test(filename);
+    const frame=document.getElementById('documentFrame');
+    const img=document.getElementById('documentImage');
+    
+    if(isImage){
+        frame.style.display='none';
+        img.style.display='block';
+        img.src=filename;
+    } else {
+        img.style.display='none';
+        frame.style.display='block';
+        frame.src=filename;
+    }
     document.getElementById('documentViewer').classList.add('active');
 }
 
 function closeDocumentViewer(){
     document.getElementById('documentViewer').classList.remove('active');
     document.getElementById('documentFrame').src='';
+    document.getElementById('documentImage').src='';
 }
 
 function changeCardColor(input){
