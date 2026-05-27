@@ -129,6 +129,11 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 .document-input[readonly]{background:var(--surface);cursor:not-allowed;opacity:0.8}
 .document-open-btn{background:var(--accent);color:#fff;padding:10px 20px;border:none;border-radius:4px;cursor:pointer;font-size:.85rem;font-weight:600;text-decoration:none;transition:all .2s;display:inline-block;font-family:'IBM Plex Mono',monospace}
 .document-open-btn:hover{background:var(--accent2);transform:scale(1.05)}
+.document-viewer{display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000;z-index:9999;flex-direction:column}
+.document-viewer.active{display:flex}
+.document-viewer iframe{width:100%;height:calc(100vh - 60px);border:none;background:#fff;flex:1}
+.document-viewer-back{position:fixed;bottom:0;left:0;width:100%;padding:18px;background:var(--accent);color:#fff;border:none;font-size:1.1rem;font-weight:700;cursor:pointer;font-family:'IBM Plex Mono',monospace;letter-spacing:1px;transition:background .2s;z-index:10000;height:60px}
+.document-viewer-back:hover{background:var(--accent2)}
 .document-info{margin-top:10px;font-size:.75rem;color:var(--muted);font-style:italic}
 .card-delete-btn{display:none;background:var(--danger);color:#fff;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:.75rem;margin-left:8px;transition:all .2s}
 .card-delete-btn:hover{background:#a81f18}
@@ -365,6 +370,10 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 </div>
 </div>
 </div>
+</div>
+<div class="document-viewer" id="documentViewer">
+<iframe id="documentFrame" src=""></iframe>
+<button class="document-viewer-back" onclick="closeDocumentViewer()">← RETOUR</button>
 </div>
 <div class="color-overlay" id="colorOverlay" onclick="closeColorPicker()"></div>
 <div class="color-picker" id="colorPicker">
@@ -704,7 +713,13 @@ function openDocument(btn){
         return;
     }
     
-    window.open(filename,'_blank');
+    document.getElementById('documentFrame').src=filename;
+    document.getElementById('documentViewer').classList.add('active');
+}
+
+function closeDocumentViewer(){
+    document.getElementById('documentViewer').classList.remove('active');
+    document.getElementById('documentFrame').src='';
 }
 
 function changeCardColor(input){
