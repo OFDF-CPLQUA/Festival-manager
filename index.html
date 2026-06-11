@@ -129,10 +129,9 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 .document-input[readonly]{background:var(--surface);cursor:not-allowed;opacity:0.8}
 .document-open-btn{background:var(--accent);color:#fff;padding:10px 20px;border:none;border-radius:4px;cursor:pointer;font-size:.85rem;font-weight:600;text-decoration:none;transition:all .2s;display:inline-block;font-family:'IBM Plex Mono',monospace}
 .document-open-btn:hover{background:var(--accent2);transform:scale(1.05)}
-.document-viewer{display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000;z-index:9999;flex-direction:column;align-items:center;justify-content:center}
+.document-viewer{display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000;z-index:9999;flex-direction:column}
 .document-viewer.active{display:flex}
 .document-viewer iframe{width:100%;height:calc(100vh - 60px);border:none;background:#fff;flex:1}
-.document-viewer img#documentImage{display:none;width:100%;max-width:100vw;height:calc(100vh - 60px);object-fit:contain;object-position:center}
 .document-viewer-back{position:fixed;bottom:0;left:0;width:100%;padding:18px;background:var(--accent);color:#fff;border:none;font-size:1.1rem;font-weight:700;cursor:pointer;font-family:'IBM Plex Mono',monospace;letter-spacing:1px;transition:background .2s;z-index:10000;height:60px}
 .document-viewer-back:hover{background:var(--accent2)}
 .document-info{margin-top:10px;font-size:.75rem;color:var(--muted);font-style:italic}
@@ -151,14 +150,51 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 .btn-apply-colors:hover{background:#25723a}
 .btn-close-colors{background:var(--danger);color:#fff}
 .btn-close-colors:hover{background:#a81f18}
-.color-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:1999}
-.color-overlay.active{display:block}
-</style>
+/* Choix du rôle */
+.role-selector{display:flex;gap:15px;justify-content:center;margin:3vh 0}
+.role-btn{flex:1;max-width:160px;padding:18px 10px;border:2px solid var(--border);background:var(--surface2);color:var(--text);border-radius:8px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:.9rem;font-weight:600;transition:all .25s;text-align:center}
+.role-btn:hover{border-color:var(--accent);color:var(--accent)}
+.role-btn.benevole{border-color:var(--accent)}
+.role-btn.benevole:hover,.role-btn.benevole.selected{background:var(--accent);color:#fff;border-color:var(--accent)}
+.role-btn.responsable{border-color:#5B9BD5}
+.role-btn.responsable:hover,.role-btn.responsable.selected{background:#5B9BD5;color:#fff;border-color:#5B9BD5}
+.role-icon{font-size:2rem;display:block;margin-bottom:8px}
+.role-label{display:block;font-size:.75rem;opacity:.8;margin-top:4px}
+/* Indicateur de rôle dans le header */
+.role-badge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:.75rem;font-weight:700;margin-left:10px;vertical-align:middle}
+.role-badge.benevole{background:var(--accent);color:#fff}
+.role-badge.responsable{background:#5B9BD5;color:#fff}
+/* Visibilité des vignettes */
+.card[data-visibility="benevoles"]{border-left:5px solid var(--accent)}
+.card[data-visibility="responsables"]{border-left:5px solid #5B9BD5}
+.card[data-visibility="tous"]{border-left:none}
+.card.hidden-for-role{display:none}
+/* Sélecteur de visibilité en mode édition */
+.visibility-selector{display:none;gap:6px;margin:10px 0 0 0;justify-content:center}
+.edit-mode .visibility-selector{display:flex}
+.vis-btn{padding:5px 12px;border:1px solid var(--border);background:var(--surface2);color:var(--text);border-radius:4px;cursor:pointer;font-size:.75rem;font-family:'IBM Plex Mono',monospace;transition:all .2s}
+.vis-btn:hover{border-color:var(--accent)}
+.vis-btn.active-vis{font-weight:700;color:#fff}
+.vis-btn.vis-benevoles.active-vis{background:var(--accent);border-color:var(--accent)}
+.vis-btn.vis-responsables.active-vis{background:#5B9BD5;border-color:#5B9BD5}
+.vis-btn.vis-tous.active-vis{background:var(--success);border-color:var(--success)}
 </head>
 <body>
 <div class="container">
 <div class="digicode-screen" id="digicodeScreen">
 <div class="login-logo"><img src="LOGO_PLW_WHITE.png" alt="Plein Les Watts Festival" id="loginLogo" onclick="toggleDarkMode()" style="cursor:pointer"></div>
+<div class="role-selector">
+<button class="role-btn benevole" id="roleBenevole" onclick="selectRole('benevole')">
+<span class="role-icon">👤</span>
+BÉNÉVOLE
+<span class="role-label">Code accès général</span>
+</button>
+<button class="role-btn responsable" id="roleResponsable" onclick="selectRole('responsable')">
+<span class="role-icon">⭐</span>
+RESPONSABLE
+<span class="role-label">Code accès responsable</span>
+</button>
+</div>
 <div class="pin-display">
 <div class="pin-dot" id="dot1"></div>
 <div class="pin-dot" id="dot2"></div>
@@ -186,7 +222,7 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 <div class="main-app" id="mainApp">
 <div class="app-header">
 <img src="LOGO_PLW_WHITE.png" alt="Plein Les Watts" class="app-header-logo" id="headerLogo" onclick="toggleDarkMode()">
-<h1>PLEIN-LES-W'APP</h1>
+<h1>PLEIN-LES-W'APP <span id="roleBadge" class="role-badge" style="display:none"></span></h1>
 <p contenteditable="false" id="headerSubtitle">Base de données des procédures et contacts</p>
 <div class="header-buttons">
 <button class="edit-btn" onclick="openColorPicker()" id="colorBtn" style="display:none;">🎨 COULEURS</button>
@@ -374,7 +410,6 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 </div>
 <div class="document-viewer" id="documentViewer">
 <iframe id="documentFrame" src=""></iframe>
-<img id="documentImage" src="" alt="Document">
 <button class="document-viewer-back" onclick="closeDocumentViewer()">← RETOUR</button>
 </div>
 <div class="color-overlay" id="colorOverlay" onclick="closeColorPicker()"></div>
@@ -400,9 +435,21 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 <button class="cancel-btn" onclick="cancelEdit()">✕ ANNULER</button>
 </div>
 <script>
-const CORRECT_PIN='072026';
+const PIN_BENEVOLE='072026';
+const PIN_RESPONSABLE='082026';
 const EDIT_PIN='041986';
-let currentPin='',isEditMode=!1,originalContent='';
+let currentPin='',isEditMode=false,originalContent='';
+let currentRole='benevole'; // rôle par défaut
+
+function selectRole(role){
+    currentRole=role;
+    document.getElementById('roleBenevole').classList.toggle('selected', role==='benevole');
+    document.getElementById('roleResponsable').classList.toggle('selected', role==='responsable');
+    // Réinitialiser le PIN quand on change de rôle
+    currentPin='';
+    updatePinDisplay();
+    document.getElementById('errorMessage').textContent='';
+}
 
 function addDigit(t){
     if(currentPin.length<6){
@@ -431,15 +478,43 @@ function updatePinDisplay(){
 }
 
 function checkPin(){
-    if(currentPin===CORRECT_PIN){
+    const correctPin=currentRole==='benevole'?PIN_BENEVOLE:PIN_RESPONSABLE;
+    const role=currentPin===EDIT_PIN?'responsable':currentRole;
+    
+    if(currentPin===correctPin||currentPin===EDIT_PIN){
         document.getElementById('digicodeScreen').style.display='none';
         document.getElementById('mainApp').classList.add('active');
         sessionStorage.setItem('authenticated','true');
+        sessionStorage.setItem('role',role);
+        
+        // Badge de rôle
+        const badge=document.getElementById('roleBadge');
+        badge.textContent=role==='benevole'?'👤 BÉNÉVOLE':'⭐ RESPONSABLE';
+        badge.className='role-badge '+role;
+        badge.style.display='inline-block';
+        
+        // Appliquer la visibilité
+        applyRoleVisibility(role);
+        
+        if(currentPin===EDIT_PIN)setTimeout(()=>toggleEditMode(true),300);
+        currentPin='';
+        updatePinDisplay();
     }else{
         document.getElementById('errorMessage').textContent='CODE INCORRECT';
         for(let t=1;t<=6;t++)document.getElementById('dot'+t).classList.add('error');
-        setTimeout(()=>{currentPin='';updatePinDisplay();},1000);
+        setTimeout(()=>{currentPin='';updatePinDisplay();document.getElementById('errorMessage').textContent='';for(let t=1;t<=6;t++)document.getElementById('dot'+t).classList.remove('error');},1200);
     }
+}
+
+function applyRoleVisibility(role){
+    document.querySelectorAll('.card').forEach(card=>{
+        const vis=card.dataset.visibility||'tous';
+        if(vis==='tous'||role==='responsable'||(vis==='benevoles'&&role==='benevole')||(vis==='responsables'&&role==='responsable')){
+            card.classList.remove('hidden-for-role');
+        }else{
+            card.classList.add('hidden-for-role');
+        }
+    });
 }
 
 function showEditPrompt(){
@@ -448,6 +523,11 @@ function showEditPrompt(){
         document.getElementById('digicodeScreen').style.display='none';
         document.getElementById('mainApp').classList.add('active');
         sessionStorage.setItem('authenticated','true');
+        sessionStorage.setItem('role','responsable');
+        const badge=document.getElementById('roleBadge');
+        badge.textContent='⭐ RESPONSABLE';
+        badge.className='role-badge responsable';
+        badge.style.display='inline-block';
         setTimeout(()=>toggleEditMode(),100);
     }else if(editCode){
         alert('Code incorrect !');
@@ -571,8 +651,21 @@ function makeEditable(){
         }
     });
     
-    // Ajouter le bouton "Ajouter un point" après chaque liste
-    document.querySelectorAll('.procedure-steps').forEach(list=>{
+    // Ajouter les sélecteurs de visibilité sur chaque carte
+    document.querySelectorAll('.card').forEach(card=>{
+        if(!card.querySelector('.visibility-selector')){
+            const vis=card.dataset.visibility||'tous';
+            const selDiv=document.createElement('div');
+            selDiv.className='visibility-selector';
+            selDiv.innerHTML=`
+                <button class="vis-btn vis-benevoles ${vis==='benevoles'?'active-vis':''}" onclick="setVisibility(this,'benevoles')">👤 Bénévoles</button>
+                <button class="vis-btn vis-responsables ${vis==='responsables'?'active-vis':''}" onclick="setVisibility(this,'responsables')">⭐ Responsables</button>
+                <button class="vis-btn vis-tous ${vis==='tous'||!vis?'active-vis':''}" onclick="setVisibility(this,'tous')">✅ Tous</button>
+            `;
+            const cardContent=card.querySelector('.card-content');
+            card.insertBefore(selDiv,cardContent);
+        }
+    });
         if(!list.nextElementSibling||!list.nextElementSibling.classList.contains('add-step-btn')){
             const addBtn=document.createElement('button');
             addBtn.className='add-step-btn';
@@ -589,6 +682,7 @@ function removeEditable(){
     document.querySelectorAll('.card-actions').forEach(actions=>actions.remove());
     document.querySelectorAll('.step-actions').forEach(actions=>actions.remove());
     document.querySelectorAll('.add-step-btn').forEach(btn=>btn.remove());
+    document.querySelectorAll('.visibility-selector').forEach(sel=>sel.remove());
 }
 
 function saveChanges(){
@@ -715,26 +809,13 @@ function openDocument(btn){
         return;
     }
     
-    const isImage=/\.(png|jpg|jpeg|gif|webp|svg)$/i.test(filename);
-    const frame=document.getElementById('documentFrame');
-    const img=document.getElementById('documentImage');
-    
-    if(isImage){
-        frame.style.display='none';
-        img.style.display='block';
-        img.src=filename;
-    } else {
-        img.style.display='none';
-        frame.style.display='block';
-        frame.src=filename;
-    }
+    document.getElementById('documentFrame').src=filename;
     document.getElementById('documentViewer').classList.add('active');
 }
 
 function closeDocumentViewer(){
     document.getElementById('documentViewer').classList.remove('active');
     document.getElementById('documentFrame').src='';
-    document.getElementById('documentImage').src='';
 }
 
 function changeCardColor(input){
@@ -749,6 +830,13 @@ function changeCardColor(input){
         tag.style.color=color;
         tag.style.borderColor=color+'4D';
     }
+}
+
+function setVisibility(btn,vis){
+    const card=btn.closest('.card');
+    card.dataset.visibility=vis;
+    btn.closest('.visibility-selector').querySelectorAll('.vis-btn').forEach(b=>b.classList.remove('active-vis'));
+    btn.classList.add('active-vis');
 }
 
 function moveCard(btn,direction){
@@ -927,6 +1015,13 @@ window.addEventListener('load',()=>{
     if('true'===sessionStorage.getItem('authenticated')){
         document.getElementById('digicodeScreen').style.display='none';
         document.getElementById('mainApp').classList.add('active');
+        const savedRole=sessionStorage.getItem('role')||'benevole';
+        currentRole=savedRole;
+        const badge=document.getElementById('roleBadge');
+        badge.textContent=savedRole==='benevole'?'👤 BÉNÉVOLE':'⭐ RESPONSABLE';
+        badge.className='role-badge '+savedRole;
+        badge.style.display='inline-block';
+        applyRoleVisibility(savedRole);
     }
     if(localStorage.getItem('festivalData')){
         try{
