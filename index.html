@@ -19,8 +19,8 @@ body.light-mode{--bg:#e8e8e8;--surface:#f5f5f5;--surface2:#fafafa;--border:#c0c0
 *:focus{outline:none !important}
 *:focus-visible{outline:none !important}
 body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text);min-height:100vh;height:100vh;display:flex;justify-content:center;align-items:stretch;padding:0;margin:0;overflow:hidden;transition:background .3s,color .3s}
-.container{background:var(--surface);border-radius:0;width:100%;height:100vh;max-height:100vh;overflow-y:auto;border:none;box-shadow:none;transition:background .3s,border-color .3s}
-.digicode-screen{padding:5vh 5vw;text-align:center;min-height:100vh;height:100vh;display:flex;flex-direction:column;justify-content:center}
+.container{background:var(--surface);width:100%;height:100vh;overflow:hidden;display:flex;flex-direction:column;transition:background .3s}
+.digicode-screen{padding:5vh 5vw;text-align:center;flex:1;display:flex;flex-direction:column;justify-content:center;overflow-y:auto}
 .login-logo{margin-bottom:20px;padding:15px;display:flex;justify-content:center;align-items:center;width:100%}
 .login-logo img{max-width:min(350px, 70vw);max-height:20vh;width:100%;height:auto;display:block;object-fit:contain;transition:transform .3s}
 .login-logo img:hover{transform:scale(1.05)}
@@ -47,8 +47,8 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 .editor-link{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--accent);font-size:.85rem;text-decoration:none;margin-top:15px;opacity:.8;transition:opacity .2s}
 .editor-link:hover{opacity:1}
 .emoji{font-size:1.1rem}
-.main-app{display:none;width:100%;max-width:100vw;height:100vh;max-height:100vh;overflow:hidden}
-.main-app.active{display:flex;flex-direction:column;width:100vw;height:100vh}
+.main-app{display:none;flex-direction:column;width:100%;height:100vh;overflow:hidden}
+.main-app.active{display:flex}
 .app-header{background:var(--surface2);color:var(--text);padding:20px 30px;border-bottom:2px solid var(--accent);position:sticky;top:0;z-index:101;text-align:center;display:flex;flex-direction:column;align-items:center;transition:background .3s}
 .app-header-logo{max-width:300px;margin-bottom:8px;cursor:pointer;transition:transform .3s}
 .app-header-logo:hover{transform:scale(1.05)}
@@ -182,6 +182,10 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 .card[data-visibility="responsables"]{border-left:5px solid #C8281E}
 .card[data-visibility="tous"]{border-left:none}
 .card.hidden-for-role{display:none}
+/* Indicateurs de visibilité sur les cartes */
+.card-header{position:relative}
+.vis-indicator{display:none;position:absolute;top:10px;left:10px;font-size:1.1rem;line-height:1;z-index:10}
+.main-app.role-responsable .vis-indicator{display:inline-block !important}
 /* Sélecteur de visibilité en mode édition */
 .visibility-selector{display:none;gap:6px;margin:10px 0 0 0;justify-content:center}
 .edit-mode .visibility-selector{display:flex}
@@ -520,8 +524,11 @@ function checkPin(){
     const role=currentPin===EDIT_PIN?'responsable':currentRole;
     
     if(currentPin===correctPin||currentPin===EDIT_PIN){
-        document.getElementById('digicodeScreen').style.display='none';
-        document.getElementById('mainApp').classList.add('active');
+        const screen=document.getElementById('digicodeScreen');
+        const app=document.getElementById('mainApp');
+        screen.style.display='none';
+        app.classList.add('active');
+        app.style.display='flex';
         sessionStorage.setItem('authenticated','true');
         sessionStorage.setItem('role',role);
         
@@ -531,8 +538,8 @@ function checkPin(){
         badge.className='role-badge '+role;
         badge.style.display='inline-block';
         
-        // Appliquer la visibilité
-        applyRoleVisibility(role);
+        // Appliquer la visibilité après rendu du DOM
+        setTimeout(()=>applyRoleVisibility(role), 50);
         
         if(currentPin===EDIT_PIN)setTimeout(()=>toggleEditMode(true),300);
         currentPin='';
@@ -545,12 +552,42 @@ function checkPin(){
 }
 
 function applyRoleVisibility(role){
+    const app=document.getElementById('mainApp');
+    app.classList.remove('role-benevole','role-responsable');
+    app.classList.add('role-'+role);
+    
     document.querySelectorAll('.card').forEach(card=>{
         const vis=card.dataset.visibility||'tous';
-        if(vis==='tous'||role==='responsable'||(vis==='benevoles'&&role==='benevole')||(vis==='responsables'&&role==='responsable')){
+        
+        // Visibilité
+        if(vis==='tous'||role==='responsable'||(vis==='benevoles'&&role==='benevole')){
             card.classList.remove('hidden-for-role');
         }else{
             card.classList.add('hidden-for-role');
+        }
+        
+        // Toujours créer/mettre à jour l'indicateur
+        let indicator=card.querySelector('.vis-indicator');
+        if(!indicator){
+            indicator=document.createElement('span');
+            const header=card.querySelector('.card-header');
+            if(header) header.appendChild(indicator);
+            else return;
+        }
+        
+        // Icône selon visibilité - toujours présente, CSS gère l'affichage
+        if(vis==='responsables'){
+            indicator.className='vis-indicator';
+            indicator.textContent='⭐';
+            indicator.title='Responsables uniquement';
+        }else if(vis==='benevoles'){
+            indicator.className='vis-indicator';
+            indicator.textContent='👤';
+            indicator.title='Bénévoles et responsables';
+        }else{
+            indicator.className='vis-indicator';
+            indicator.textContent='👥';
+            indicator.title='Visible par tous';
         }
     });
 }
@@ -601,8 +638,8 @@ function toggleCard(t){
     t.classList.toggle('expanded');
 }
 
-function toggleEditMode(){
-    if(!isEditMode){
+function toggleEditMode(skipPrompt){
+    if(!isEditMode && !skipPrompt){
         const editCode=prompt('Entrez le code pour le mode edition:');
         if(editCode!==EDIT_PIN){
             alert('Code incorrect !');
@@ -878,6 +915,24 @@ function setVisibility(btn,vis){
     card.dataset.visibility=vis;
     btn.closest('.visibility-selector').querySelectorAll('.vis-btn').forEach(b=>b.classList.remove('active-vis'));
     btn.classList.add('active-vis');
+    
+    // Mettre à jour l'indicateur immédiatement
+    let indicator=card.querySelector('.vis-indicator');
+    if(!indicator){
+        indicator=document.createElement('span');
+        indicator.className='vis-indicator';
+        card.querySelector('.card-header').appendChild(indicator);
+    }
+    if(vis==='benevoles'){
+        indicator.className='vis-indicator ind-benevole';
+        indicator.textContent='👤';
+    }else if(vis==='responsables'){
+        indicator.className='vis-indicator ind-responsable';
+        indicator.textContent='⭐';
+    }else{
+        indicator.className='vis-indicator ind-tous';
+        indicator.textContent='';
+    }
 }
 
 function moveCard(btn,direction){
@@ -1034,6 +1089,23 @@ function filterUrgence(){
 
 
 window.addEventListener('load',()=>{
+    // === CONNEXION AUTOMATIQUE PAR URL (pour intégrations externes) ===
+    // Exemple : index.html?key=072026&role=benevole
+    const urlParams=new URLSearchParams(window.location.search);
+    const urlKey=urlParams.get('key');
+    const urlRole=urlParams.get('role');
+    
+    if(urlKey && (urlKey===PIN_BENEVOLE || urlKey===PIN_RESPONSABLE || urlKey===EDIT_PIN)){
+        let role='benevole';
+        if(urlKey===PIN_RESPONSABLE || urlKey===EDIT_PIN){
+            role='responsable';
+        }else if(urlRole==='responsable' && urlKey===PIN_BENEVOLE){
+            role='benevole'; // le rôle ne peut pas dépasser le niveau du code
+        }
+        sessionStorage.setItem('authenticated','true');
+        sessionStorage.setItem('role',role);
+    }
+    
     const savedTheme=localStorage.getItem('theme');
     if(savedTheme==='light'){
         document.body.classList.add('light-mode');
@@ -1053,17 +1125,6 @@ window.addEventListener('load',()=>{
         document.documentElement.style.setProperty('--danger',savedDangerColor);
         document.getElementById('dangerColor').value=savedDangerColor;
     }
-    if('true'===sessionStorage.getItem('authenticated')){
-        document.getElementById('digicodeScreen').style.display='none';
-        document.getElementById('mainApp').classList.add('active');
-        const savedRole=sessionStorage.getItem('role')||'benevole';
-        currentRole=savedRole;
-        const badge=document.getElementById('roleBadge');
-        badge.textContent=savedRole==='benevole'?'👤 BÉNÉVOLE':'⭐ RESPONSABLE';
-        badge.className='role-badge '+savedRole;
-        badge.style.display='inline-block';
-        applyRoleVisibility(savedRole);
-    }
     if(localStorage.getItem('festivalData')){
         try{
             const t=JSON.parse(localStorage.getItem('festivalData'));
@@ -1073,6 +1134,24 @@ window.addEventListener('load',()=>{
             if(t.urgence)document.getElementById('urgenceList').innerHTML=t.urgence;
             reattachEvents();
         }catch(t){console.error('Erreur:',t)}
+    }
+    if('true'===sessionStorage.getItem('authenticated')){
+        document.getElementById('digicodeScreen').style.display='none';
+        const app=document.getElementById('mainApp');
+        app.classList.add('active');
+        app.style.display='flex';
+        const savedRole=sessionStorage.getItem('role')||'benevole';
+        currentRole=savedRole;
+        const badge=document.getElementById('roleBadge');
+        badge.textContent=savedRole==='benevole'?'👤 BÉNÉVOLE':'⭐ RESPONSABLE';
+        badge.className='role-badge '+savedRole;
+        badge.style.display='inline-block';
+        setTimeout(()=>applyRoleVisibility(savedRole), 50);
+        
+        // Activer le mode édition si demandé via URL
+        if(urlKey===EDIT_PIN && !isEditMode){
+            setTimeout(()=>toggleEditMode(true), 100);
+        }
     }
 });
 </script>
