@@ -243,6 +243,7 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 <div class="header-buttons">
 <button class="edit-btn" onclick="openColorPicker()" id="colorBtn" style="display:none;">🎨 COULEURS</button>
 <button class="edit-btn" onclick="toggleEditMode()" id="editBtn">MODE EDITION</button>
+<button class="logout-btn" onclick="logout()">🔒 DÉCONNEXION</button>
 </div>
 </div>
 <div class="tabs">
@@ -665,6 +666,54 @@ function toggleEditMode(skipPrompt){
         document.getElementById('headerSubtitle').contentEditable='false';
         removeEditable();
     }
+}
+
+function logout(){
+    if(isEditMode){
+        if(!confirm('Vous êtes en mode édition. Quitter sans enregistrer ?')){
+            return;
+        }
+        if(originalContent){
+            document.getElementById('mainApp').innerHTML=originalContent;
+        }
+        isEditMode=false;
+    }
+    
+    // Nettoyer la session
+    sessionStorage.removeItem('authenticated');
+    sessionStorage.removeItem('role');
+    
+    // Nettoyer l'URL des paramètres key/role
+    if(window.location.search){
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    
+    // Réinitialiser l'affichage
+    const app=document.getElementById('mainApp');
+    app.classList.remove('active','edit-mode','role-benevole','role-responsable');
+    app.style.display='none';
+    
+    const badge=document.getElementById('roleBadge');
+    badge.style.display='none';
+    
+    document.getElementById('colorBtn').style.display='none';
+    document.getElementById('editBtn').classList.remove('active');
+    document.getElementById('editBtn').textContent='MODE EDITION';
+    
+    // Réafficher le digicode
+    const screen=document.getElementById('digicodeScreen');
+    screen.style.display='flex';
+    
+    // Réinitialiser le toggle de rôle en bénévole
+    currentRole='benevole';
+    const toggle=document.getElementById('roleToggle');
+    toggle.classList.remove('responsable','sliding','key-yellow');
+    screen.classList.remove('responsable-mode','key-yellow');
+    
+    // Réinitialiser le PIN
+    currentPin='';
+    updatePinDisplay();
+    document.getElementById('errorMessage').textContent='';
 }
 
 function toggleDarkMode(){
