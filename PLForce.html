@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="fr" style="--accent: #e3944f; --danger: #ff1100;"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PLW'APP">
+<link rel="apple-touch-icon" href="IMG_5325.png">
+<link rel="icon" type="image/png" href="IMG_5325.png">
+<meta name="theme-color" content="#0a0a0a">
+<title>PLForce</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:wght@400;600&amp;display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0a;--surface:#1a1a1a;--surface2:#2a2a2a;--border:#333;--text:#f0ece4;--muted:#888;--accent:#E8730A;--accent2:#F5B800;--danger:#C8281E;--success:#2D8C3E}
+body.light-mode{--bg:#e8e8e8;--surface:#f5f5f5;--surface2:#fafafa;--border:#c0c0c0;--text:#3a3a3a;--muted:#666;--accent:#E8730A;--accent2:#F5B800;--danger:#C8281E;--success:#2D8C3E}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:rgba(0,0,0,0) !important;touch-action:manipulation;-webkit-focus-ring-color:transparent;tap-highlight-color:transparent}
+*:focus{outline:none !important}
+*:focus-visible{outline:none !important}
+body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text);min-height:100vh;height:100vh;display:flex;justify-content:center;align-items:stretch;padding:0;margin:0;overflow:hidden;transition:background .3s,color .3s}
+.container{background:var(--surface);width:100%;height:100vh;overflow:hidden;display:flex;flex-direction:column;transition:background .3s}
+.digicode-screen{padding:5vh 5vw;text-align:center;flex:1;display:flex;flex-direction:column;justify-content:center;overflow-y:auto}
+.login-logo{margin-bottom:20px;padding:15px;display:flex;justify-content:center;align-items:center;width:100%}
+.login-logo img{max-width:min(350px, 70vw);max-height:20vh;width:100%;height:auto;display:block;object-fit:contain;transition:transform .3s}
+.login-logo img:hover{transform:scale(1.05)}
+.pin-display{display:flex;gap:min(12px,3vw);justify-content:center;margin:3vh 0}
+.pin-dot{width:min(14px,3vw);height:min(14px,3vw);border:2px solid var(--border);border-radius:50%;transition:all .2s;background:transparent}
+.pin-dot.filled{background:var(--accent);border-color:var(--accent);box-shadow:0 0 8px rgba(232,115,10,.6)}
+.pin-dot.error{background:var(--danger);border-color:var(--danger)}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:min(15px,3vw);max-width:min(400px,90vw);margin:0 auto 20px}
+.key{background:#2D8C3E;border:1px solid #256b32;border-radius:6px;padding:0;min-height:70px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;font-size:clamp(1.8rem,7vw,2.4rem);font-weight:600;color:#fff;cursor:pointer;transition:background .6s ease, border-color .6s ease, transform .15s;font-family:'IBM Plex Mono',monospace}
+.key:hover{background:#25723a;transform:translateY(-1px)}
+.key:active{transform:scale(.95)}
+.key.empty{background:transparent;border:none;cursor:default;pointer-events:none;transition:none}
+.key.empty:hover{transform:none}
+.key.del{background:#1e6b2e;border-color:#174f22;transition:background .6s ease, border-color .6s ease, transform .15s}
+.digicode-screen.key-yellow .key{background:#F5B800;border-color:#d4a000}
+.digicode-screen.key-yellow .key.del{background:#d4a000;border-color:#b38900}
+.digicode-screen.responsable-mode .key{background:#C8281E;border-color:#a81f18}
+.digicode-screen.responsable-mode .key:hover{background:#a81f18}
+.digicode-screen.responsable-mode .key.del{background:#9e1d16;border-color:#7a1510}
+.digicode-screen.responsable-mode .key.empty{background:transparent;border:none}
+.key:active{transform:scale(.95)}
+.key.del{font-size:1.2rem;color:var(--muted)}
+.error-message{color:var(--danger);margin-top:15px;font-weight:500;min-height:20px;font-size:.8rem}
+.editor-link{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--accent);font-size:.85rem;text-decoration:none;margin-top:15px;opacity:.8;transition:opacity .2s}
+.editor-link:hover{opacity:1}
+.emoji{font-size:1.1rem}
+.main-app{display:none;flex-direction:column;width:100%;height:100vh;overflow:hidden}
+.main-app.active{display:flex}
+.app-header{background:var(--surface2);color:var(--text);padding:20px 30px;border-bottom:2px solid var(--accent);position:sticky;top:0;z-index:101;text-align:center;display:flex;flex-direction:column;align-items:center;transition:background .3s}
+.app-header-logo{max-width:300px;margin-bottom:8px;cursor:pointer;transition:transform .3s}
+.app-header-logo:hover{transform:scale(1.05)}
+.app-header h1{font-size:1.8rem;margin-bottom:4px;font-family:'Bebas Neue',sans-serif;letter-spacing:2px;color:var(--accent)}
+.app-header p{opacity:.7;font-size:.9rem;margin-bottom:8px}
+.header-buttons{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.logout-btn,.edit-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 16px;border-radius:4px;cursor:pointer;font-size:.8rem;transition:all .2s;font-family:'IBM Plex Mono',monospace}
+.logout-btn:hover{background:var(--danger);border-color:var(--danger);color:#fff}
+.edit-btn{background:var(--accent);border-color:var(--accent);color:#fff}
+.edit-btn:hover{background:var(--accent2);border-color:var(--accent2)}
+.edit-btn.active{background:var(--success);border-color:var(--success)}
+@media (max-width:768px){.edit-btn{display:none}}
+.tabs{display:flex;background:var(--surface2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;transition:background .3s,border-color .3s}
+.tab{flex:1;padding:16px;background:none;border:none;font-size:.85rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;font-family:'IBM Plex Mono',monospace;border-bottom:3px solid transparent}
+.tab.active{color:var(--accent);background:var(--surface);border-bottom-color:var(--accent)}
+.tab:hover:not(.active){color:var(--text);background:var(--surface)}
+.tab-content{padding:25px;background:var(--bg);flex:1;overflow-y:auto;height:calc(100vh - 200px);transition:background .3s}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+.search-bar{width:100%;padding:12px 16px;border:1px solid var(--border);background:var(--surface);border-radius:6px;font-size:.9rem;margin-bottom:20px;transition:all .2s;color:var(--text);font-family:'IBM Plex Mono',monospace}
+.search-bar:focus{outline:none;border-color:var(--accent);background:var(--surface2)}
+.search-bar::placeholder{color:var(--muted)}
+.card{background:var(--surface);border-radius:6px;margin-bottom:12px;border:2px solid var(--accent);transition:border-width .15s, box-shadow .3s;overflow:hidden;-webkit-tap-highlight-color:rgba(0,0,0,0);user-select:none}
+.card:hover{box-shadow:0 2px 12px rgba(232,115,10,.2)}
+.card:focus,.card:active,.card *:focus,.card *:active{outline:none !important;-webkit-tap-highlight-color:rgba(0,0,0,0) !important}
+.card.expanded{border-width:6px}
+.emergency.expanded{border-width:6px}
+.card-header{padding:16px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;transition:background .2s}
+.card-header:hover{background:var(--surface2)}
+.edit-mode .card-header{cursor:default}
+.edit-mode .card-header:hover{background:transparent}
+.card-actions{display:none;gap:5px;align-items:center;margin-left:10px}
+.edit-mode .card-actions{display:flex}
+.card-color-btn{width:30px;height:30px;border:2px solid var(--border);border-radius:50%;cursor:pointer;transition:all .2s;position:relative}
+.card-color-btn:hover{transform:scale(1.1)}
+.card-move-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:4px;cursor:pointer;font-size:.9rem;transition:all .2s}
+.card-move-btn:hover{background:var(--accent);color:#fff}
+.card-header-left{flex:1;text-align:center}
+.card h3{color:var(--text);font-size:1.1rem;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;margin-bottom:4px}
+.card-subtitle{color:var(--muted);font-size:.8rem;margin-top:4px}
+.expand-icon{color:var(--accent);font-size:1.3rem;transition:transform .3s;margin-left:12px}
+.card.expanded .expand-icon{transform:rotate(180deg)}
+.card-content{max-height:0;overflow:hidden;transition:max-height .3s ease;padding:0 20px}
+.card.expanded .card-content{max-height:2000px;padding:0 20px 20px}
+.card-content-inner{color:var(--muted);line-height:1.6;padding-top:12px;border-top:1px solid var(--border);font-size:.9rem}
+.contact-item{display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--surface2);border-radius:4px;margin-bottom:8px;border:1px solid var(--border);transition:all .2s}
+.contact-item:hover{background:var(--surface);border-color:var(--muted)}
+.contact-name{font-weight:600;color:var(--text);font-size:.9rem}
+.contact-role{color:var(--muted);font-size:.8rem;margin-top:3px}
+.contact-phone{background:var(--accent);color:#fff;padding:6px 14px;border-radius:4px;text-decoration:none;font-weight:600;transition:all .2s;font-size:.85rem}
+.contact-phone:hover{background:var(--accent2);transform:scale(1.05)}
+.procedure-steps{list-style:none;counter-reset:step-counter}
+.procedure-steps li{counter-increment:step-counter;padding:12px 12px 12px 48px;position:relative;margin-bottom:8px;background:var(--surface2);border-radius:4px;border:1px solid var(--border);color:var(--text);line-height:1.5;font-size:.9rem;transition:all .2s}
+.procedure-steps li::before{content:counter(step-counter);position:absolute;left:12px;top:50%;transform:translateY(-50%);background:var(--accent);color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:.85rem}
+.edit-mode .procedure-steps li{padding-right:100px}
+.step-actions{display:none;position:absolute;right:8px;top:50%;transform:translateY(-50%);gap:4px}
+.edit-mode .step-actions{display:flex}
+.step-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:4px;cursor:pointer;font-size:.75rem;transition:all .2s}
+.step-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.step-btn.delete{background:var(--danger);color:#fff;border-color:var(--danger)}
+.step-btn.delete:hover{background:#a81f18}
+.add-step-btn{display:none;width:100%;padding:10px;border:1px dashed var(--accent);background:transparent;color:var(--accent);border-radius:4px;font-size:.85rem;cursor:pointer;margin-top:8px;transition:all .2s}
+.add-step-btn:hover{background:rgba(232,115,10,.1)}
+.edit-mode .add-step-btn{display:block}
+.category-tag{display:inline-block;padding:4px 10px;background:rgba(232,115,10,.15);color:var(--accent);border-radius:4px;font-size:.7rem;margin-bottom:8px;font-weight:600;letter-spacing:.5px;border:1px solid rgba(232,115,10,.3)}
+.emergency{border-color:var(--danger)}
+.emergency .category-tag{background:rgba(200,40,30,.15);color:var(--danger);border-color:rgba(200,40,30,.3)}
+.edit-mode .card h3:hover,.edit-mode .card-subtitle:hover,.edit-mode .contact-name:hover,.edit-mode .contact-role:hover,.edit-mode .contact-phone:hover,.edit-mode .procedure-steps li:hover,.edit-mode .category-tag:hover{border:1px dashed var(--accent2);background:rgba(245,184,0,.1)}
+[contenteditable="true"]{outline:none;cursor:text}
+[contenteditable="true"]:focus{border:1px solid var(--accent2)!important;background:rgba(245,184,0,.15)!important}
+.edit-actions{position:fixed;bottom:0;left:0;right:0;display:none;gap:0;z-index:1000;flex-direction:row}
+.edit-mode .edit-actions{display:flex}
+.save-btn,.cancel-btn,.export-btn{flex:1;padding:16px 8px;border:none;font-weight:700;cursor:pointer;transition:all .2s;font-size:.8rem;font-family:'IBM Plex Mono',monospace;box-shadow:0 -2px 10px rgba(0,0,0,.3)}
+.save-btn{background:var(--success);color:#fff}
+.save-btn:hover{background:#25723a}
+.cancel-btn{background:var(--danger);color:#fff}
+.cancel-btn:hover{background:#a81f18}
+.export-btn{background:var(--accent);color:#fff}
+.export-btn:hover{background:var(--accent2)}
+@media (max-width:600px){html{font-size:14px}.container{width:100%;height:100vh;max-height:100vh;border-radius:0;border:none}.main-app.active{border-radius:0}.digicode-screen{padding:3vh 5vw;min-height:100vh;height:100vh}.login-logo img{max-width:min(250px,75vw);max-height:18vh}.keypad{max-width:80vw}.tab-content{padding:15px;height:calc(100vh - 180px)}.contact-item{flex-direction:column;align-items:flex-start;gap:10px}.contact-phone{width:100%;text-align:center}.app-header{padding:12px}.app-header h1{font-size:1.3rem}.app-header p{font-size:.75rem}.app-header-logo{max-width:180px;margin-bottom:6px}.card h3{font-size:1rem}.card-subtitle{font-size:.75rem}.card-header{padding:12px 16px}.card-content-inner{font-size:.85rem}.procedure-steps li{font-size:.85rem;padding:10px 10px 10px 40px}.procedure-steps li::before{width:22px;height:22px;font-size:.75rem}.contact-name{font-size:.85rem}.contact-role{font-size:.75rem}.search-bar{font-size:.85rem;padding:10px 14px}.tab{font-size:.8rem;padding:12px}.edit-actions{bottom:20px;right:20px;flex-direction:column}}
+.add-card-btn{display:none;width:100%;padding:15px;border:2px dashed var(--accent);background:transparent;color:var(--accent);border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;margin-top:10px;transition:all .2s;font-family:'IBM Plex Mono',monospace}
+.add-card-btn:hover{background:rgba(232,115,10,.1)}
+.edit-mode .add-card-btn{display:block}
+.document-link-section{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.document-input{flex:1;padding:10px;border:1px solid var(--border);background:var(--surface2);border-radius:4px;font-size:.85rem;color:var(--text);font-family:'IBM Plex Mono',monospace}
+.document-input:focus{outline:none;border-color:var(--accent)}
+.document-input[readonly]{background:var(--surface);cursor:not-allowed;opacity:0.8}
+.document-open-btn{background:var(--accent);color:#fff;padding:10px 20px;border:none;border-radius:4px;cursor:pointer;font-size:.85rem;font-weight:600;text-decoration:none;transition:all .2s;display:inline-block;font-family:'IBM Plex Mono',monospace}
+.document-open-btn:hover{background:var(--accent2);transform:scale(1.05)}
+.document-viewer{display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000;z-index:9999;flex-direction:column}
+.document-viewer.active{display:flex}
+.document-viewer iframe{width:100%;height:calc(100vh - 60px);border:none;background:#fff;flex:1}
+.document-viewer-back{position:fixed;bottom:0;left:0;width:100%;padding:18px;background:var(--accent);color:#fff;border:none;font-size:1.1rem;font-weight:700;cursor:pointer;font-family:'IBM Plex Mono',monospace;letter-spacing:1px;transition:background .2s;z-index:10000;height:60px}
+.document-viewer-back:hover{background:var(--accent2)}
+.document-info{margin-top:10px;font-size:.75rem;color:var(--muted);font-style:italic}
+.card-delete-btn{display:none;background:var(--danger);color:#fff;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:.75rem;margin-left:8px;transition:all .2s}
+.card-delete-btn:hover{background:#a81f18}
+.edit-mode .card-delete-btn{display:inline-block}
+.color-picker{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--surface);padding:25px;border-radius:8px;border:2px solid var(--accent);z-index:2000;box-shadow:0 10px 40px rgba(0,0,0,.7);transition:background .3s}
+.color-picker.active{display:block}
+.color-picker h3{color:var(--accent);margin-bottom:15px;font-family:'Bebas Neue',sans-serif}
+.color-row{margin-bottom:15px}
+.color-row label{display:block;color:var(--text);margin-bottom:8px;font-size:.85rem}
+.color-row input[type="color"]{width:100%;height:40px;border:1px solid var(--border);border-radius:4px;cursor:pointer;background:var(--surface2);transition:background .3s,border-color .3s}
+.color-picker-buttons{display:flex;gap:8px;margin-top:20px}
+.color-picker-buttons button{flex:1;padding:10px;border:none;border-radius:4px;cursor:pointer;font-weight:600;transition:all .2s;font-family:'IBM Plex Mono',monospace}
+.btn-apply-colors{background:var(--success);color:#fff}
+.btn-apply-colors:hover{background:#25723a}
+.btn-close-colors{background:var(--danger);color:#fff}
+.btn-close-colors:hover{background:#a81f18}
+/* Toggle de rôle */
+.role-selector{display:flex;justify-content:center;margin:3vh 0}
+.role-toggle{position:relative;width:min(320px,80vw);height:52px;cursor:pointer;user-select:none}
+.role-toggle-track{position:absolute;inset:0;border-radius:26px;background:var(--surface2);border:2px solid #2D8C3E;display:flex;align-items:center;overflow:hidden;transition:border-color .5s}
+.role-toggle-label{flex:1;text-align:center;font-size:.8rem;font-weight:700;font-family:'IBM Plex Mono',monospace;z-index:1;transition:color .3s;letter-spacing:.5px}
+.role-toggle-label.left{color:#fff}
+.role-toggle-label.right{color:var(--muted)}
+.role-toggle-thumb{position:absolute;top:4px;left:4px;width:calc(50% - 4px);height:calc(100% - 8px);border-radius:22px;background:#2D8C3E;transition:left .6s cubic-bezier(.4,0,.2,1), background .6s ease;box-shadow:0 2px 8px rgba(45,140,62,.6)}
+.role-toggle.responsable .role-toggle-thumb{left:calc(50%);background:#C8281E;box-shadow:0 2px 8px rgba(200,40,30,.6)}
+.role-toggle.responsable .role-toggle-track{border-color:#C8281E;transition:border-color .6s}
+.role-toggle.responsable .role-toggle-label.left{color:var(--muted)}
+.role-toggle.responsable .role-toggle-label.right{color:#fff}
+/* Animation intermédiaire jaune via keyframe */
+.role-toggle.sliding .role-toggle-thumb{background:#F5B800 !important;box-shadow:0 2px 8px rgba(245,184,0,.6) !important}
+/* Indicateur de rôle dans le header */
+.role-badge{display:inline-block;padding:4px 18px;border-radius:20px;font-size:.8rem;font-weight:700;margin:5px 0 8px 0;letter-spacing:1px}
+.role-badge.benevole{background:#2D8C3E;color:#fff}
+.role-badge.responsable{background:#C8281E;color:#fff}
+/* Visibilité des vignettes */
+.card[data-visibility="benevoles"]{border-left:5px solid #2D8C3E}
+.card[data-visibility="responsables"]{border-left:5px solid #C8281E}
+.card[data-visibility="tous"]{border-left:none}
+.card.hidden-for-role{display:none}
+/* Indicateurs de visibilité sur les cartes */
+.card-header{position:relative}
+.vis-indicator{display:none;position:absolute;top:10px;left:10px;font-size:1.1rem;line-height:1;z-index:10}
+.main-app.role-responsable .vis-indicator{display:inline-block !important}
+/* Sélecteur de visibilité en mode édition */
+.visibility-selector{display:none;gap:6px;margin:10px 0 0 0;justify-content:center}
+.edit-mode .visibility-selector{display:flex}
+.vis-btn{padding:5px 12px;border:1px solid var(--border);background:var(--surface2);color:var(--text);border-radius:4px;cursor:pointer;font-size:.75rem;font-family:'IBM Plex Mono',monospace;transition:all .2s}
+.vis-btn:hover{border-color:var(--accent)}
+.vis-btn.active-vis{font-weight:700;color:#fff}
+.vis-btn.vis-benevoles.active-vis{background:#2D8C3E;border-color:#2D8C3E}
+.vis-btn.vis-responsables.active-vis{background:#C8281E;border-color:#C8281E}
+.vis-btn.vis-tous.active-vis{background:var(--success);border-color:var(--success)}
+</style>
+<script>
+window.addEventListener('load',function(){
+    var p=new URLSearchParams(window.location.search);
+    var k=p.get('key');
+    if(k==='021526'){
+        var app=document.getElementById('mainApp');
+        if(app){app.classList.add('active');app.style.display='flex';}
+        var screen=document.getElementById('digicodeScreen');
+        if(screen) screen.style.display='none';
+        setTimeout(function(){applyRoleVisibility('responsable');},50);
+    }
+});</script><style>.tab-content{height:calc(100vh - 55px)!important}.main-app.active{display:flex!important}</style></head>
+<body>
+<div class="container">
+<div class="digicode-screen" id="digicodeScreen" style="display: none;">
+<div class="login-logo"><img src="LOGO_PLW_WHITE.png" alt="Plein Les Watts Festival" id="loginLogo" onclick="toggleDarkMode()" style="cursor:pointer"></div>
+<div class="role-selector">
+<div class="role-toggle" id="roleToggle" onclick="toggleRole()">
+<div class="role-toggle-track">
+<span class="role-toggle-label left">BÉNÉVOLE</span>
+<span class="role-toggle-label right">RESPONSABLE</span>
+</div>
+<div class="role-toggle-thumb" id="roleThumb"></div>
+</div>
+</div>
+<div class="pin-display">
+<div class="pin-dot" id="dot1"></div>
+<div class="pin-dot" id="dot2"></div>
+<div class="pin-dot" id="dot3"></div>
+<div class="pin-dot" id="dot4"></div>
+<div class="pin-dot" id="dot5"></div>
+<div class="pin-dot" id="dot6"></div>
+</div>
+<div class="keypad">
+<button class="key" onclick="addDigit('1')">1</button>
+<button class="key" onclick="addDigit('2')">2</button>
+<button class="key" onclick="addDigit('3')">3</button>
+<button class="key" onclick="addDigit('4')">4</button>
+<button class="key" onclick="addDigit('5')">5</button>
+<button class="key" onclick="addDigit('6')">6</button>
+<button class="key" onclick="addDigit('7')">7</button>
+<button class="key" onclick="addDigit('8')">8</button>
+<button class="key" onclick="addDigit('9')">9</button>
+<button class="key empty" disabled=""></button>
+<button class="key" onclick="addDigit('0')">0</button>
+<button class="key del" onclick="deleteDigit()">⌫</button>
+</div>
+<div class="error-message" id="errorMessage"></div>
+</div>
+<div class="main-app active role-responsable edit-mode" id="mainApp" style="display: flex;">
+
+<div class="tabs">
+<button class="tab active" onclick="switchTab('procedures')">Infos Gen</button>
+<button class="tab" onclick="switchTab('urgence')">Urgence</button>
+<button class="tab" onclick="switchTab('contacts')">Contact</button>
+<button class="tab" onclick="switchTab('documents')">Documents</button>
+</div>
+<div class="tab-content">
+<div class="tab-pane active" id="procedures">
+<input type="text" class="search-bar" id="searchProcedures" placeholder="Rechercher une procedure..." onkeyup="filterProcedures()">
+<div id="proceduresList">
+<div class="card emergency expanded" data-keywords="urgence accident blessure medical secours" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><span class="category-tag" contenteditable="true">URGENCE</span><h3 contenteditable="true">Accident / Urgence Medicale</h3><div class="card-subtitle" contenteditable="true">Procedure d'intervention en cas d'accident</div></div><div class="card-actions">
+                <input type="color" class="card-color-btn" value="#ff1100" onchange="changeCardColor(this)" title="Changer la couleur">
+                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
+                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
+            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="visibility-selector">
+                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
+                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
+                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
+            </div><div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
+<li contenteditable="true">Securiser la zone et eloigner le public si necessaire<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Appeler immediatement le poste de secours (voir contacts)<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Ne pas deplacer la victime sauf danger imminent<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Informer le regisseur general<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Remplir le formulaire d'incident apres intervention<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+</ol><button class="add-step-btn">+ Ajouter un point</button></div></div>
+</div>
+<div class="card expanded" data-keywords="perte enfant perdu famille" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><span class="category-tag" contenteditable="true">SECURITE</span><h3 contenteditable="true">Enfant Perdu</h3><div class="card-subtitle" contenteditable="true">Gestion des enfants separes de leurs parents</div></div><div class="card-actions">
+                <input type="color" class="card-color-btn" value="#e3944f" onchange="changeCardColor(this)" title="Changer la couleur">
+                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
+                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
+            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="visibility-selector">
+                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
+                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
+                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
+            </div><div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
+<li contenteditable="true">Rester avec l'enfant, le rassurer<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Contacter le poste de securite<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Noter l'heure et le lieu de prise en charge<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Accompagner l'enfant au point d'accueil famille<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Remplir la fiche de signalement<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+</ol><button class="add-step-btn">+ Ajouter un point</button></div></div>
+</div>
+<div class="card emergency expanded" data-keywords="incendie feu fumee evacuation" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><span class="category-tag" contenteditable="true">URGENCE</span><h3 contenteditable="true">Debut d'Incendie</h3><div class="card-subtitle" contenteditable="true">Protocole en cas de depart de feu</div></div><div class="card-actions">
+                <input type="color" class="card-color-btn" value="#ff1100" onchange="changeCardColor(this)" title="Changer la couleur">
+                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
+                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
+            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="visibility-selector">
+                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
+                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
+                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
+            </div><div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
+<li contenteditable="true">Declencher l'alarme la plus proche<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Appeler les pompiers (18) et le poste securite<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Si le feu est petit, utiliser l'extincteur approprie<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Evacuer la zone calmement<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Guider le public vers les sorties de secours<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+</ol><button class="add-step-btn">+ Ajouter un point</button></div></div>
+</div>
+<div class="card expanded" data-keywords="bagarre violence conflit agression" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><span class="category-tag" contenteditable="true">SECURITE</span><h3 contenteditable="true">Bagarre / Conflit</h3><div class="card-subtitle" contenteditable="true">Intervention lors de conflits entre festivaliers</div></div><div class="card-actions">
+                <input type="color" class="card-color-btn" value="#e3944f" onchange="changeCardColor(this)" title="Changer la couleur">
+                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
+                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
+            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="visibility-selector">
+                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
+                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
+                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
+            </div><div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
+<li contenteditable="true">Ne PAS intervenir physiquement seul<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Appeler immediatement la securite<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Eloigner le public de la zone<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Observer et memoriser les details (nombre de personnes, description)<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Rediger un rapport d'incident<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+</ol><button class="add-step-btn">+ Ajouter un point</button></div></div>
+</div>
+<div class="card expanded" data-keywords="technique panne electricite son lumiere" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><span class="category-tag" contenteditable="true">TECHNIQUE</span><h3 contenteditable="true">Panne Technique (Son/Lumiere)</h3><div class="card-subtitle" contenteditable="true">Resolution des problemes techniques</div></div><div class="card-actions">
+                <input type="color" class="card-color-btn" value="#e3944f" onchange="changeCardColor(this)" title="Changer la couleur">
+                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
+                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
+            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="visibility-selector">
+                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
+                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
+                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
+            </div><div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
+<li contenteditable="true">Identifier la nature de la panne<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Contacter le regisseur technique de scene<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Informer l'artiste et le public si necessaire<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Mettre en place une solution temporaire<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Logger l'incident dans le cahier technique<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+</ol><button class="add-step-btn">+ Ajouter un point</button></div></div>
+</div>
+<div class="card emergency expanded" data-keywords="meteo orage pluie vent evacuation" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><span class="category-tag" contenteditable="true">METEO</span><h3 contenteditable="true">Alerte Meteo (Orage/Vent fort)</h3><div class="card-subtitle" contenteditable="true">Actions en cas de conditions meteo dangereuses</div></div><div class="card-actions">
+                <input type="color" class="card-color-btn" value="#ff1100" onchange="changeCardColor(this)" title="Changer la couleur">
+                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
+                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
+            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="visibility-selector">
+                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
+                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
+                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
+            </div><div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
+<li contenteditable="true">Surveiller l'application meteo et les alertes<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Informer le directeur du festival<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Preparer l'evacuation des structures temporaires<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Couper l'alimentation electrique des zones a risque<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Guider le public vers les zones securisees<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+</ol><button class="add-step-btn">+ Ajouter un point</button></div></div>
+</div>
+<div class="card expanded" data-keywords="accreditation badge acces controle" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><span class="category-tag" contenteditable="true">ACCES</span><h3 contenteditable="true">Probleme d'Accreditation</h3><div class="card-subtitle" contenteditable="true">Verification et gestion des acces</div></div><div class="card-actions">
+                <input type="color" class="card-color-btn" value="#e3944f" onchange="changeCardColor(this)" title="Changer la couleur">
+                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
+                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
+            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="visibility-selector">
+                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
+                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
+                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
+            </div><div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
+<li contenteditable="true">Verifier l'identite de la personne<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Consulter la liste officielle des accredites<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Contacter le responsable accreditations<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">En cas de doute, refuser l'acces poliment<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+<li contenteditable="true">Orienter vers le bureau accreditations<div class="step-actions">
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            </div></li>
+</ol><button class="add-step-btn">+ Ajouter un point</button></div></div>
+</div>
+</div>
+<button class="add-card-btn" onclick="addCard(\'procedures\')" id="addProceduresBtn">+ Ajouter une vignette</button>
+<button class="add-card-btn" onclick="addDocumentToTab(\'procedures\')" id="addProceduresDocBtn">📄 Ajouter un document</button>
+</div>
+<div class="tab-pane" id="urgence">
+<input type="text" class="search-bar" id="searchUrgence" placeholder="Rechercher..." onkeyup="filterUrgence()">
+<div id="urgenceList">
+</div>
+<button class="add-card-btn" onclick="addCard(\'urgence\')" id="addUrgenceBtn">+ Ajouter une vignette</button>
+<button class="add-card-btn" onclick="addDocumentToTab(\'urgence\')" id="addUrgenceDocBtn">📄 Ajouter un document</button>
+</div>
+<div class="tab-pane" id="contacts">
+<input type="text" class="search-bar" id="searchContacts" placeholder="Rechercher un contact..." onkeyup="filterContacts()">
+<div id="contactsList">
+<div class="card emergency expanded" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><h3 contenteditable="true">URGENCES</h3><div class="card-subtitle" contenteditable="true">Numeros d'urgence nationaux</div></div><div class="card-actions">
+                <input type="color" class="card-color-btn" value="#ff1100" onchange="changeCardColor(this)" title="Changer la couleur">
+                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
+                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
+            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="visibility-selector">
+                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
+                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
+                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
+            </div><div class="card-content"><div class="card-content-inner">
+<div class="contact-item"><div><div class="contact-name" contenteditable="true">SAMU</div><div class="contact-role" contenteditable="true">Urgences medicales</div></div><a href="tel:15" class="contact-phone" contenteditable="true">15</a></div>
+<div class="contact-item"><div><div class="contact-name" contenteditable="true">Pompiers</div><div class="contact-role" contenteditable="true">Incendie / Secours</div></div><a href="tel:18" class="contact-phone" contenteditable="true">18</a></div>
+<div class="contact-item"><div><div class="contact-name" contenteditable="true">Police / Gendarmerie</div><div class="contact-role" contenteditable="true">Urgences securite</div></div><a href="tel:17" class="contact-phone" contenteditable="true">17</a></div>
+<div class="contact-item"><div><div class="contact-name" contenteditable="true">Numero d'urgence europeen</div><div class="contact-role" contenteditable="true">Toutes urgences</div></div><a href="tel:112" class="contact-phone" contenteditable="true">112</a></div>
+</div></div>
+</div>
+<div class="card expanded" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><h3 contenteditable="true">DIRECTION FESTIVAL</h3><div class="card-subtitle" contenteditable="true">Equipe de direction</div></div><div class="card-actions">
+                <input type="color" class="card-color-btn" value="#e3944f" onchange="changeCardColor(this)" title="Changer la couleur">
+                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
+                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
+            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="visibility-selector">
+                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
+                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
+                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
+            </div><div class="card-content"><div class="card-content-inner">
+<div class="contact-item"><div><div class="contact-name" contenteditable="true">Marie Dupont</div><div class="contact-role" contenteditable="true">Directrice du Festival</div></div><a href="tel:0601020304" class="contact-phone" contenteditable="true">06 01 02 03 04</a></div>
+<div class="contact-item"><div><div class="contact-name" contenteditable="true">Thomas Martin</div><div class="contact-role" contenteditable="true">Regisseur General</div></div><a href="tel:0602030405" class="contact-phone" contenteditable="true">06 02 03 04 05</a></div>
+</div></div>
+</div>
+<div class="card expanded" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><h3 contenteditable="true">EQUIPE TECHNIQUE</h3><div class="card-subtitle" contenteditable="true">Regisseurs son, lumiere, plateau</div></div><div class="card-actions">
+                <input type="color" class="card-color-btn" value="#e3944f" onchange="changeCardColor(this)" title="Changer la couleur">
+                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
+                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
+            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="visibility-selector">
+                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
+                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
+                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
+            </div><div class="card-content"><div class="card-content-inner">
+<div class="contact-item"><div><div class="contact-name" contenteditable="true">Lucas Bernard</div><div class="contact-role" contenteditable="true">Regisseur Son</div></div><a href="tel:0603040506" class="contact-phone" contenteditable="true">06 03 04 05 06</a></div>
+<div class="contact-item"><div><div class="contact-name" contenteditable="true">Sophie Petit</div><div class="contact-role" contenteditable="true">Regisseur Lumiere</div></div><a href="tel:0604050607" class="contact-phone" contenteditable="true">06 04 05 06 07</a></div>
+<div class="contact-item"><div><div class="contact-name" contenteditable="true">Alex Moreau</div><div class="contact-role" contenteditable="true">Regisseur Plateau</div></div><a href="tel:0605060708" class="contact-phone" contenteditable="true">06 05 06 07 08</a></div>
+</div></div>
+</div>
+<div class="card expanded" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><h3 contenteditable="true">SECURITE</h3><div class="card-subtitle" contenteditable="true">Equipe de securite du festival</div></div><div class="card-actions">
+                <input type="color" class="card-color-btn" value="#e3944f" onchange="changeCardColor(this)" title="Changer la couleur">
+                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
+                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
+            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="visibility-selector">
+                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
+                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
+                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
+            </div><div class="card-content"><div class="card-content-inner">
+<div class="contact-item"><div><div class="contact-name" contenteditable="true">David Rousseau</div><div class="contact-role" contenteditable="true">Chef de la Securite</div></div><a href="tel:0606070809" class="contact-phone" contenteditable="true">06 06 07 08 09</a></div>
+<div class="contact-item"><div><div class="contact-name" contenteditable="true">Poste Central Securite</div><div class="contact-role" contenteditable="true">PC Securite</div></div><a href="tel:0607080910" class="contact-phone" contenteditable="true">06 07 08 09 10</a></div>
+</div></div>
+</div>
+<div class="card expanded" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><h3 contenteditable="true">SECOURS &amp; SANTE</h3><div class="card-subtitle" contenteditable="true">Equipe medicale et poste de secours</div></div><div class="card-actions">
+                <input type="color" class="card-color-btn" value="#e3944f" onchange="changeCardColor(this)" title="Changer la couleur">
+                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
+                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
+            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="visibility-selector">
+                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
+                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
+                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
+            </div><div class="card-content"><div class="card-content-inner">
+<div class="contact-item"><div><div class="contact-name" contenteditable="true">Dr. Julie Laurent</div><div class="contact-role" contenteditable="true">Medecin du Festival</div></div><a href="tel:0608091011" class="contact-phone" contenteditable="true">06 08 09 10 11</a></div>
+<div class="contact-item"><div><div class="contact-name" contenteditable="true">Poste de Secours</div><div class="contact-role" contenteditable="true">Infirmerie</div></div><a href="tel:0609101112" class="contact-phone" contenteditable="true">06 09 10 11 12</a></div>
+</div></div>
+</div>
+<div class="card expanded" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><h3 contenteditable="true">BILLETTERIE &amp; ACCUEIL</h3><div class="card-subtitle" contenteditable="true">Accueil et gestion des entrees</div></div><div class="card-actions">
+                <input type="color" class="card-color-btn" value="#e3944f" onchange="changeCardColor(this)" title="Changer la couleur">
+                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
+                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
+            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="visibility-selector">
+                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
+                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
+                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
+            </div><div class="card-content"><div class="card-content-inner">
+<div class="contact-item"><div><div class="contact-name" contenteditable="true">Emma Dubois</div><div class="contact-role" contenteditable="true">Responsable Billetterie</div></div><a href="tel:0610111213" class="contact-phone" contenteditable="true">06 10 11 12 13</a></div>
+<div class="contact-item"><div><div class="contact-name" contenteditable="true">Pierre Leroy</div><div class="contact-role" contenteditable="true">Accreditations</div></div><a href="tel:0611121314" class="contact-phone" contenteditable="true">06 11 12 13 14</a></div>
+</div></div>
+</div>
+<div class="card expanded" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><h3 contenteditable="true">RESTAURATION &amp; LOGISTIQUE</h3><div class="card-subtitle" contenteditable="true">Catering et logistique generale</div></div><div class="card-actions">
+                <input type="color" class="card-color-btn" value="#e3944f" onchange="changeCardColor(this)" title="Changer la couleur">
+                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
+                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
+            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="visibility-selector">
+                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
+                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
+                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
+            </div><div class="card-content"><div class="card-content-inner">
+<div class="contact-item"><div><div class="contact-name" contenteditable="true">Camille Girard</div><div class="contact-role" contenteditable="true">Responsable Restauration</div></div><a href="tel:0612131415" class="contact-phone" contenteditable="true">06 12 13 14 15</a></div>
+<div class="contact-item"><div><div class="contact-name" contenteditable="true">Nicolas Simon</div><div class="contact-role" contenteditable="true">Logistique</div></div><a href="tel:0613141516" class="contact-phone" contenteditable="true">06 13 14 15 16</a></div>
+</div></div>
+</div>
+</div>
+<button class="add-card-btn" onclick="addCard(\'contacts\')" id="addContactsBtn">+ Ajouter une vignette</button>
+<button class="add-card-btn" onclick="addDocumentToTab(\'contacts\')" id="addContactsDocBtn">📄 Ajouter un document</button>
+</div>
+<div class="tab-pane" id="documents">
+<input type="text" class="search-bar" id="searchDocuments" placeholder="Rechercher un document..." onkeyup="filterDocuments()">
+<div id="documentsList">
+<div class="card document-card expanded">
+<div class="card-header" onclick="toggleCard(this.parentElement)">
+<div class="card-header-left">
+<span class="category-tag" contenteditable="true">DOCUMENT</span>
+<h3 contenteditable="true">Plan du site</h3>
+<div class="card-subtitle" contenteditable="true">Carte détaillée du festival</div>
+</div>
+<div class="card-actions">
+                <input type="color" class="card-color-btn" value="#e3944f" onchange="changeCardColor(this)" title="Changer la couleur">
+                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
+                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
+            </div><span class="expand-icon">▼</span>
+<button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button>
+<span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="visibility-selector">
+                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
+                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
+                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
+            </div><div class="card-content">
+<div class="card-content-inner">
+<div class="document-link-section">
+<input type="text" class="document-input" placeholder="Nom du fichier (ex: plan-site.pdf)" value="plan-site.pdf">
+<button class="document-open-btn" onclick="openDocument(this)">📄 Ouvrir</button>
+</div>
+<p class="document-info">Placez le fichier avec ce nom exact dans votre dépôt GitHub</p>
+</div>
+</div>
+</div>
+</div>
+<button class="add-card-btn" onclick="addDocumentCard()" id="addDocumentsBtn">+ Ajouter un document</button>
+</div>
+</div>
+</div>
+</div>
+<div class="document-viewer" id="documentViewer">
+<iframe id="documentFrame" src=""></iframe>
+<button class="document-viewer-back" onclick="closeDocumentViewer()">← RETOUR</button>
+</div>
+<div class="color-overlay" id="colorOverlay" onclick="closeColorPicker()"></div>
+<div class="color-picker" id="colorPicker">
+<h3>CHOISIR LES COULEURS</h3>
+<div class="color-row">
+<label>Couleur principale (bordures):</label>
+<input type="color" id="primaryColor" value="#E8730A">
+</div>
+<div class="color-row">
+<label>Couleur urgence:</label>
+<input type="color" id="dangerColor" value="#C8281E">
+</div>
+<div class="color-picker-buttons">
+<button class="btn-apply-colors" onclick="applyColors()">Appliquer</button>
+<button class="btn-close-colors" onclick="closeColorPicker()">Fermer</button>
+</div>
+</div>
+<div class="edit-actions" style="display:none!important"></div>
+<script>
+const PIN_BENEVOLE='072026';
+const PIN_RESPONSABLE='082026';
+const EDIT_PIN='041986';
+let currentPin='',isEditMode=false,originalContent='';
+let currentRole='benevole'; // rôle par défaut
+
+function toggleRole(){
+    const toggle=document.getElementById('roleToggle');
+    const screen=document.getElementById('digicodeScreen');
+    
+    // Phase jaune sur le toggle ET les touches
+    toggle.classList.add('sliding');
+    screen.classList.add('key-yellow');
+    
+    // Après la moitié, passer à la couleur finale
+    setTimeout(()=>{
+        toggle.classList.remove('sliding');
+        screen.classList.remove('key-yellow');
+        currentRole = currentRole==='benevole' ? 'responsable' : 'benevole';
+        toggle.classList.toggle('responsable', currentRole==='responsable');
+        screen.classList.toggle('responsable-mode', currentRole==='responsable');
+    }, 400);
+    
+    currentPin='';
+    updatePinDisplay();
+    document.getElementById('errorMessage').textContent='';
+}
+
+// Support swipe sur le toggle
+document.addEventListener('DOMContentLoaded',()=>{
+    const toggle=document.getElementById('roleToggle');
+    let startX=0;
+    toggle.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;},{passive:true});
+    toggle.addEventListener('touchend',e=>{
+        const diff=e.changedTouches[0].clientX - startX;
+        if(Math.abs(diff)>30){
+            const newRole = diff>0 ? 'responsable' : 'benevole';
+            if(newRole!==currentRole){ toggleRole(); }
+        }
+    },{passive:true});
+});
+
+function addDigit(t){
+    if(currentPin.length<6){
+        currentPin+=t;
+        updatePinDisplay();
+        if(currentPin.length===6)checkPin();
+    }
+}
+
+function deleteDigit(){
+    currentPin=currentPin.slice(0,-1);
+    updatePinDisplay();
+    document.getElementById('errorMessage').textContent='';
+}
+
+function updatePinDisplay(){
+    for(let t=1;t<=6;t++){
+        const e=document.getElementById('dot'+t);
+        if(t<=currentPin.length){
+            e.classList.add('filled');
+            e.classList.remove('error');
+        }else{
+            e.classList.remove('filled','error');
+        }
+    }
+}
+
+function checkPin(){
+    const correctPin=currentRole==='benevole'?PIN_BENEVOLE:PIN_RESPONSABLE;
+    const role=currentPin===EDIT_PIN?'responsable':currentRole;
+    
+    if(currentPin===correctPin||currentPin===EDIT_PIN){
+        const screen=document.getElementById('digicodeScreen');
+        const app=document.getElementById('mainApp');
+        screen.style.display='none';
+        app.classList.add('active');
+        app.style.display='flex';
+        sessionStorage.setItem('authenticated','true');
+        sessionStorage.setItem('role',role);
+        
+        // Badge de rôle
+        const badge=document.getElementById('roleBadge');
+        badge.textContent=role==='benevole'?'👤 BÉNÉVOLE':'⭐ RESPONSABLE';
+        badge.className='role-badge '+role;
+        badge.style.display='inline-block';
+        
+        // Appliquer la visibilité après rendu du DOM
+        setTimeout(()=>applyRoleVisibility(role), 50);
+        
+        if(currentPin===EDIT_PIN)setTimeout(()=>toggleEditMode(true),300);
+        currentPin='';
+        updatePinDisplay();
+    }else{
+        document.getElementById('errorMessage').textContent='CODE INCORRECT';
+        for(let t=1;t<=6;t++)document.getElementById('dot'+t).classList.add('error');
+        setTimeout(()=>{currentPin='';updatePinDisplay();document.getElementById('errorMessage').textContent='';for(let t=1;t<=6;t++)document.getElementById('dot'+t).classList.remove('error');},1200);
+    }
+}
+
+function applyRoleVisibility(role){
+    const app=document.getElementById('mainApp');
+    app.classList.remove('role-benevole','role-responsable');
+    app.classList.add('role-'+role);
+    
+    document.querySelectorAll('.card').forEach(card=>{
+        const vis=card.dataset.visibility||'tous';
+        
+        // Visibilité
+        if(vis==='tous'||role==='responsable'||(vis==='benevoles'&&role==='benevole')){
+            card.classList.remove('hidden-for-role');
+        }else{
+            card.classList.add('hidden-for-role');
+        }
+        
+        // Toujours créer/mettre à jour l'indicateur
+        let indicator=card.querySelector('.vis-indicator');
+        if(!indicator){
+            indicator=document.createElement('span');
+            const header=card.querySelector('.card-header');
+            if(header) header.appendChild(indicator);
+            else return;
+        }
+        
+        // Icône selon visibilité - toujours présente, CSS gère l'affichage
+        if(vis==='responsables'){
+            indicator.className='vis-indicator';
+            indicator.textContent='⭐';
+            indicator.title='Responsables uniquement';
+        }else if(vis==='benevoles'){
+            indicator.className='vis-indicator';
+            indicator.textContent='👤';
+            indicator.title='Bénévoles et responsables';
+        }else{
+            indicator.className='vis-indicator';
+            indicator.textContent='👥';
+            indicator.title='Visible par tous';
+        }
+    });
+}
+
+function showEditPrompt(){
+    const editCode=prompt('Entrez le code pour le mode edition:');
+    if(editCode===EDIT_PIN){
+        document.getElementById('digicodeScreen').style.display='none';
+        document.getElementById('mainApp').classList.add('active');
+        sessionStorage.setItem('authenticated','true');
+        sessionStorage.setItem('role','responsable');
+        const badge=document.getElementById('roleBadge');
+        badge.textContent='⭐ RESPONSABLE';
+        badge.className='role-badge responsable';
+        badge.style.display='inline-block';
+        setTimeout(()=>toggleEditMode(),100);
+    }else if(editCode){
+        alert('Code incorrect !');
+    }
+}
+
+function logout(){
+    if(isEditMode&&!confirm('Vous etes en mode edition. Voulez-vous vraiment quitter sans sauvegarder?'))return;
+    sessionStorage.removeItem('authenticated');
+    document.getElementById('digicodeScreen').style.display='block';
+    document.getElementById('mainApp').classList.remove('active');
+    currentPin='';
+    updatePinDisplay();
+    if(isEditMode)cancelEdit();
+}
+
+function switchTab(t){
+    document.querySelectorAll('.tab').forEach(tab=>tab.classList.remove('active'));
+    event.target.classList.add('active');
+    document.querySelectorAll('.tab-pane').forEach(pane=>pane.classList.remove('active'));
+    document.getElementById(t).classList.add('active');
+}
+
+function toggleCard(t){
+    if(isEditMode){
+        event.stopPropagation();
+        return;
+    }
+    if(event.target.closest('.contact-phone')){
+        event.stopPropagation();
+        return;
+    }
+    t.classList.toggle('expanded');
+}
+
+function toggleEditMode(skipPrompt){
+    if(!isEditMode && !skipPrompt){
+        const editCode=prompt('Entrez le code pour le mode edition:');
+        if(editCode!==EDIT_PIN){
+            alert('Code incorrect !');
+            return;
+        }
+    }
+    isEditMode=!isEditMode;
+    const t=document.getElementById('mainApp'),e=document.getElementById('editBtn');
+    if(isEditMode){
+        originalContent=t.innerHTML;
+        t.classList.add('edit-mode');
+        e.classList.add('active');
+        e.textContent='MODE EDITION ACTIF';
+        document.getElementById('colorBtn').style.display='inline-block';
+        document.getElementById('exportBtn').style.display='inline-block';
+        document.getElementById('headerSubtitle').contentEditable='true';
+        document.querySelectorAll('.card').forEach(card=>card.classList.add('expanded'));
+        makeEditable();
+    }else{
+        t.classList.remove('edit-mode');
+        e.classList.remove('active');
+        e.textContent='MODE EDITION';
+        document.getElementById('colorBtn').style.display='none';
+        document.getElementById('exportBtn').style.display='none';
+        document.getElementById('headerSubtitle').contentEditable='false';
+        removeEditable();
+    }
+}
+
+function logout(){
+    if(isEditMode){
+        if(!confirm('Vous êtes en mode édition. Quitter sans enregistrer ?')){
+            return;
+        }
+        if(originalContent){
+            document.getElementById('mainApp').innerHTML=originalContent;
+        }
+        isEditMode=false;
+    }
+    
+    // Nettoyer la session
+    sessionStorage.removeItem('authenticated');
+    sessionStorage.removeItem('role');
+    
+    // Nettoyer l'URL des paramètres key/role
+    if(window.location.search){
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    
+    // Réinitialiser l'affichage
+    const app=document.getElementById('mainApp');
+    app.classList.remove('active','edit-mode','role-benevole','role-responsable');
+    app.style.display='none';
+    
+    const badge=document.getElementById('roleBadge');
+    badge.style.display='none';
+    
+    document.getElementById('colorBtn').style.display='none';
+    document.getElementById('editBtn').classList.remove('active');
+    document.getElementById('editBtn').textContent='MODE EDITION';
+    
+    // Réafficher le digicode
+    const screen=document.getElementById('digicodeScreen');
+    screen.style.display='flex';
+    
+    // Réinitialiser le toggle de rôle en bénévole
+    currentRole='benevole';
+    const toggle=document.getElementById('roleToggle');
+    toggle.classList.remove('responsable','sliding','key-yellow');
+    screen.classList.remove('responsable-mode','key-yellow');
+    
+    // Réinitialiser le PIN
+    currentPin='';
+    updatePinDisplay();
+    document.getElementById('errorMessage').textContent='';
+}
+
+function toggleDarkMode(){
+    document.body.classList.toggle('light-mode');
+    const isLight=document.body.classList.contains('light-mode');
+    localStorage.setItem('theme',isLight?'light':'dark');
+    
+    // Changer les logos selon le mode
+    const loginLogo=document.getElementById('loginLogo');
+    const headerLogo=document.getElementById('headerLogo');
+    const logoSrc=isLight?'LOGO_PLW_BLACK.png':'LOGO_PLW_WHITE.png';
+    
+    if(loginLogo)loginLogo.src=logoSrc;
+    if(headerLogo)headerLogo.src=logoSrc;
+}
+
+function makeEditable(){
+    document.querySelectorAll('.card h3, .card-subtitle, .category-tag, .contact-name, .contact-role, .contact-phone, .procedure-steps li').forEach(t=>t.setAttribute('contenteditable','true'));
+    document.querySelectorAll('.contact-phone').forEach(t=>t.addEventListener('click',function(e){if(isEditMode)e.preventDefault()}));
+    document.querySelectorAll('.document-input').forEach(input=>input.removeAttribute('readonly'));
+    
+    // Ajouter les boutons de gestion des cartes
+    document.querySelectorAll('.card').forEach(card=>{
+        if(!card.querySelector('.card-actions')){
+            const header=card.querySelector('.card-header');
+            const expandIcon=header.querySelector('.expand-icon');
+            
+            // Obtenir la couleur de bordure actuelle
+            const currentColor=card.style.borderColor||getComputedStyle(card).borderColor||'#E8730A';
+            const rgbToHex=(rgb)=>{
+                const match=rgb.match(/\d+/g);
+                if(!match)return '#E8730A';
+                return '#'+match.slice(0,3).map(x=>parseInt(x).toString(16).padStart(2,'0')).join('');
+            };
+            const hexColor=currentColor.startsWith('rgb')?rgbToHex(currentColor):currentColor;
+            
+            const actionsDiv=document.createElement('div');
+            actionsDiv.className='card-actions';
+            actionsDiv.innerHTML=`
+                <input type="color" class="card-color-btn" value="${hexColor}" onchange="changeCardColor(this)" title="Changer la couleur">
+                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
+                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
+            `;
+            header.insertBefore(actionsDiv,expandIcon);
+        }
+    });
+    
+    // Ajouter les boutons de gestion des points de liste
+    document.querySelectorAll('.procedure-steps li').forEach(li=>{
+        if(!li.querySelector('.step-actions')){
+            const actionsDiv=document.createElement('div');
+            actionsDiv.className='step-actions';
+            actionsDiv.innerHTML=`
+                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+            `;
+            li.appendChild(actionsDiv);
+        }
+    });
+    
+    // Ajouter les sélecteurs de visibilité sur chaque carte
+    document.querySelectorAll('.card').forEach(card=>{
+        if(!card.querySelector('.visibility-selector')){
+            const vis=card.dataset.visibility||'tous';
+            const selDiv=document.createElement('div');
+            selDiv.className='visibility-selector';
+            selDiv.innerHTML=`
+                <button class="vis-btn vis-benevoles ${vis==='benevoles'?'active-vis':''}" onclick="setVisibility(this,'benevoles')">Bénévoles</button>
+                <button class="vis-btn vis-responsables ${vis==='responsables'?'active-vis':''}" onclick="setVisibility(this,'responsables')">Responsables</button>
+                <button class="vis-btn vis-tous ${vis==='tous'||!vis?'active-vis':''}" onclick="setVisibility(this,'tous')">Tous</button>
+            `;
+            const cardContent=card.querySelector('.card-content');
+            card.insertBefore(selDiv,cardContent);
+        }
+    });
+
+    // Ajouter le bouton "Ajouter un point" après chaque liste
+    document.querySelectorAll('.procedure-steps').forEach(list=>{
+        if(!list.nextElementSibling||!list.nextElementSibling.classList.contains('add-step-btn')){
+            const addBtn=document.createElement('button');
+            addBtn.className='add-step-btn';
+            addBtn.textContent='+ Ajouter un point';
+            addBtn.onclick=function(){addStep(this)};
+            list.parentNode.insertBefore(addBtn,list.nextSibling);
+        }
+    });
+}
+
+function removeEditable(){
+    document.querySelectorAll('[contenteditable]').forEach(t=>t.removeAttribute('contenteditable'));
+    document.querySelectorAll('.document-input').forEach(input=>input.setAttribute('readonly','readonly'));
+    document.querySelectorAll('.card-actions').forEach(actions=>actions.remove());
+    document.querySelectorAll('.step-actions').forEach(actions=>actions.remove());
+    document.querySelectorAll('.add-step-btn').forEach(btn=>btn.remove());
+    document.querySelectorAll('.visibility-selector').forEach(sel=>sel.remove());
+}
+
+function saveChanges(){
+    const t={
+        procedures:document.getElementById('proceduresList').innerHTML,
+        contacts:document.getElementById('contactsList').innerHTML,
+        documents:document.getElementById('documentsList').innerHTML,
+        urgence:document.getElementById('urgenceList').innerHTML
+    };
+    localStorage.setItem('festivalData',JSON.stringify(t));
+    alert('✅ Modifications enregistrées !\n\n💡 N\'oubliez pas d\'exporter le HTML pour mettre à jour GitHub.');
+    toggleEditMode();
+}
+
+function cancelEdit(){
+    if(confirm('Annuler toutes les modifications?')){
+        const t=document.getElementById('mainApp');
+        t.innerHTML=originalContent;
+        isEditMode=!1;
+        t.classList.remove('edit-mode');
+        document.getElementById('editBtn').classList.remove('active');
+        document.getElementById('editBtn').textContent='MODE EDITION';
+        reattachEvents();
+    }
+}
+
+function exportData(){
+    const t={procedures:document.getElementById('proceduresList').innerHTML,contacts:document.getElementById('contactsList').innerHTML,exportDate:(new Date).toISOString()};
+    const e=new Blob([JSON.stringify(t,null,2)],{type:'application/json'});
+    const n=URL.createObjectURL(e);
+    const o=document.createElement('a');
+    o.href=n;
+    o.download='plw-festival-backup-'+(new Date).toISOString().split('T')[0]+'.json';
+    o.click();
+    URL.revokeObjectURL(n);
+    alert('Backup JSON exporte !');
+}
+
+function exportHTML(){
+    // Sauvegarder les données
+    const data={
+        procedures:document.getElementById('proceduresList').innerHTML,
+        contacts:document.getElementById('contactsList').innerHTML,
+        documents:document.getElementById('documentsList').innerHTML,
+        urgence:document.getElementById('urgenceList').innerHTML
+    };
+    localStorage.setItem('festivalData',JSON.stringify(data));
+
+    // === EXPORT PLWapp.html ===
+    const plwappHTML=document.documentElement.outerHTML;
+    const blob1=new Blob([plwappHTML],{type:'text/html;charset=utf-8'});
+    const url1=URL.createObjectURL(blob1);
+    const a1=document.createElement('a');
+    a1.href=url1; a1.download='PLWapp.html'; a1.click();
+    URL.revokeObjectURL(url1);
+
+    // === EXPORT PLForce.html (sans header) ===
+    setTimeout(()=>{
+        // Créer un DOM temporaire
+        const parser=new DOMParser();
+        const doc2=parser.parseFromString(plwappHTML,'text/html');
+
+        // Supprimer le header
+        const hdr=doc2.querySelector('.app-header');
+        if(hdr) hdr.remove();
+
+        // Ajouter auth automatique PLForce au chargement
+        const forceScript=doc2.createElement('script');
+        forceScript.textContent=`
+window.addEventListener('load',function(){
+    var p=new URLSearchParams(window.location.search);
+    var k=p.get('key');
+    if(k==='021526'){
+        var app=document.getElementById('mainApp');
+        if(app){app.classList.add('active');app.style.display='flex';}
+        var screen=document.getElementById('digicodeScreen');
+        if(screen) screen.style.display='none';
+        setTimeout(function(){applyRoleVisibility('responsable');},50);
+    }
+});`;
+        doc2.head.appendChild(forceScript);
+
+        // Modifier le titre
+        const t=doc2.querySelector('title');
+        if(t) t.textContent="PLForce";
+
+        // Ajuster tab-content height sans header
+        const style=doc2.createElement('style');
+        style.textContent='.tab-content{height:calc(100vh - 55px)!important}.main-app.active{display:flex!important}';
+        doc2.head.appendChild(style);
+
+        const plforceHTML='<!DOCTYPE html>\n'+doc2.documentElement.outerHTML;
+        const blob2=new Blob([plforceHTML],{type:'text/html;charset=utf-8'});
+        const url2=URL.createObjectURL(blob2);
+        const a2=document.createElement('a');
+        a2.href=url2; a2.download='PLForce.html'; a2.click();
+        URL.revokeObjectURL(url2);
+
+        alert('✅ Export terminé !\n\n📥 Fichiers générés :\n• PLWapp.html (app complète)\n• PLForce.html (sans header, pour embedding)\n\n📝 Uploadez les deux sur GitHub !');
+    },500);
+}
+
+function reattachEvents(){
+    document.querySelectorAll('.card').forEach(card=>card.onclick=function(){toggleCard(this)});
+}
+
+function filterProcedures(){
+    const t=document.getElementById('searchProcedures').value.toLowerCase();
+    document.querySelectorAll('#proceduresList .card').forEach(e=>{
+        const n=((e.querySelector('h3').textContent+(e.querySelector('.card-subtitle')?.textContent||'')+(e.querySelector('.card-content-inner')?.textContent||'')+e.getAttribute('data-keywords'))||'').toLowerCase();
+        e.style.display=n.includes(t)?'block':'none';
+    });
+}
+
+function filterContacts(){
+    const t=document.getElementById('searchContacts').value.toLowerCase();
+    document.querySelectorAll('#contactsList .card').forEach(e=>{
+        const n=((e.querySelector('h3').textContent+(e.querySelector('.card-subtitle')?.textContent||'')+(e.querySelector('.card-content-inner')?.textContent||'')||'')).toLowerCase();
+        e.style.display=n.includes(t)?'block':'none';
+    });
+}
+
+function filterDocuments(){
+    const t=document.getElementById('searchDocuments').value.toLowerCase();
+    document.querySelectorAll('#documentsList .card').forEach(e=>{
+        const n=((e.querySelector('h3').textContent+(e.querySelector('.card-subtitle')?.textContent||'')||'')).toLowerCase();
+        e.style.display=n.includes(t)?'block':'none';
+    });
+}
+
+function addDocumentCard(){
+    const container=document.getElementById('documentsList');
+    const newCard=document.createElement('div');
+    newCard.className='card document-card';
+    newCard.innerHTML=`
+        <div class="card-header" onclick="toggleCard(this.parentElement)">
+            <div class="card-header-left">
+                <span class="category-tag">DOCUMENT</span>
+                <h3 contenteditable="true">Nouveau document</h3>
+                <div class="card-subtitle" contenteditable="true">Description...</div>
+            </div>
+            <span class="expand-icon">▼</span>
+            <button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button>
+        </div>
+        <div class="card-content">
+            <div class="card-content-inner">
+                <div class="document-link-section">
+                    <input type="text" class="document-input" placeholder="Nom du fichier (ex: mon-document.pdf)" value="" readonly>
+                    <button class="document-open-btn" onclick="openDocument(this)">📄 Ouvrir</button>
+                </div>
+                <p class="document-info">Placez le fichier avec ce nom exact dans votre dépôt GitHub</p>
+            </div>
+        </div>
+    `;
+    container.appendChild(newCard);
+}
+
+function openDocument(btn){
+    const card=btn.closest('.card-content-inner');
+    const input=card.querySelector('.document-input');
+    const filename=input.value.trim();
+    
+    if(!filename){
+        alert('Veuillez entrer un nom de fichier');
+        return;
+    }
+    
+    document.getElementById('documentFrame').src=filename;
+    document.getElementById('documentViewer').classList.add('active');
+}
+
+function closeDocumentViewer(){
+    document.getElementById('documentViewer').classList.remove('active');
+    document.getElementById('documentFrame').src='';
+}
+
+function changeCardColor(input){
+    const card=input.closest('.card');
+    const color=input.value;
+    card.style.borderColor=color;
+    
+    // Changer aussi la couleur du tag si c'est une carte d'urgence
+    const tag=card.querySelector('.category-tag');
+    if(card.classList.contains('emergency')){
+        tag.style.background=color+'26';
+        tag.style.color=color;
+        tag.style.borderColor=color+'4D';
+    }
+}
+
+function setVisibility(btn,vis){
+    const card=btn.closest('.card');
+    card.dataset.visibility=vis;
+    btn.closest('.visibility-selector').querySelectorAll('.vis-btn').forEach(b=>b.classList.remove('active-vis'));
+    btn.classList.add('active-vis');
+    
+    // Mettre à jour l'indicateur immédiatement
+    let indicator=card.querySelector('.vis-indicator');
+    if(!indicator){
+        indicator=document.createElement('span');
+        indicator.className='vis-indicator';
+        card.querySelector('.card-header').appendChild(indicator);
+    }
+    if(vis==='benevoles'){
+        indicator.className='vis-indicator ind-benevole';
+        indicator.textContent='👤';
+    }else if(vis==='responsables'){
+        indicator.className='vis-indicator ind-responsable';
+        indicator.textContent='⭐';
+    }else{
+        indicator.className='vis-indicator ind-tous';
+        indicator.textContent='';
+    }
+}
+
+function moveCard(btn,direction){
+    const card=btn.closest('.card');
+    const container=card.parentElement;
+    
+    if(direction==='up'){
+        const prev=card.previousElementSibling;
+        if(prev&&prev.classList.contains('card')){
+            container.insertBefore(card,prev);
+        }
+    }else if(direction==='down'){
+        const next=card.nextElementSibling;
+        if(next&&next.classList.contains('card')){
+            container.insertBefore(next,card);
+        }
+    }
+}
+
+function moveStep(btn,direction){
+    const li=btn.closest('li');
+    const list=li.parentElement;
+    
+    if(direction==='up'){
+        const prev=li.previousElementSibling;
+        if(prev){
+            list.insertBefore(li,prev);
+        }
+    }else if(direction==='down'){
+        const next=li.nextElementSibling;
+        if(next){
+            list.insertBefore(next,li);
+        }
+    }
+}
+
+function deleteStep(btn){
+    if(confirm('Supprimer ce point ?')){
+        btn.closest('li').remove();
+    }
+}
+
+function addStep(btn){
+    const list=btn.previousElementSibling;
+    const newLi=document.createElement('li');
+    newLi.contentEditable='true';
+    newLi.textContent='Nouveau point à modifier...';
+    
+    // Ajouter les boutons de gestion
+    const actionsDiv=document.createElement('div');
+    actionsDiv.className='step-actions';
+    actionsDiv.innerHTML=`
+        <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
+        <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
+        <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
+    `;
+    newLi.appendChild(actionsDiv);
+    
+    list.appendChild(newLi);
+    newLi.focus();
+}
+
+
+
+function openColorPicker(){
+    document.getElementById('colorPicker').classList.add('active');
+    document.getElementById('colorOverlay').classList.add('active');
+}
+
+function closeColorPicker(){
+    document.getElementById('colorPicker').classList.remove('active');
+    document.getElementById('colorOverlay').classList.remove('active');
+}
+
+function applyColors(){
+    const primaryColor=document.getElementById('primaryColor').value;
+    const dangerColor=document.getElementById('dangerColor').value;
+    document.documentElement.style.setProperty('--accent',primaryColor);
+    document.documentElement.style.setProperty('--danger',dangerColor);
+    localStorage.setItem('primaryColor',primaryColor);
+    localStorage.setItem('dangerColor',dangerColor);
+    closeColorPicker();
+    alert('Couleurs appliquees avec succes !');
+}
+
+function addCard(tabName){
+    const container=document.getElementById(tabName+'List');
+    if(!container)return;
+    const isEmergency=tabName==='urgence';
+    const newCard=document.createElement('div');
+    newCard.className=isEmergency?'card emergency':'card';
+    newCard.setAttribute('onclick','toggleCard(this)');
+    newCard.innerHTML=`
+        <div class="card-header">
+            <div class="card-header-left">
+                <span class="category-tag">${tabName.toUpperCase()}</span>
+                <h3 contenteditable="true">Nouvelle vignette</h3>
+                <div class="card-subtitle" contenteditable="true">Description...</div>
+            </div>
+            <span class="expand-icon">▼</span>
+            <button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button>
+        </div>
+        <div class="card-content">
+            <div class="card-content-inner" contenteditable="true">
+                <p>Contenu à modifier...</p>
+            </div>
+        </div>
+    `;
+    container.appendChild(newCard);
+}
+
+function addDocumentToTab(tabName){
+    const container=document.getElementById(tabName+'List');
+    if(!container)return;
+    const isEmergency=tabName==='urgence';
+    const newCard=document.createElement('div');
+    newCard.className=isEmergency?'card emergency document-card':'card document-card';
+    newCard.innerHTML=`
+        <div class="card-header" onclick="toggleCard(this.parentElement)">
+            <div class="card-header-left">
+                <span class="category-tag">📄 DOCUMENT</span>
+                <h3 contenteditable="true">Nouveau document</h3>
+                <div class="card-subtitle" contenteditable="true">Description...</div>
+            </div>
+            <span class="expand-icon">▼</span>
+            <button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button>
+        </div>
+        <div class="card-content">
+            <div class="card-content-inner">
+                <div class="document-link-section">
+                    <input type="text" class="document-input" placeholder="Nom du fichier (ex: mon-document.pdf)" value="" readonly>
+                    <button class="document-open-btn" onclick="openDocument(this)">📄 Ouvrir</button>
+                </div>
+                <p class="document-info">Placez le fichier avec ce nom exact dans votre dépôt GitHub</p>
+            </div>
+        </div>
+    `;
+    container.appendChild(newCard);
+}
+
+function deleteCard(btn){
+    if(confirm('Supprimer cette vignette ?')){
+        btn.closest('.card').remove();
+    }
+}
+
+function filterUrgence(){
+    const t=document.getElementById('searchUrgence').value.toLowerCase();
+    document.querySelectorAll('#urgenceList .card').forEach(e=>{
+        const n=((e.querySelector('h3').textContent+(e.querySelector('.card-subtitle')?.textContent||'')+(e.querySelector('.card-content-inner')?.textContent||'')||'')).toLowerCase();
+        e.style.display=n.includes(t)?'block':'none';
+    });
+}
+
+
+window.addEventListener('load',()=>{
+    // Auth via URL params depuis index.html
+    const urlParams=new URLSearchParams(window.location.search);
+    const urlKey=urlParams.get('key');
+    const urlRole=urlParams.get('role')||'benevole';
+    if(urlKey&&(urlKey==='072026'||urlKey==='082026'||urlKey==='041986')){
+        const role=urlKey==='041986'?'responsable':urlRole;
+        sessionStorage.setItem('authenticated','true');
+        sessionStorage.setItem('role',role);
+        if(urlKey==='041986') sessionStorage.setItem('editMode','true');
+        // Nettoyer l'URL
+        window.history.replaceState({},'',window.location.pathname);
+    }
+
+    // === CONNEXION AUTOMATIQUE PAR URL (pour intégrations externes) ===
+    // Géré par le bloc ajouté au début du load
+    
+    const savedTheme=localStorage.getItem('theme');
+    if(savedTheme==='light'){
+        document.body.classList.add('light-mode');
+        // Changer les logos pour le mode clair
+        const loginLogo=document.getElementById('loginLogo');
+        const headerLogo=document.getElementById('headerLogo');
+        if(loginLogo)loginLogo.src='LOGO_PLW_BLACK.png';
+        if(headerLogo)headerLogo.src='LOGO_PLW_BLACK.png';
+    }
+    const savedPrimaryColor=localStorage.getItem('primaryColor');
+    const savedDangerColor=localStorage.getItem('dangerColor');
+    if(savedPrimaryColor){
+        document.documentElement.style.setProperty('--accent',savedPrimaryColor);
+        document.getElementById('primaryColor').value=savedPrimaryColor;
+    }
+    if(savedDangerColor){
+        document.documentElement.style.setProperty('--danger',savedDangerColor);
+        document.getElementById('dangerColor').value=savedDangerColor;
+    }
+    if(localStorage.getItem('festivalData')){
+        try{
+            const t=JSON.parse(localStorage.getItem('festivalData'));
+            if(t.procedures)document.getElementById('proceduresList').innerHTML=t.procedures;
+            if(t.contacts)document.getElementById('contactsList').innerHTML=t.contacts;
+            if(t.documents)document.getElementById('documentsList').innerHTML=t.documents;
+            if(t.urgence)document.getElementById('urgenceList').innerHTML=t.urgence;
+            reattachEvents();
+        }catch(t){console.error('Erreur:',t)}
+    }
+    if('true'===sessionStorage.getItem('authenticated')){
+        document.getElementById('digicodeScreen').style.display='none';
+        const app=document.getElementById('mainApp');
+        app.classList.add('active');
+        app.style.display='flex';
+        const savedRole=sessionStorage.getItem('role')||'benevole';
+        currentRole=savedRole;
+        const badge=document.getElementById('roleBadge');
+        badge.textContent=savedRole==='benevole'?'👤 BÉNÉVOLE':'⭐ RESPONSABLE';
+        badge.className='role-badge '+savedRole;
+        badge.style.display='inline-block';
+        setTimeout(()=>applyRoleVisibility(savedRole), 50);
+        
+        // Activer le mode édition si demandé via URL
+        if(urlKey===EDIT_PIN && !isEditMode){
+            setTimeout(()=>toggleEditMode(true), 100);
+        }
+    }
+});
+</script>
+
+
+</body></html>
