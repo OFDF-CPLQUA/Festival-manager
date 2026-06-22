@@ -10,6 +10,18 @@
 <meta name="theme-color" content="#0a0a0a">
 <title>PLEIN-LES-W'APP</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:wght@400;600&amp;display=swap" rel="stylesheet">
+<script>
+// Exécuté immédiatement avant le rendu - masque le digicode si auth par URL
+(function(){
+    var p=new URLSearchParams(window.location.search);
+    var k=p.get('key');
+    var validKeys=['072026','082026','plw_edit_9x4k2m'];
+    if(k && validKeys.indexOf(k)!==-1){
+        // Injecter un style temporaire pour masquer le digicode avant le rendu
+        document.write('<style>#digicodeScreen{display:none!important}.main-app{display:flex!important}</style>');
+    }
+})();
+</script><style>#digicodeScreen{display:none!important}.main-app{display:flex!important}</style>
 <style>
 :root{--bg:#0a0a0a;--surface:#1a1a1a;--surface2:#2a2a2a;--border:#333;--text:#f0ece4;--muted:#888;--accent:#E8730A;--accent2:#F5B800;--danger:#C8281E;--success:#2D8C3E}
 body.light-mode{--bg:#e8e8e8;--surface:#f5f5f5;--surface2:#fafafa;--border:#c0c0c0;--text:#3a3a3a;--muted:#666;--accent:#E8730A;--accent2:#F5B800;--danger:#C8281E;--success:#2D8C3E}
@@ -58,7 +70,7 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 .edit-btn{background:var(--accent);border-color:var(--accent);color:#fff}
 .edit-btn:hover{background:var(--accent2);border-color:var(--accent2)}
 .edit-btn.active{background:var(--success);border-color:var(--success)}
-@media (max-width:768px){.edit-btn{display:none}}
+@media (max-width:768px){#colorBtn,#exportBtn,#editBtn{display:none!important}}
 .tabs{display:flex;background:var(--surface2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;transition:background .3s,border-color .3s}
 .tab{flex:1;padding:16px;background:none;border:none;font-size:.85rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;font-family:'IBM Plex Mono',monospace;border-bottom:3px solid transparent}
 .tab.active{color:var(--accent);background:var(--surface);border-bottom-color:var(--accent)}
@@ -232,294 +244,98 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 </div>
 <div class="error-message" id="errorMessage"></div>
 </div>
-<div class="main-app active role-responsable edit-mode" id="mainApp" style="display: flex;">
+<div class="main-app active role-responsable" id="mainApp" style="display: flex;">
 <div class="app-header">
 <img src="LOGO_PLW_WHITE.png" alt="Plein Les Watts" class="app-header-logo" id="headerLogo" onclick="toggleDarkMode()">
 <h1>PLEIN-LES-W'APP</h1>
 <span id="roleBadge" class="role-badge responsable" style="display: inline-block;">⭐ RESPONSABLE</span>
-<p contenteditable="true" id="headerSubtitle">Base de données des procédures et contacts</p>
+<p id="headerSubtitle">Base de données des procédures et contacts</p>
 <div class="header-buttons">
-<button class="edit-btn" onclick="openColorPicker()" id="colorBtn" style="display: inline-block;">🎨 COULEURS</button>
-<button class="edit-btn" onclick="exportHTML()" id="exportBtn" style="display: inline-block;">📥 EXPORTER</button>
-<button class="edit-btn active" onclick="toggleEditMode()" id="editBtn">MODE EDITION ACTIF</button>
+<button class="edit-btn" onclick="openColorPicker()" id="colorBtn" style="display: none;">🎨 COULEURS</button>
+<button class="edit-btn" onclick="exportHTML()" id="exportBtn" style="display: none;">📥 EXPORTER</button>
+<button class="edit-btn" onclick="toggleEditMode()" id="editBtn">MODE EDITION</button>
 <button class="logout-btn" onclick="logout()">🔒 DÉCONNEXION</button>
 </div>
 </div>
 <div class="tabs">
-<button class="tab active" onclick="switchTab('procedures')">Infos Gen</button>
-<button class="tab" onclick="switchTab('urgence')">Urgence</button>
-<button class="tab" onclick="switchTab('contacts')">Contact</button>
-<button class="tab" onclick="switchTab('documents')">Documents</button>
+<button class="tab active" onclick="switchTab('procedures',this)">Infos Gen</button>
+<button class="tab" onclick="switchTab('urgence',this)">Urgence</button>
+<button class="tab" onclick="switchTab('contacts',this)">Contact</button>
+<button class="tab" onclick="switchTab('documents',this)">Documents</button>
 </div>
 <div class="tab-content">
 <div class="tab-pane active" id="procedures">
 <input type="text" class="search-bar" id="searchProcedures" placeholder="Rechercher une procedure..." onkeyup="filterProcedures()">
 <div id="proceduresList">
-<div class="card emergency expanded" data-keywords="urgence accident blessure medical secours" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><span class="category-tag" contenteditable="true">URGENCE</span><h3 contenteditable="true">Accident / Urgence Medicale</h3><div class="card-subtitle" contenteditable="true">Procedure d'intervention en cas d'accident</div></div><div class="card-actions">
-                <input type="color" class="card-color-btn" value="#ff1100" onchange="changeCardColor(this)" title="Changer la couleur">
-                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
-                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
-            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
-<div class="visibility-selector">
-                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
-                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
-                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
-            </div><div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
-<li contenteditable="true">Securiser la zone et eloigner le public si necessaire<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Appeler immediatement le poste de secours (voir contacts)<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Ne pas deplacer la victime sauf danger imminent<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Informer le regisseur general<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Remplir le formulaire d'incident apres intervention<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-</ol><button class="add-step-btn">+ Ajouter un point</button></div></div>
+<div class="card emergency" data-keywords="urgence accident blessure medical secours" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><span class="category-tag">URGENCE</span><h3>Urgence cannabique</h3><div class="card-subtitle">Procedure d'intervention en cas d'accident</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
+<li>Securiser Oz et mettre le public en zone sûr</li>
+<li>Appeler immediatement le stand CBD du festival</li>
+<li>Ne pas deplacer le cul de pet tombé au sol</li>
+<li>Informer la CECO du problème</li>
+<li>Remplir RETEX à la fin de l'incident</li>
+</ol></div></div>
 </div>
-<div class="card expanded" data-keywords="perte enfant perdu famille" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><span class="category-tag" contenteditable="true">SECURITE</span><h3 contenteditable="true">Enfant Perdu</h3><div class="card-subtitle" contenteditable="true">Gestion des enfants separes de leurs parents</div></div><div class="card-actions">
-                <input type="color" class="card-color-btn" value="#e3944f" onchange="changeCardColor(this)" title="Changer la couleur">
-                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
-                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
-            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
-<div class="visibility-selector">
-                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
-                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
-                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
-            </div><div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
-<li contenteditable="true">Rester avec l'enfant, le rassurer<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Contacter le poste de securite<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Noter l'heure et le lieu de prise en charge<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Accompagner l'enfant au point d'accueil famille<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Remplir la fiche de signalement<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-</ol><button class="add-step-btn">+ Ajouter un point</button></div></div>
+<div class="card" data-keywords="perte enfant perdu famille" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><span class="category-tag">SECURITE</span><h3>Enfant Perdu</h3><div class="card-subtitle">Gestion des enfants separes de leurs parents</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
+<li>Rester avec l'enfant, le rassurer</li>
+<li>Contacter le poste de securite</li>
+<li>Noter l'heure et le lieu de prise en charge</li>
+<li>Accompagner l'enfant au point d'accueil famille</li>
+<li>Remplir la fiche de signalement</li>
+</ol></div></div>
 </div>
-<div class="card emergency expanded" data-keywords="incendie feu fumee evacuation" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><span class="category-tag" contenteditable="true">URGENCE</span><h3 contenteditable="true">Debut d'Incendie</h3><div class="card-subtitle" contenteditable="true">Protocole en cas de depart de feu</div></div><div class="card-actions">
-                <input type="color" class="card-color-btn" value="#ff1100" onchange="changeCardColor(this)" title="Changer la couleur">
-                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
-                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
-            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
-<div class="visibility-selector">
-                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
-                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
-                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
-            </div><div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
-<li contenteditable="true">Declencher l'alarme la plus proche<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Appeler les pompiers (18) et le poste securite<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Si le feu est petit, utiliser l'extincteur approprie<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Evacuer la zone calmement<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Guider le public vers les sorties de secours<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-</ol><button class="add-step-btn">+ Ajouter un point</button></div></div>
+<div class="card emergency" data-keywords="incendie feu fumee evacuation" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><span class="category-tag">URGENCE</span><h3>Debut d'Incendie</h3><div class="card-subtitle">Protocole en cas de depart de feu</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
+<li>Declencher l'alarme la plus proche</li>
+<li>Appeler les pompiers (18) et le poste securite</li>
+<li>Si le feu est petit, utiliser l'extincteur approprie</li>
+<li>Evacuer la zone calmement</li>
+<li>Guider le public vers les sorties de secours</li>
+</ol></div></div>
 </div>
-<div class="card expanded" data-keywords="bagarre violence conflit agression" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><span class="category-tag" contenteditable="true">SECURITE</span><h3 contenteditable="true">Bagarre / Conflit</h3><div class="card-subtitle" contenteditable="true">Intervention lors de conflits entre festivaliers</div></div><div class="card-actions">
-                <input type="color" class="card-color-btn" value="#e3944f" onchange="changeCardColor(this)" title="Changer la couleur">
-                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
-                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
-            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
-<div class="visibility-selector">
-                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
-                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
-                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
-            </div><div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
-<li contenteditable="true">Ne PAS intervenir physiquement seul<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Appeler immediatement la securite<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Eloigner le public de la zone<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Observer et memoriser les details (nombre de personnes, description)<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Rediger un rapport d'incident<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-</ol><button class="add-step-btn">+ Ajouter un point</button></div></div>
+<div class="card" data-keywords="bagarre violence conflit agression" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><span class="category-tag">SECURITE</span><h3>Bagarre / Conflit</h3><div class="card-subtitle">Intervention lors de conflits entre festivaliers</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
+<li>Ne PAS intervenir physiquement seul</li>
+<li>Appeler immediatement la securite</li>
+<li>Eloigner le public de la zone</li>
+<li>Observer et memoriser les details (nombre de personnes, description)</li>
+<li>Rediger un rapport d'incident</li>
+</ol></div></div>
 </div>
-<div class="card expanded" data-keywords="technique panne electricite son lumiere" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><span class="category-tag" contenteditable="true">TECHNIQUE</span><h3 contenteditable="true">Panne Technique (Son/Lumiere)</h3><div class="card-subtitle" contenteditable="true">Resolution des problemes techniques</div></div><div class="card-actions">
-                <input type="color" class="card-color-btn" value="#e3944f" onchange="changeCardColor(this)" title="Changer la couleur">
-                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
-                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
-            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
-<div class="visibility-selector">
-                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
-                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
-                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
-            </div><div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
-<li contenteditable="true">Identifier la nature de la panne<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Contacter le regisseur technique de scene<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Informer l'artiste et le public si necessaire<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Mettre en place une solution temporaire<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Logger l'incident dans le cahier technique<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-</ol><button class="add-step-btn">+ Ajouter un point</button></div></div>
+<div class="card" data-keywords="technique panne electricite son lumiere" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><span class="category-tag">TECHNIQUE</span><h3>Panne Technique (Son/Lumiere)</h3><div class="card-subtitle">Resolution des problemes techniques</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
+<li>Identifier la nature de la panne</li>
+<li>Contacter le regisseur technique de scene</li>
+<li>Informer l'artiste et le public si necessaire</li>
+<li>Mettre en place une solution temporaire</li>
+<li>Logger l'incident dans le cahier technique</li>
+</ol></div></div>
 </div>
-<div class="card emergency expanded" data-keywords="meteo orage pluie vent evacuation" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><span class="category-tag" contenteditable="true">METEO</span><h3 contenteditable="true">Alerte Meteo (Orage/Vent fort)</h3><div class="card-subtitle" contenteditable="true">Actions en cas de conditions meteo dangereuses</div></div><div class="card-actions">
-                <input type="color" class="card-color-btn" value="#ff1100" onchange="changeCardColor(this)" title="Changer la couleur">
-                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
-                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
-            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
-<div class="visibility-selector">
-                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
-                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
-                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
-            </div><div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
-<li contenteditable="true">Surveiller l'application meteo et les alertes<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Informer le directeur du festival<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Preparer l'evacuation des structures temporaires<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Couper l'alimentation electrique des zones a risque<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Guider le public vers les zones securisees<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-</ol><button class="add-step-btn">+ Ajouter un point</button></div></div>
+<div class="card emergency" data-keywords="meteo orage pluie vent evacuation" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><span class="category-tag">METEO</span><h3>Alerte Meteo (Orage/Vent fort)</h3><div class="card-subtitle">Actions en cas de conditions meteo dangereuses</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
+<li>Surveiller l'application meteo et les alertes</li>
+<li>Informer le directeur du festival</li>
+<li>Preparer l'evacuation des structures temporaires</li>
+<li>Couper l'alimentation electrique des zones a risque</li>
+<li>Guider le public vers les zones securisees</li>
+</ol></div></div>
 </div>
-<div class="card expanded" data-keywords="accreditation badge acces controle" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><span class="category-tag" contenteditable="true">ACCES</span><h3 contenteditable="true">Probleme d'Accreditation</h3><div class="card-subtitle" contenteditable="true">Verification et gestion des acces</div></div><div class="card-actions">
-                <input type="color" class="card-color-btn" value="#e3944f" onchange="changeCardColor(this)" title="Changer la couleur">
-                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
-                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
-            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
-<div class="visibility-selector">
-                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
-                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
-                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
-            </div><div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
-<li contenteditable="true">Verifier l'identite de la personne<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Consulter la liste officielle des accredites<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Contacter le responsable accreditations<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">En cas de doute, refuser l'acces poliment<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-<li contenteditable="true">Orienter vers le bureau accreditations<div class="step-actions">
-                <button class="step-btn" onclick="moveStep(this,'up')" title="Monter">▲</button>
-                <button class="step-btn" onclick="moveStep(this,'down')" title="Descendre">▼</button>
-                <button class="step-btn delete" onclick="deleteStep(this)" title="Supprimer">✕</button>
-            </div></li>
-</ol><button class="add-step-btn">+ Ajouter un point</button></div></div>
+<div class="card" data-keywords="accreditation badge acces controle" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><span class="category-tag">ACCES</span><h3>Probleme d'Accreditation</h3><div class="card-subtitle">Verification et gestion des acces</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="card-content"><div class="card-content-inner"><ol class="procedure-steps">
+<li>Verifier l'identite de la personne</li>
+<li>Consulter la liste officielle des accredites</li>
+<li>Contacter le responsable accreditations</li>
+<li>En cas de doute, refuser l'acces poliment</li>
+<li>Orienter vers le bureau accreditations</li>
+</ol></div></div>
 </div>
 </div>
 <button class="add-card-btn" onclick="addCard(\'procedures\')" id="addProceduresBtn">+ Ajouter une vignette</button>
@@ -535,112 +351,56 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 <div class="tab-pane" id="contacts">
 <input type="text" class="search-bar" id="searchContacts" placeholder="Rechercher un contact..." onkeyup="filterContacts()">
 <div id="contactsList">
-<div class="card emergency expanded" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><h3 contenteditable="true">URGENCES</h3><div class="card-subtitle" contenteditable="true">Numeros d'urgence nationaux</div></div><div class="card-actions">
-                <input type="color" class="card-color-btn" value="#ff1100" onchange="changeCardColor(this)" title="Changer la couleur">
-                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
-                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
-            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
-<div class="visibility-selector">
-                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
-                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
-                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
-            </div><div class="card-content"><div class="card-content-inner">
-<div class="contact-item"><div><div class="contact-name" contenteditable="true">SAMU</div><div class="contact-role" contenteditable="true">Urgences medicales</div></div><a href="tel:15" class="contact-phone" contenteditable="true">15</a></div>
-<div class="contact-item"><div><div class="contact-name" contenteditable="true">Pompiers</div><div class="contact-role" contenteditable="true">Incendie / Secours</div></div><a href="tel:18" class="contact-phone" contenteditable="true">18</a></div>
-<div class="contact-item"><div><div class="contact-name" contenteditable="true">Police / Gendarmerie</div><div class="contact-role" contenteditable="true">Urgences securite</div></div><a href="tel:17" class="contact-phone" contenteditable="true">17</a></div>
-<div class="contact-item"><div><div class="contact-name" contenteditable="true">Numero d'urgence europeen</div><div class="contact-role" contenteditable="true">Toutes urgences</div></div><a href="tel:112" class="contact-phone" contenteditable="true">112</a></div>
+<div class="card emergency" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><h3>URGENCES</h3><div class="card-subtitle">Numeros d'urgence nationaux</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="card-content"><div class="card-content-inner">
+<div class="contact-item"><div><div class="contact-name">SAMU</div><div class="contact-role">Urgences medicales</div></div><a href="tel:15" class="contact-phone">15</a></div>
+<div class="contact-item"><div><div class="contact-name">Pompiers</div><div class="contact-role">Incendie / Secours</div></div><a href="tel:18" class="contact-phone">18</a></div>
+<div class="contact-item"><div><div class="contact-name">Police / Gendarmerie</div><div class="contact-role">Urgences securite</div></div><a href="tel:17" class="contact-phone">17</a></div>
+<div class="contact-item"><div><div class="contact-name">Numero d'urgence europeen</div><div class="contact-role">Toutes urgences</div></div><a href="tel:112" class="contact-phone">112</a></div>
 </div></div>
 </div>
-<div class="card expanded" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><h3 contenteditable="true">DIRECTION FESTIVAL</h3><div class="card-subtitle" contenteditable="true">Equipe de direction</div></div><div class="card-actions">
-                <input type="color" class="card-color-btn" value="#e3944f" onchange="changeCardColor(this)" title="Changer la couleur">
-                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
-                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
-            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
-<div class="visibility-selector">
-                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
-                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
-                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
-            </div><div class="card-content"><div class="card-content-inner">
-<div class="contact-item"><div><div class="contact-name" contenteditable="true">Marie Dupont</div><div class="contact-role" contenteditable="true">Directrice du Festival</div></div><a href="tel:0601020304" class="contact-phone" contenteditable="true">06 01 02 03 04</a></div>
-<div class="contact-item"><div><div class="contact-name" contenteditable="true">Thomas Martin</div><div class="contact-role" contenteditable="true">Regisseur General</div></div><a href="tel:0602030405" class="contact-phone" contenteditable="true">06 02 03 04 05</a></div>
+<div class="card" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><h3>DIRECTION FESTIVAL</h3><div class="card-subtitle">Equipe de direction</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="card-content"><div class="card-content-inner">
+<div class="contact-item"><div><div class="contact-name">Marie Dupont</div><div class="contact-role">Directrice du Festival</div></div><a href="tel:0601020304" class="contact-phone">06 01 02 03 04</a></div>
+<div class="contact-item"><div><div class="contact-name">Thomas Martin</div><div class="contact-role">Regisseur General</div></div><a href="tel:0602030405" class="contact-phone">06 02 03 04 05</a></div>
 </div></div>
 </div>
-<div class="card expanded" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><h3 contenteditable="true">EQUIPE TECHNIQUE</h3><div class="card-subtitle" contenteditable="true">Regisseurs son, lumiere, plateau</div></div><div class="card-actions">
-                <input type="color" class="card-color-btn" value="#e3944f" onchange="changeCardColor(this)" title="Changer la couleur">
-                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
-                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
-            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
-<div class="visibility-selector">
-                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
-                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
-                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
-            </div><div class="card-content"><div class="card-content-inner">
-<div class="contact-item"><div><div class="contact-name" contenteditable="true">Lucas Bernard</div><div class="contact-role" contenteditable="true">Regisseur Son</div></div><a href="tel:0603040506" class="contact-phone" contenteditable="true">06 03 04 05 06</a></div>
-<div class="contact-item"><div><div class="contact-name" contenteditable="true">Sophie Petit</div><div class="contact-role" contenteditable="true">Regisseur Lumiere</div></div><a href="tel:0604050607" class="contact-phone" contenteditable="true">06 04 05 06 07</a></div>
-<div class="contact-item"><div><div class="contact-name" contenteditable="true">Alex Moreau</div><div class="contact-role" contenteditable="true">Regisseur Plateau</div></div><a href="tel:0605060708" class="contact-phone" contenteditable="true">06 05 06 07 08</a></div>
+<div class="card" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><h3>EQUIPE TECHNIQUE</h3><div class="card-subtitle">Regisseurs son, lumiere, plateau</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="card-content"><div class="card-content-inner">
+<div class="contact-item"><div><div class="contact-name">Lucas Bernard</div><div class="contact-role">Regisseur Son</div></div><a href="tel:0603040506" class="contact-phone">06 03 04 05 06</a></div>
+<div class="contact-item"><div><div class="contact-name">Sophie Petit</div><div class="contact-role">Regisseur Lumiere</div></div><a href="tel:0604050607" class="contact-phone">06 04 05 06 07</a></div>
+<div class="contact-item"><div><div class="contact-name">Alex Moreau</div><div class="contact-role">Regisseur Plateau</div></div><a href="tel:0605060708" class="contact-phone">06 05 06 07 08</a></div>
 </div></div>
 </div>
-<div class="card expanded" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><h3 contenteditable="true">SECURITE</h3><div class="card-subtitle" contenteditable="true">Equipe de securite du festival</div></div><div class="card-actions">
-                <input type="color" class="card-color-btn" value="#e3944f" onchange="changeCardColor(this)" title="Changer la couleur">
-                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
-                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
-            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
-<div class="visibility-selector">
-                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
-                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
-                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
-            </div><div class="card-content"><div class="card-content-inner">
-<div class="contact-item"><div><div class="contact-name" contenteditable="true">David Rousseau</div><div class="contact-role" contenteditable="true">Chef de la Securite</div></div><a href="tel:0606070809" class="contact-phone" contenteditable="true">06 06 07 08 09</a></div>
-<div class="contact-item"><div><div class="contact-name" contenteditable="true">Poste Central Securite</div><div class="contact-role" contenteditable="true">PC Securite</div></div><a href="tel:0607080910" class="contact-phone" contenteditable="true">06 07 08 09 10</a></div>
+<div class="card" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><h3>SECURITE</h3><div class="card-subtitle">Equipe de securite du festival</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="card-content"><div class="card-content-inner">
+<div class="contact-item"><div><div class="contact-name">David Rousseau</div><div class="contact-role">Chef de la Securite</div></div><a href="tel:0606070809" class="contact-phone">06 06 07 08 09</a></div>
+<div class="contact-item"><div><div class="contact-name">Poste Central Securite</div><div class="contact-role">PC Securite</div></div><a href="tel:0607080910" class="contact-phone">06 07 08 09 10</a></div>
 </div></div>
 </div>
-<div class="card expanded" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><h3 contenteditable="true">SECOURS &amp; SANTE</h3><div class="card-subtitle" contenteditable="true">Equipe medicale et poste de secours</div></div><div class="card-actions">
-                <input type="color" class="card-color-btn" value="#e3944f" onchange="changeCardColor(this)" title="Changer la couleur">
-                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
-                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
-            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
-<div class="visibility-selector">
-                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
-                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
-                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
-            </div><div class="card-content"><div class="card-content-inner">
-<div class="contact-item"><div><div class="contact-name" contenteditable="true">Dr. Julie Laurent</div><div class="contact-role" contenteditable="true">Medecin du Festival</div></div><a href="tel:0608091011" class="contact-phone" contenteditable="true">06 08 09 10 11</a></div>
-<div class="contact-item"><div><div class="contact-name" contenteditable="true">Poste de Secours</div><div class="contact-role" contenteditable="true">Infirmerie</div></div><a href="tel:0609101112" class="contact-phone" contenteditable="true">06 09 10 11 12</a></div>
+<div class="card" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><h3>SECOURS &amp; SANTE</h3><div class="card-subtitle">Equipe medicale et poste de secours</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="card-content"><div class="card-content-inner">
+<div class="contact-item"><div><div class="contact-name">Dr. Julie Laurent</div><div class="contact-role">Medecin du Festival</div></div><a href="tel:0608091011" class="contact-phone">06 08 09 10 11</a></div>
+<div class="contact-item"><div><div class="contact-name">Poste de Secours</div><div class="contact-role">Infirmerie</div></div><a href="tel:0609101112" class="contact-phone">06 09 10 11 12</a></div>
 </div></div>
 </div>
-<div class="card expanded" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><h3 contenteditable="true">BILLETTERIE &amp; ACCUEIL</h3><div class="card-subtitle" contenteditable="true">Accueil et gestion des entrees</div></div><div class="card-actions">
-                <input type="color" class="card-color-btn" value="#e3944f" onchange="changeCardColor(this)" title="Changer la couleur">
-                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
-                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
-            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
-<div class="visibility-selector">
-                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
-                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
-                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
-            </div><div class="card-content"><div class="card-content-inner">
-<div class="contact-item"><div><div class="contact-name" contenteditable="true">Emma Dubois</div><div class="contact-role" contenteditable="true">Responsable Billetterie</div></div><a href="tel:0610111213" class="contact-phone" contenteditable="true">06 10 11 12 13</a></div>
-<div class="contact-item"><div><div class="contact-name" contenteditable="true">Pierre Leroy</div><div class="contact-role" contenteditable="true">Accreditations</div></div><a href="tel:0611121314" class="contact-phone" contenteditable="true">06 11 12 13 14</a></div>
+<div class="card" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><h3>BILLETTERIE &amp; ACCUEIL</h3><div class="card-subtitle">Accueil et gestion des entrees</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="card-content"><div class="card-content-inner">
+<div class="contact-item"><div><div class="contact-name">Emma Dubois</div><div class="contact-role">Responsable Billetterie</div></div><a href="tel:0610111213" class="contact-phone">06 10 11 12 13</a></div>
+<div class="contact-item"><div><div class="contact-name">Pierre Leroy</div><div class="contact-role">Accreditations</div></div><a href="tel:0611121314" class="contact-phone">06 11 12 13 14</a></div>
 </div></div>
 </div>
-<div class="card expanded" onclick="toggleCard(this)">
-<div class="card-header"><div class="card-header-left"><h3 contenteditable="true">RESTAURATION &amp; LOGISTIQUE</h3><div class="card-subtitle" contenteditable="true">Catering et logistique generale</div></div><div class="card-actions">
-                <input type="color" class="card-color-btn" value="#e3944f" onchange="changeCardColor(this)" title="Changer la couleur">
-                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
-                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
-            </div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
-<div class="visibility-selector">
-                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
-                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
-                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
-            </div><div class="card-content"><div class="card-content-inner">
-<div class="contact-item"><div><div class="contact-name" contenteditable="true">Camille Girard</div><div class="contact-role" contenteditable="true">Responsable Restauration</div></div><a href="tel:0612131415" class="contact-phone" contenteditable="true">06 12 13 14 15</a></div>
-<div class="contact-item"><div><div class="contact-name" contenteditable="true">Nicolas Simon</div><div class="contact-role" contenteditable="true">Logistique</div></div><a href="tel:0613141516" class="contact-phone" contenteditable="true">06 13 14 15 16</a></div>
+<div class="card" onclick="toggleCard(this)">
+<div class="card-header"><div class="card-header-left"><h3>RESTAURATION &amp; LOGISTIQUE</h3><div class="card-subtitle">Catering et logistique generale</div></div><span class="expand-icon">▼</span><button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button><span class="vis-indicator" title="Visible par tous">👥</span></div>
+<div class="card-content"><div class="card-content-inner">
+<div class="contact-item"><div><div class="contact-name">Camille Girard</div><div class="contact-role">Responsable Restauration</div></div><a href="tel:0612131415" class="contact-phone">06 12 13 14 15</a></div>
+<div class="contact-item"><div><div class="contact-name">Nicolas Simon</div><div class="contact-role">Logistique</div></div><a href="tel:0613141516" class="contact-phone">06 13 14 15 16</a></div>
 </div></div>
 </div>
 </div>
@@ -650,28 +410,20 @@ body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--text
 <div class="tab-pane" id="documents">
 <input type="text" class="search-bar" id="searchDocuments" placeholder="Rechercher un document..." onkeyup="filterDocuments()">
 <div id="documentsList">
-<div class="card document-card expanded">
+<div class="card document-card">
 <div class="card-header" onclick="toggleCard(this.parentElement)">
 <div class="card-header-left">
-<span class="category-tag" contenteditable="true">DOCUMENT</span>
-<h3 contenteditable="true">Plan du site</h3>
-<div class="card-subtitle" contenteditable="true">Carte détaillée du festival</div>
+<span class="category-tag">DOCUMENT</span>
+<h3>Plan du site</h3>
+<div class="card-subtitle">Carte détaillée du festival</div>
 </div>
-<div class="card-actions">
-                <input type="color" class="card-color-btn" value="#e3944f" onchange="changeCardColor(this)" title="Changer la couleur">
-                <button class="card-move-btn" onclick="moveCard(this,'up')" title="Monter">▲</button>
-                <button class="card-move-btn" onclick="moveCard(this,'down')" title="Descendre">▼</button>
-            </div><span class="expand-icon">▼</span>
+<span class="expand-icon">▼</span>
 <button class="card-delete-btn" onclick="event.stopPropagation(); deleteCard(this)">Supprimer</button>
 <span class="vis-indicator" title="Visible par tous">👥</span></div>
-<div class="visibility-selector">
-                <button class="vis-btn vis-benevoles " onclick="setVisibility(this,'benevoles')">Bénévoles</button>
-                <button class="vis-btn vis-responsables " onclick="setVisibility(this,'responsables')">Responsables</button>
-                <button class="vis-btn vis-tous active-vis" onclick="setVisibility(this,'tous')">Tous</button>
-            </div><div class="card-content">
+<div class="card-content">
 <div class="card-content-inner">
 <div class="document-link-section">
-<input type="text" class="document-input" placeholder="Nom du fichier (ex: plan-site.pdf)" value="plan-site.pdf">
+<input type="text" class="document-input" placeholder="Nom du fichier (ex: plan-site.pdf)" value="plan-site.pdf" readonly="readonly">
 <button class="document-open-btn" onclick="openDocument(this)">📄 Ouvrir</button>
 </div>
 <p class="document-info">Placez le fichier avec ce nom exact dans votre dépôt GitHub</p>
@@ -874,9 +626,9 @@ function logout(){
     if(isEditMode)cancelEdit();
 }
 
-function switchTab(t){
+function switchTab(t,el){
     document.querySelectorAll('.tab').forEach(tab=>tab.classList.remove('active'));
-    event.target.classList.add('active');
+    if(el) el.classList.add('active');
     document.querySelectorAll('.tab-pane').forEach(pane=>pane.classList.remove('active'));
     document.getElementById(t).classList.add('active');
 }
@@ -976,14 +728,9 @@ function toggleDarkMode(){
     document.body.classList.toggle('light-mode');
     const isLight=document.body.classList.contains('light-mode');
     localStorage.setItem('theme',isLight?'light':'dark');
-    
-    // Changer les logos selon le mode
-    const loginLogo=document.getElementById('loginLogo');
-    const headerLogo=document.getElementById('headerLogo');
     const logoSrc=isLight?'LOGO_PLW_BLACK.png':'LOGO_PLW_WHITE.png';
-    
-    if(loginLogo)loginLogo.src=logoSrc;
-    if(headerLogo)headerLogo.src=logoSrc;
+    const headerLogo=document.getElementById('headerLogo');
+    if(headerLogo) headerLogo.src=logoSrc;
 }
 
 function makeEditable(){
@@ -1114,47 +861,90 @@ function exportHTML(){
     };
     localStorage.setItem('festivalData',JSON.stringify(data));
 
-    // === EXPORT PLWapp.html ===
-    const plwappHTML=document.documentElement.outerHTML;
-    const blob1=new Blob([plwappHTML],{type:'text/html;charset=utf-8'});
+    const mainApp=document.getElementById('mainApp');
+    const wasEditMode=isEditMode;
+
+    // === EXPORT PLWapp.html (état actuel propre, mode édition désactivé) ===
+    // On capture d'abord après avoir nettoyé l'UI
+    mainApp.classList.remove('edit-mode');
+    document.querySelectorAll('.card.expanded').forEach(c=>c.classList.remove('expanded'));
+    document.querySelectorAll('.card-actions,.step-actions,.add-step-btn,.visibility-selector').forEach(el=>el.remove());
+    document.querySelectorAll('.document-input').forEach(el=>el.setAttribute('readonly','readonly'));
+    document.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
+    // Cacher les boutons d'édition
+    document.getElementById('colorBtn').style.display='none';
+    document.getElementById('exportBtn').style.display='none';
+    document.getElementById('editBtn').classList.remove('active');
+    document.getElementById('editBtn').textContent='MODE EDITION';
+
+    const cleanHTML=document.documentElement.outerHTML;
+
+    // Télécharger PLWapp.html
+    const blob1=new Blob([cleanHTML],{type:'text/html;charset=utf-8'});
     const url1=URL.createObjectURL(blob1);
     const a1=document.createElement('a');
     a1.href=url1; a1.download='PLWapp.html'; a1.click();
     URL.revokeObjectURL(url1);
 
-    // === EXPORT PLForce.html (sans header) ===
-    setTimeout(()=>{
-        // Créer un DOM temporaire
-        const parser=new DOMParser();
-        const doc2=parser.parseFromString(plwappHTML,'text/html');
+    // Restaurer le mode édition dans l'interface utilisateur
+    if(wasEditMode){
+        mainApp.classList.add('edit-mode');
+        document.getElementById('colorBtn').style.display='inline-block';
+        document.getElementById('exportBtn').style.display='inline-block';
+        document.getElementById('editBtn').classList.add('active');
+        document.getElementById('editBtn').textContent='MODE EDITION ACTIF';
+        makeEditable();
+    }
 
-        // Supprimer le header
+    // === EXPORT PLForce.html (sans header, sans mode édition) ===
+    setTimeout(()=>{
+        const parser=new DOMParser();
+        const doc2=parser.parseFromString(cleanHTML,'text/html');
+
+        // Supprimer le header entier
         const hdr=doc2.querySelector('.app-header');
         if(hdr) hdr.remove();
 
-        // Ajouter auth automatique PLForce au chargement
+        // Supprimer le bouton MODE EDITION et les edit-actions
+        const editBtn=doc2.getElementById('editBtn');
+        if(editBtn) editBtn.remove();
+        const colorBtn=doc2.getElementById('colorBtn');
+        if(colorBtn) colorBtn.remove();
+        const exportBtn=doc2.getElementById('exportBtn');
+        if(exportBtn) exportBtn.remove();
+        const editActions=doc2.querySelector('.edit-actions');
+        if(editActions) editActions.remove();
+        const colorOverlay=doc2.getElementById('colorOverlay');
+        if(colorOverlay) colorOverlay.remove();
+        const colorPicker=doc2.getElementById('colorPicker');
+        if(colorPicker) colorPicker.remove();
+
+        // Supprimer les boutons de suppression et d'ajout des vignettes
+        doc2.querySelectorAll('.card-delete-btn,.add-card-btn').forEach(el=>el.remove());
+
+        // Ajouter auth automatique PLForce + bloquer le mode édition
         const forceScript=doc2.createElement('script');
-        forceScript.textContent=`
-window.addEventListener('load',function(){
-    var p=new URLSearchParams(window.location.search);
-    var k=p.get('key');
-    if(k==='021526'){
-        var app=document.getElementById('mainApp');
-        if(app){app.classList.add('active');app.style.display='flex';}
-        var screen=document.getElementById('digicodeScreen');
-        if(screen) screen.style.display='none';
-        setTimeout(function(){applyRoleVisibility('responsable');},50);
-    }
-});`;
+        forceScript.textContent=[
+            'window.addEventListener("load",function(){',
+            '  var p=new URLSearchParams(window.location.search);',
+            '  var k=p.get("key");',
+            '  if(k==="021526"){',
+            '    var app=document.getElementById("mainApp");',
+            '    if(app){app.classList.add("active");app.style.display="flex";}',
+            '    var screen=document.getElementById("digicodeScreen");',
+            '    if(screen) screen.style.display="none";',
+            '    setTimeout(function(){applyRoleVisibility("responsable");},50);',
+            '  }',
+            '});',
+            'function toggleEditMode(){ return false; }'
+        ].join('\n');
         doc2.head.appendChild(forceScript);
 
-        // Modifier le titre
+        // Titre et styles
         const t=doc2.querySelector('title');
-        if(t) t.textContent="PLForce";
-
-        // Ajuster tab-content height sans header
+        if(t) t.textContent='PLForce';
         const style=doc2.createElement('style');
-        style.textContent='.tab-content{height:calc(100vh - 55px)!important}.main-app.active{display:flex!important}';
+        style.textContent='.tab-content{height:calc(100vh - 55px)!important}.main-app.active{display:flex!important}.edit-btn,.logout-btn{display:none!important}';
         doc2.head.appendChild(style);
 
         const plforceHTML='<!DOCTYPE html>\n'+doc2.documentElement.outerHTML;
@@ -1164,7 +954,7 @@ window.addEventListener('load',function(){
         a2.href=url2; a2.download='PLForce.html'; a2.click();
         URL.revokeObjectURL(url2);
 
-        alert('✅ Export terminé !\n\n📥 Fichiers générés :\n• PLWapp.html (app complète)\n• PLForce.html (sans header, pour embedding)\n\n📝 Uploadez les deux sur GitHub !');
+        alert('✅ Export terminé !\n\n📥 Fichiers générés :\n• PLWapp.html (app complète)\n• PLForce.html (lecture seule, pour embedding)\n\n📝 Uploadez les deux sur GitHub !');
     },500);
 }
 
@@ -1439,17 +1229,14 @@ window.addEventListener('load',()=>{
     const urlParams=new URLSearchParams(window.location.search);
     const urlKey=urlParams.get('key');
     const urlRole=urlParams.get('role')||'benevole';
-    if(urlKey&&(urlKey==='072026'||urlKey==='082026'||urlKey==='041986')){
-        const role=urlKey==='041986'?'responsable':urlRole;
+    const INTERNAL_EDIT_TOKEN='plw_edit_9x4k2m';
+    if(urlKey&&(urlKey==='072026'||urlKey==='082026'||urlKey===INTERNAL_EDIT_TOKEN)){
+        const role=urlKey===INTERNAL_EDIT_TOKEN?'responsable':urlRole;
         sessionStorage.setItem('authenticated','true');
         sessionStorage.setItem('role',role);
-        if(urlKey==='041986') sessionStorage.setItem('editMode','true');
-        // Nettoyer l'URL
+        if(urlKey===INTERNAL_EDIT_TOKEN) sessionStorage.setItem('editMode','true');
         window.history.replaceState({},'',window.location.pathname);
     }
-
-    // === CONNEXION AUTOMATIQUE PAR URL (pour intégrations externes) ===
-    // Géré par le bloc ajouté au début du load
     
     const savedTheme=localStorage.getItem('theme');
     if(savedTheme==='light'){
@@ -1494,7 +1281,7 @@ window.addEventListener('load',()=>{
         setTimeout(()=>applyRoleVisibility(savedRole), 50);
         
         // Activer le mode édition si demandé via URL
-        if(urlKey===EDIT_PIN && !isEditMode){
+        if(urlKey==='plw_edit_9x4k2m' && !isEditMode){
             setTimeout(()=>toggleEditMode(true), 100);
         }
     }
