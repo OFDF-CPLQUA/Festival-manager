@@ -1,0 +1,568 @@
+<html lang="fr" class="light"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>PLEIN-LES-W'APP</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PLW'APP">
+<meta name="theme-color" content="#1B7A3D">
+<link rel="apple-touch-icon" sizes="180x180" href="data:image/png;base64,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">
+<link rel="icon" type="image/png" href="data:image/png;base64,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">
+<style>
+:root {
+  --bg: #0d1310; --surface: #14201a; --surface2: #1c2b22;
+  --border: #2c4536; --text: #f2ede1; --muted: #9aab9d;
+  --accent: #1B7A3D; --danger: #C8102E; --success: #1B7A3D;
+  --accent2: #F2C230;
+  --reggae-green: #1B7A3D; --reggae-yellow: #F2C230; --reggae-red: #C8102E;
+  --mono: "IBM Plex Mono", "Segoe UI", monospace;
+  --sans: "Bebas Neue", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+/* MODE CLAIR */
+body.light {
+  --bg: #F4F1E6; --surface: #ffffff; --surface2: #F4F1E6;
+  --border: #DDD6C0; --text: #1a1a1a; --muted: #6b6b6b;
+  --accent: #1B7A3D; --danger: #C8102E; --success: #1B7A3D;
+  --accent2: #B8890A;
+}
+html.light { background: #F4F1E6; }
+* { box-sizing: border-box; margin: 0; padding: 0; touch-action: manipulation; }
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--sans); }
+
+/* HEADER */
+header {
+  background: var(--surface); border-bottom: 6px solid transparent;
+  border-image: linear-gradient(to right, var(--reggae-green) 0 33.33%, var(--reggae-yellow) 33.33% 66.66%, var(--reggae-red) 66.66% 100%) 1;
+  padding: 0 16px; height: 64px; display: flex; align-items: center; gap: 10px;
+  position: fixed; top: env(safe-area-inset-top); left: 0; right: 0; z-index: 200;
+}
+.ch-cross { width: 30px; height: 32px; flex-shrink: 0; }
+.ch-cross svg { width: 30px; height: 32px; display: block; }
+header .logo { font-family: var(--sans); font-weight: 600; font-size: 19px; color: var(--text); }
+header .logo-sep { color: var(--border); font-weight: 300; font-size: 18px; margin: 0 2px; }
+header .app-subtitle { font-family: var(--sans); font-size: 13px; color: var(--muted); }
+.header-right { margin-left: auto; display: flex; gap: 6px; }
+.icon-btn { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; color: var(--text); cursor: pointer; background: none; border: none; border-radius: 50%; padding: 0; flex-shrink: 0; transition: background .12s; }
+.icon-btn:hover { background: var(--bg); }
+.icon-btn svg { width: 19px; height: 19px; display: block; }
+.btn-outline { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border: none; color: var(--text); background: none; border-radius: 50%; cursor: pointer; transition: background .12s; }
+.btn-outline:hover { background: var(--bg); }
+
+/* LOGIN */
+.login {
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  padding-top: calc(70px + env(safe-area-inset-top));
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--bg); overflow-y: auto;
+}
+.login-box {
+  display: flex; flex-direction: column; align-items: center; gap: 20px;
+  width: min(340px, 90vw); padding: 36px 28px; margin: 20px 0;
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+}
+.login-title { font-family: var(--sans); font-weight: 700; font-size: 24px; color: var(--text); letter-spacing: .5px; }
+.login-sub   { font-family: var(--sans); font-size: 12px; color: var(--accent); letter-spacing: 2px; margin-top: -12px; font-weight: 600; text-transform: uppercase; }
+.pin-dots { display: flex; gap: 12px; justify-content: center; }
+.pin-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); background: transparent; transition: all .15s; }
+.pin-dot.filled { background: var(--accent); border-color: var(--accent); }
+.pin-dot.error  { background: var(--danger); border-color: var(--danger); }
+.pin-error { font-family: var(--sans); font-size: 12px; font-weight: 600; color: var(--danger); min-height: 16px; letter-spacing: .5px; }
+.numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 220px; }
+.numpad-btn {
+  background: var(--surface2); border: 1.5px solid var(--border); border-radius: 8px;
+  color: var(--text); font-family: var(--sans); font-size: 20px; font-weight: 600;
+  padding: 14px; cursor: pointer; transition: all .12s; text-align: center;
+}
+.numpad-btn:hover { border-color: var(--accent2); }
+.numpad-btn:active { transform: scale(.94); }
+.numpad-btn.del { font-size: 16px; color: var(--muted); }
+.login-back { background: none; border: none; color: var(--accent2); font-family: var(--sans); font-size: 12px; font-weight: 600; cursor: pointer; letter-spacing: .5px; }
+
+/* SÉLECTION DU CANTON */
+.canton-screen {
+  position: fixed; inset: 0; display: flex; align-items: flex-start; justify-content: center;
+  padding-top: calc(90px + env(safe-area-inset-top)); padding-bottom: 40px;
+  background: var(--bg); overflow-y: auto;
+}
+.canton-box { width: min(420px, 92vw); }
+.canton-title { font-size: 21px; font-weight: 700; color: var(--text); margin-bottom: 4px; text-align: center; }
+.canton-subtitle { font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 22px; }
+.canton-list { display: flex; flex-direction: column; gap: 10px; }
+.canton-row {
+  display: flex; align-items: center; gap: 14px; padding: 16px 18px;
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px;
+  cursor: pointer; transition: all .12s; box-shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+.canton-row:hover { border-color: var(--accent); }
+.canton-row:active { transform: scale(.99); }
+.canton-flag {
+  width: 34px; height: 34px; border-radius: 6px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--accent); color: #fff; font-weight: 700; font-size: 12px; letter-spacing: .5px;
+}
+.canton-name { flex: 1; font-size: 15px; font-weight: 600; color: var(--text); }
+.canton-arrow { color: var(--muted); font-size: 16px; }
+.canton-row.disabled { cursor: default; opacity: .55; }
+.canton-row.disabled:hover { border-color: var(--border); }
+.canton-row.disabled .canton-flag { background: var(--muted); }
+.canton-soon {
+  font-size: 9px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
+  color: var(--muted); background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 4px; padding: 3px 7px; flex-shrink: 0;
+}
+
+/* EDITOR */
+.editor-overlay {
+  display: none; position: fixed; inset: 0; background: var(--bg);
+  flex-direction: column; z-index: 500;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.editor-overlay.show { display: flex; }
+.ed-header {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 14px 20px; display: flex; align-items: center; gap: 12px;
+}
+.ed-header h2 { font-family: var(--sans); font-size: 14px; color: var(--accent); letter-spacing: 1px; flex: 1; font-weight: 700; }
+.ed-close { background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; padding: 4px; }
+.ed-body { flex: 1; padding: 28px 24px; display: flex; flex-direction: column; gap: 20px; align-items: center; justify-content: center; }
+.ed-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; padding: 24px; width: 100%; max-width: 380px; }
+.ed-card h3 { font-family: var(--sans); font-size: 12px; color: var(--muted); letter-spacing: 1.5px; margin-bottom: 16px; text-transform: uppercase; }
+.ed-input {
+  width: 100%; background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: 6px; color: var(--text); font-family: var(--sans);
+  font-size: 18px; padding: 10px 14px; outline: none; letter-spacing: 8px;
+  text-align: center;
+}
+.ed-input:focus { border-color: var(--accent2); }
+.ed-msg { font-family: var(--sans); font-size: 12px; font-weight: 600; min-height: 16px; margin-top: 8px; text-align: center; }
+.ed-btn {
+  width: 100%; margin-top: 14px; padding: 12px;
+  background: var(--accent); border: none; border-radius: 8px;
+  color: #fff; font-family: var(--sans); font-size: 13px;
+  font-weight: 700; letter-spacing: 1px; cursor: pointer;
+}
+.ed-btn.secondary {
+  background: var(--surface2); border: 1.5px solid var(--border);
+  color: var(--text); margin-top: 8px;
+}
+
+/* EDITOR DIGICODE */
+.ed-pin-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,.7);
+  z-index: 600; align-items: center; justify-content: center;
+}
+.ed-pin-overlay.show { display: flex; }
+
+/* COPYRIGHT */
+.copyright {
+  position: fixed; bottom: calc(8px + env(safe-area-inset-bottom));
+  left: 0; right: 0; text-align: center;
+  font-family: var(--sans); font-size: 9px; color: var(--muted); opacity: .7;
+  letter-spacing: 1px; pointer-events: none;
+}
+</style>
+</head>
+<body class="light">
+
+<header>
+  <div class="ch-cross">
+    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="16" cy="16" r="15" fill="none" stroke="var(--border)" stroke-width="1.5"/>
+      <path d="M16 1 A15 15 0 0 1 29.9 20.5 L2.1 20.5 A15 15 0 0 1 16 1 Z" fill="#1B7A3D"/>
+      <path d="M2.1 20.5 L29.9 20.5 A15 15 0 0 1 24.5 28.5 L7.5 28.5 A15 15 0 0 1 2.1 20.5 Z" fill="#F2C230"/>
+      <path d="M7.5 28.5 L24.5 28.5 A15 15 0 0 1 16 31 A15 15 0 0 1 7.5 28.5 Z" fill="#C8102E"/>
+    </svg>
+  </div>
+  <span class="logo">PLEIN-LES-W'APP</span>
+  <span class="logo-sep">///</span>
+  <span class="app-subtitle">Application d'informations</span>
+  <div class="header-right">
+    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="Mode clair/sombre"></button>
+    <button class="btn-outline" onclick="refreshAndReset()" title="Rafraîchir">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a9 9 0 11-2.6-6.4"/><path d="M21 4v5h-5"/></svg>
+    </button>
+    <button class="btn-outline" id="editorBtn" onclick="openEditorPin()" title="Éditeur">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>
+    </button>
+    <button class="icon-btn" onclick="window.location.href='mailto:contact@pleinleswatts.ch?subject=PLW%27APP%20-%20Probl%C3%A8me%20rencontr%C3%A9'" title="Signaler un problème par e-mail">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9.3 9a2.7 2.7 0 015.2.9c0 1.6-2.2 2-2.5 3.4"/><circle cx="12" cy="16.2" r=".6" fill="currentColor" stroke="none"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- ── SÉLECTION DU RÔLE ── -->
+<div class="canton-screen" id="cantonScreen">
+  <div class="canton-box">
+    <div class="canton-title">Sélection du rôle</div>
+    <div class="canton-subtitle">Choisissez votre rôle pour accéder à l'application</div>
+    <div class="canton-list" id="cantonList"></div>
+  </div>
+</div>
+
+<!-- ── LOGIN ── -->
+<div class="login" id="loginScreen" style="display:none;">
+  <div class="login-box">
+    <button class="login-back" onclick="backToCantons()">← Changer de rôle</button>
+    <div class="login-title" id="loginCantonName">PLEIN-LES-W'APP</div>
+    <div class="login-sub">Code d'accès</div>
+    <div class="pin-dots" id="pinDots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+      <div class="pin-dot" id="pd4"></div>
+      <div class="pin-dot" id="pd5"></div>
+    </div>
+    <div class="pin-error" id="pinError"></div>
+    <div class="numpad">
+      <button class="numpad-btn" onclick="pinPress('1')">1</button>
+      <button class="numpad-btn" onclick="pinPress('2')">2</button>
+      <button class="numpad-btn" onclick="pinPress('3')">3</button>
+      <button class="numpad-btn" onclick="pinPress('4')">4</button>
+      <button class="numpad-btn" onclick="pinPress('5')">5</button>
+      <button class="numpad-btn" onclick="pinPress('6')">6</button>
+      <button class="numpad-btn" onclick="pinPress('7')">7</button>
+      <button class="numpad-btn" onclick="pinPress('8')">8</button>
+      <button class="numpad-btn" onclick="pinPress('9')">9</button>
+      <button class="numpad-btn" style="visibility:hidden;"></button>
+      <button class="numpad-btn" onclick="pinPress('0')">0</button>
+      <button class="numpad-btn del" onclick="pinDel()">⌫</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── EDITOR PIN ── -->
+<div class="ed-pin-overlay" id="edPinOverlay">
+  <div class="login-box">
+    <div class="login-title" style="font-size:18px;">ÉDITEUR</div>
+    <div class="login-sub">CODE D'ACCÈS</div>
+    <div class="pin-dots" id="edPinDots">
+      <div class="pin-dot" id="epd0"></div>
+      <div class="pin-dot" id="epd1"></div>
+      <div class="pin-dot" id="epd2"></div>
+      <div class="pin-dot" id="epd3"></div>
+      <div class="pin-dot" id="epd4"></div>
+      <div class="pin-dot" id="epd5"></div>
+    </div>
+    <div class="pin-error" id="edPinError"></div>
+    <div class="numpad">
+      <button class="numpad-btn" onclick="edPinPress('1')">1</button>
+      <button class="numpad-btn" onclick="edPinPress('2')">2</button>
+      <button class="numpad-btn" onclick="edPinPress('3')">3</button>
+      <button class="numpad-btn" onclick="edPinPress('4')">4</button>
+      <button class="numpad-btn" onclick="edPinPress('5')">5</button>
+      <button class="numpad-btn" onclick="edPinPress('6')">6</button>
+      <button class="numpad-btn" onclick="edPinPress('7')">7</button>
+      <button class="numpad-btn" onclick="edPinPress('8')">8</button>
+      <button class="numpad-btn" onclick="edPinPress('9')">9</button>
+      <button class="numpad-btn" style="visibility:hidden;"></button>
+      <button class="numpad-btn" onclick="edPinPress('0')">0</button>
+      <button class="numpad-btn del" onclick="edPinDel()">⌫</button>
+    </div>
+    <button onclick="closeEditorPin()" style="background:none;border:none;color:var(--muted);font-family:var(--mono);font-size:11px;cursor:pointer;margin-top:4px;">Annuler</button>
+  </div>
+</div>
+
+<!-- ── EDITOR ── -->
+<div class="editor-overlay" id="editorOverlay">
+  <div class="ed-header">
+    <h2>ÉDITEUR — INDEX</h2>
+    <button class="ed-close" onclick="closeEditor()">✕</button>
+  </div>
+  <div class="ed-body">
+    <div class="ed-card">
+      <h3>CODE BÉNÉVOLE (6 CHIFFRES)</h3>
+      <input type="number" id="newPinBV1" class="ed-input" placeholder="······" maxlength="6">
+      <input type="number" id="newPinBV2" class="ed-input" placeholder="······" maxlength="6" style="margin-top:8px;">
+      <div class="ed-msg" id="pinMsgBV"></div>
+      <button class="ed-btn" onclick="saveNewPin('BV')">CONFIRMER</button>
+    </div>
+    <div class="ed-card">
+      <h3>CODE RESPONSABLE (6 CHIFFRES)</h3>
+      <input type="number" id="newPinRS1" class="ed-input" placeholder="······" maxlength="6">
+      <input type="number" id="newPinRS2" class="ed-input" placeholder="······" maxlength="6" style="margin-top:8px;">
+      <div class="ed-msg" id="pinMsgRS"></div>
+      <button class="ed-btn" onclick="saveNewPin('RS')">CONFIRMER</button>
+    </div>
+    <div class="ed-card">
+      <h3>EXPORTER INDEX.HTML</h3>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Génère un nouveau index.html avec le code d'accès mis à jour à uploader sur GitHub.</p>
+      <button class="ed-btn secondary" onclick="exportIndex()">📤 EXPORTER INDEX</button>
+    </div>
+  </div>
+</div>
+
+<div class="copyright">© 2026 Quinodoz Adrien — QuA95334</div>
+
+<script>
+// ── RÔLES ──
+const ROLES = [
+  { code: 'BV', name: 'Bénévole',    file: 'PLWapp.html' },
+  { code: 'RS', name: 'Responsable', file: 'PLWapp.html' },
+];
+let selectedRole = null;
+
+function renderCantons() {
+  const list = document.getElementById('cantonList');
+  list.innerHTML = ROLES.map(r => {
+    return `<div class="canton-row" onclick="selectCanton('${r.code}')">
+      <div class="canton-flag">${r.code}</div>
+      <div class="canton-name">${r.name}</div>
+      <div class="canton-arrow">›</div>
+    </div>`;
+  }).join('');
+}
+renderCantons();
+
+function selectCanton(code) {
+  const r = ROLES.find(x => x.code === code);
+  if (!r) return;
+  selectedRole = code;
+  document.getElementById('cantonScreen').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginCantonName').textContent = r.name;
+  pinBuffer = '';
+  updateDots('pd', pinBuffer);
+  document.getElementById('pinError').textContent = '';
+}
+function backToCantons() {
+  selectedRole = null;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('cantonScreen').style.display = 'flex';
+}
+
+// ── CODES ──
+const DEFAULT_PIN_BV = '072026';
+const DEFAULT_PIN_RS = '125678';
+const DEFAULT_ED_PIN = '654321';
+
+function getPinBV() { return localStorage.getItem('plw_index_pin_bv') || DEFAULT_PIN_BV; }
+function getPinRS() { return localStorage.getItem('plw_index_pin_rs') || DEFAULT_PIN_RS; }
+function getEdPin() { return localStorage.getItem('plw_index_ed_pin') || DEFAULT_ED_PIN; }
+
+// ── LOGIN PIN ──
+let pinBuffer = '';
+
+function pinPress(d) {
+  if (pinBuffer.length >= 6) return;
+  pinBuffer += d;
+  updateDots('pd', pinBuffer);
+  if (pinBuffer.length === 6) setTimeout(checkPin, 120);
+}
+function pinDel() {
+  pinBuffer = pinBuffer.slice(0, -1);
+  updateDots('pd', pinBuffer);
+  document.getElementById('pinError').textContent = '';
+}
+function updateDots(prefix, buf) {
+  for (let i = 0; i < 6; i++) {
+    const d = document.getElementById(prefix + i);
+    d.classList.toggle('filled', i < buf.length);
+    d.classList.remove('error');
+  }
+}
+function checkPin() {
+  const r = ROLES.find(x => x.code === selectedRole);
+  const expected = selectedRole === 'BV' ? getPinBV() : getPinRS();
+  if (r && pinBuffer === expected) {
+    // Marquer la session comme autorisée puis rediriger vers l'app du rôle choisi
+    sessionStorage.setItem('plw_auth', '1');
+    sessionStorage.setItem('plw_role', selectedRole);
+    window.location.href = r.file;
+  } else {
+    for (let i = 0; i < 6; i++) {
+      const d = document.getElementById('pd' + i);
+      d.classList.remove('filled');
+      d.classList.add('error');
+    }
+    document.getElementById('pinError').textContent = 'Code incorrect';
+    setTimeout(() => {
+      pinBuffer = '';
+      updateDots('pd', pinBuffer);
+      document.getElementById('pinError').textContent = '';
+    }, 900);
+  }
+}
+
+// ── EDITOR PIN ──
+let edPinBuffer = '';
+
+function openEditorPin() {
+  edPinBuffer = '';
+  updateDots('epd', edPinBuffer);
+  document.getElementById('edPinError').textContent = '';
+  document.getElementById('edPinOverlay').classList.add('show');
+}
+function closeEditorPin() {
+  document.getElementById('edPinOverlay').classList.remove('show');
+  edPinBuffer = '';
+  updateDots('epd', edPinBuffer);
+}
+function edPinPress(d) {
+  if (edPinBuffer.length >= 6) return;
+  edPinBuffer += d;
+  updateDots('epd', edPinBuffer);
+  if (edPinBuffer.length === 6) setTimeout(checkEdPin, 120);
+}
+function edPinDel() {
+  edPinBuffer = edPinBuffer.slice(0, -1);
+  updateDots('epd', edPinBuffer);
+  document.getElementById('edPinError').textContent = '';
+}
+function checkEdPin() {
+  if (edPinBuffer === getEdPin()) {
+    closeEditorPin();
+    openEditor();
+  } else {
+    for (let i = 0; i < 6; i++) {
+      const d = document.getElementById('epd' + i);
+      d.classList.remove('filled');
+      d.classList.add('error');
+    }
+    document.getElementById('edPinError').textContent = 'Code incorrect';
+    setTimeout(() => {
+      edPinBuffer = '';
+      updateDots('epd', edPinBuffer);
+      document.getElementById('edPinError').textContent = '';
+    }, 900);
+  }
+}
+
+// ── EDITOR ──
+function openEditor() {
+  document.getElementById('newPinBV1').value = '';
+  document.getElementById('newPinBV2').value = '';
+  document.getElementById('newPinRS1').value = '';
+  document.getElementById('newPinRS2').value = '';
+  document.getElementById('pinMsgBV').textContent = '';
+  document.getElementById('pinMsgRS').textContent = '';
+  document.getElementById('editorOverlay').classList.add('show');
+}
+function closeEditor() {
+  document.getElementById('editorOverlay').classList.remove('show');
+}
+function saveNewPin(role) {
+  const suffix = role === 'BV' ? 'BV' : 'RS';
+  const p1 = document.getElementById('newPin' + suffix + '1').value;
+  const p2 = document.getElementById('newPin' + suffix + '2').value;
+  const msg = document.getElementById('pinMsg' + suffix);
+  if (!/^\d{6}$/.test(p1)) { msg.style.color = 'var(--danger)'; msg.textContent = 'Exactement 6 chiffres requis.'; return; }
+  if (p1 !== p2) { msg.style.color = 'var(--danger)'; msg.textContent = 'Les codes ne correspondent pas.'; return; }
+  localStorage.setItem(role === 'BV' ? 'plw_index_pin_bv' : 'plw_index_pin_rs', p1);
+  msg.style.color = 'var(--success)';
+  msg.textContent = '✓ Code mis à jour — pensez à exporter !';
+}
+
+// ── EXPORT INDEX ──
+function exportIndex() {
+  const currentPinBV = localStorage.getItem('plw_index_pin_bv') || DEFAULT_PIN_BV;
+  const currentPinRS = localStorage.getItem('plw_index_pin_rs') || DEFAULT_PIN_RS;
+
+  // Remettre les écrans dans leur état initial avant de capturer le HTML
+  const cantonEl = document.getElementById('cantonScreen');
+  const loginEl  = document.getElementById('loginScreen');
+  const savedCantonDisplay = cantonEl.style.display;
+  const savedLoginDisplay  = loginEl.style.display;
+  cantonEl.style.display = 'flex';
+  loginEl.style.display  = 'none';
+
+  const source = document.documentElement.outerHTML;
+
+  cantonEl.style.display = savedCantonDisplay;
+  loginEl.style.display  = savedLoginDisplay;
+
+  // Remplacer les DEFAULT_PIN dans le source exporté
+  const exported = source
+    .replace("const DEFAULT_PIN_BV = '" + DEFAULT_PIN_BV + "';", "const DEFAULT_PIN_BV = '" + currentPinBV + "';")
+    .replace("const DEFAULT_PIN_RS = '" + DEFAULT_PIN_RS + "';", "const DEFAULT_PIN_RS = '" + currentPinRS + "';");
+
+  // Vider les champs avant export
+  const clean = exported
+    .replace(/value="[0-9]*"/g, 'value=""')
+    .replace(/class="pin-dot"/g, 'class="pin-dot"')
+    .replace(/class="editor-overlay"/g, 'class="editor-overlay"')
+    .replace(/class="ed-pin-overlay"/g, 'class="ed-pin-overlay"');
+
+  const blob = new Blob([clean], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'index.html';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── REFRESH ──
+function refreshAndReset() {
+  if ('caches' in window) {
+    caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+  }
+  window.location.href = window.location.href.split('?')[0] + '?v=' + Date.now();
+}
+
+// ── THEME CLAIR / SOMBRE ──
+const SVG_MOON = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>';
+const SVG_SUN  = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>';
+function applyTheme(mode) {
+  if (mode === 'light') {
+    document.body.classList.add('light');
+    document.documentElement.classList.add('light');
+    const btn = document.getElementById('themeBtn');
+    if (btn) btn.innerHTML = SVG_MOON;
+  } else {
+    document.body.classList.remove('light');
+    document.documentElement.classList.remove('light');
+    const btn = document.getElementById('themeBtn');
+    if (btn) btn.innerHTML = SVG_SUN;
+  }
+}
+function toggleTheme() {
+  const isLight = document.body.classList.contains('light');
+  const newMode = isLight ? 'dark' : 'light';
+  localStorage.setItem('plw_theme', newMode);
+  applyTheme(newMode);
+}
+(function() {
+  const saved = localStorage.getItem('plw_theme');
+  applyTheme(saved || 'light');
+})();
+
+// Cacher le bouton éditeur sur iPhone et iPad
+(function() {
+  const ua = navigator.userAgent || navigator.vendor || window.opera;
+  const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+  const isIPadOS = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+  if (isIOS || isIPadOS) {
+    const btn = document.getElementById('editorBtn');
+    if (btn) btn.style.display = 'none';
+  }
+})();
+
+// ── RESET DIGICODE AU RETOUR NAVIGATEUR ──
+window.addEventListener('pageshow', function(e) {
+  if (e.persisted) {
+    pinBuffer = '';
+    updateDots('pd', pinBuffer);
+    document.getElementById('pinError').textContent = '';
+  }
+});
+
+// ── ANTI-ZOOM ──
+document.addEventListener('touchstart', function(e) {
+  if (e.touches.length > 1) e.preventDefault();
+}, { passive: false });
+let lastTap = 0;
+document.addEventListener('touchend', function(e) {
+  const tag = e.target.tagName;
+  if (tag === 'BUTTON' || tag === 'INPUT') return;
+  const now = Date.now();
+  if (now - lastTap < 300) e.preventDefault();
+  lastTap = now;
+}, { passive: false });
+</script>
+
+
+</body></html>
