@@ -122,12 +122,11 @@ header::before {
   background: var(--surface);
   z-index: 201;
 }
-.ch-cross { width: 30px; height: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.ch-cross svg { width: 30px; height: 32px; display: block; }
-.app-subtitle { font-family: var(--sans); font-weight: 400; font-size: 13px; color: var(--muted); white-space: nowrap; }
-.logo { font-family: var(--sans); font-weight: 600; font-size: 19px; color: var(--text); letter-spacing: 0; }
-.logo-sep { color: var(--border); font-weight: 300; font-family: var(--sans); font-size: 18px; margin: 0 6px; }
-@media (max-width: 640px) { .app-subtitle, .logo-sep { display: none; } }
+.header-center {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  display: flex; align-items: center; white-space: nowrap; pointer-events: none;
+}
+.logo { font-family: var(--sans); font-weight: 700; font-size: 27px; color: var(--text); letter-spacing: .5px; }
 .icon-btn { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; color: var(--text); cursor: pointer; background: none; border: none; border-radius: 50%; padding: 0; flex-shrink: 0; transition: background .12s; }
 .icon-btn:hover { background: var(--bg); }
 .icon-btn svg { width: 19px; height: 19px; display: block; }
@@ -553,13 +552,8 @@ body:not(.light) .btn-save { color: #000; }
   main > *:not(.welcome) { padding: 12px 8px; }
   
   .logo {
-    font-size: 16px;
-    letter-spacing: 2px;
-  }
-  
-  .logo-sep {
-    font-size: 14px;
-    margin: 0 4px;
+    font-size: 20px;
+    letter-spacing: 1px;
   }
   
   .page-tab {
@@ -589,26 +583,16 @@ body:not(.light) .btn-save { color: #000; }
 }
 
 /* ── MODE EMBED (variantes *FC, sans header ni digicode) ── */
-body.embed-fc header { display: none !important; }
-body.embed-fc .layout { padding-top: 0 !important; }
-body.embed-fc main { height: calc(100dvh - env(safe-area-inset-top)) !important; }
+
 </style>
 </head>
 <body class="light embed-fc">
 
 <header>
-  <button class="menu-toggle" id="menuToggleBtn" onclick="toggleMenu()"><span id="menuToggleIcon">☰</span></button>
-  <div class="ch-cross">
-    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="16" cy="16" r="15" fill="none" stroke="var(--border)" stroke-width="1.5"></circle>
-      <path d="M16 1 A15 15 0 0 1 29.9 20.5 L2.1 20.5 A15 15 0 0 1 16 1 Z" fill="#1B7A3D"></path>
-      <path d="M2.1 20.5 L29.9 20.5 A15 15 0 0 1 24.5 28.5 L7.5 28.5 A15 15 0 0 1 2.1 20.5 Z" fill="#F2C230"></path>
-      <path d="M7.5 28.5 L24.5 28.5 A15 15 0 0 1 16 31 A15 15 0 0 1 7.5 28.5 Z" fill="#C8102E"></path>
-    </svg>
+  <button class="menu-toggle" id="menuToggleBtn" onclick="toggleMenu()"><span id="menuToggleIcon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></span></button>
+  <div class="header-center">
+    <span class="logo">PLEIN-LES-W'APP</span>
   </div>
-  <span class="logo">PLEIN-LES-W'APP</span>
-  <span class="logo-sep">///</span>
-  <span class="app-subtitle">Application d'informations</span>
   <div class="header-right">
     <div class="header-actions" id="headerActions">
       <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="Passer en mode sombre"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg></button>
@@ -845,7 +829,7 @@ function getWelcomeHTML() {
   }
 
   const html = '<div>'
-    + '<h1 id="welcomeLogo" class="proc-title">Choix des annexes</h1>'
+    + '<h1 id="welcomeLogo" class="proc-title">' + esc(currentPage) + '</h1>'
     + rows
     + refRows
     + '</div>';
@@ -998,7 +982,7 @@ const copyTexts = {};
 let navPath = []; // [{node, label}]
 let annexeHistory = []; // pile des annexes visitées [{annexeId, navPath}]
 let editorAnnexeId = null;
-let editorActivePage = 'Informations générales';
+let editorActivePage = (appData.pages && appData.pages[0]) || 'Informations générales';
 
 function saveChecked() { localStorage.setItem('plw_checked', JSON.stringify(checked)); }
 
@@ -1579,7 +1563,7 @@ function goSearch(annId, pathStr) {
 // ================================================================
 let sidebarPinned = false;
 let sidebarHoverTimer = null;
-const SVG_MENU_HAMBURGER = '☰';
+const SVG_MENU_HAMBURGER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
 function setMenuToggleIcon(isOpen) {
   const el = document.getElementById('menuToggleIcon');
   if (el) el.innerHTML = isOpen ? SVG_CLOSE_X : SVG_MENU_HAMBURGER;
@@ -2984,7 +2968,7 @@ function exportFile() {
 
   // ── Exporter la version FC (embed, sans header ni digicode — pour iframe) ──
   const fcHTML = appHTML
-    .replace('const EMBED_MODE = false;', 'const EMBED_MODE = true;')
+    .replace('const EMBED_MODE = true;', 'const EMBED_MODE = true;')
     .replace('<body class="light">', '<body class="light embed-fc">');
   setTimeout(() => download(fcHTML, 'PLForce.html', 'text/html;charset=utf-8'), 150);
 
@@ -3025,7 +3009,7 @@ function downloadBlob(content, type, filename) {
 // ================================================================
 // PAGES — POL GE / POL VD / DOGA
 // ================================================================
-let currentPage = 'Informations générales';
+let currentPage = (appData.pages && appData.pages[0]) || 'Informations générales';
 
 function renderPageTabs() {
   const container = document.getElementById('pageTabs');
