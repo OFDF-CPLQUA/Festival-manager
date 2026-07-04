@@ -81,10 +81,10 @@ body.light .codinf-copy-btn { color:#fff; }
 
 /* MODE CLAIR */
 :root.light, body.light {
-  --bg: #EFEFEF;
+  --bg: #F4F1E6;
   --surface: #ffffff;
-  --surface2: #EFEFEF;
-  --border: #D5D5D5;
+  --surface2: #F4F1E6;
+  --border: #DDD6C0;
   --text: #1a1a1a;
   --muted: #6b6b6b;
   --accent: #1B7A3D;
@@ -203,7 +203,7 @@ aside.open { left: 0; }
   aside {
     left: 0; width: 260px; min-width: 260px; box-shadow: none;
     clip-path: inset(0 208px 0 0);
-    transition: clip-path .5s cubic-bezier(.25,.8,.25,1);
+    transition: clip-path .22s cubic-bezier(.25,.8,.25,1);
     will-change: clip-path;
   }
   aside.open { clip-path: inset(0 0 0 0); box-shadow: 4px 0 20px rgba(0,0,0,.25); }
@@ -1323,7 +1323,11 @@ function renderMain() {
     const stepsKey = nodeKey;
 
     html += `<div class="result-box">
-      <div class="result-tag">PROCÉDURE À APPLIQUER</div>
+      <div class="action-row" style="margin-top:0;margin-bottom:16px;">
+        ${navPath.length > 0 ? `<button class="btn-back" onclick="jumpTo(${navPath.length-2})">← Choix précédent</button>` : ''}
+        ${navPath.length > 0 ? `<button class="btn-back" onclick="jumpTo(-1)">↑ Début de l'annexe</button>` : ''}
+        ${annexeHistory.length > 0 ? (()=>{ const prev=appData.annexes.find(a=>a.id===annexeHistory[annexeHistory.length-1].annexeId); return `<button class="btn-back" onclick="goBackAnnexe()">↩ ${prev?prev.num+' / '+prev.titre:''}</button>`; })() : ''}
+      </div>
       <div class="steps-list">`;
 
     const steps = node.steps || [];
@@ -1417,11 +1421,6 @@ function renderMain() {
           }).join('')}
         </div>
       </div>` : ''}
-      <div class="action-row">
-        ${navPath.length > 0 ? `<button class="btn-back" onclick="jumpTo(${navPath.length-2})">← Choix précédent</button>` : ''}
-        ${navPath.length > 0 ? `<button class="btn-back" onclick="jumpTo(-1)">↑ Début de l'annexe</button>` : ''}
-        ${annexeHistory.length > 0 ? (()=>{ const prev=appData.annexes.find(a=>a.id===annexeHistory[annexeHistory.length-1].annexeId); return `<button class="btn-back" onclick="goBackAnnexe()">↩ ${prev?prev.num+' / '+prev.titre:''}</button>`; })() : ''}
-      </div>
     </div>`;
   }
 
@@ -1593,7 +1592,7 @@ function initSidebarHover() {
   const show = () => { clearTimeout(sidebarHoverTimer); openSidebarUI(); };
   const hideDelayed = () => {
     clearTimeout(sidebarHoverTimer);
-    sidebarHoverTimer = setTimeout(() => { if (!sidebarPinned) closeSidebarUI(); }, 250);
+    sidebarHoverTimer = setTimeout(() => { if (!sidebarPinned) closeSidebarUI(); }, 100);
   };
   trigger.addEventListener('mouseenter', show);
   sidebar.addEventListener('mouseenter', show);
