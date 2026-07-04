@@ -1321,24 +1321,9 @@ function renderMain() {
 
   } else if (node.type === 'procedure') {
     const stepsKey = nodeKey;
-    // Ne compter que les étapes cochables (pas les _type)
-    const checkableSteps = (node.steps||[]).filter(s => !s._type);
-    const total = checkableSteps.length;
-    const allSteps = node.steps || [];
-    const done = checkableSteps.filter((s, i) => {
-      const realIdx = allSteps.indexOf(s);
-      return checked[stepsKey + '_' + realIdx];
-    }).length;
-    const pct = total > 0 ? Math.round(done/total*100) : 0;
 
     html += `<div class="result-box">
       <div class="result-tag">PROCÉDURE À APPLIQUER</div>
-      ${total > 0 ? `<div class="progress-row">
-        <span class="prog-label">Progression</span>
-        <div class="prog-bar"><div class="prog-fill ${pct===100?'done':''}" style="width:${pct}%"></div></div>
-        <span class="prog-count">${done}/${total}</span>
-      </div>
-      <div class="complete-badge ${pct===100?'show':''}">✓ PROCÉDURE COMPLÈTE</div>` : ''}
       <div class="steps-list">`;
 
     const steps = node.steps || [];
@@ -1347,16 +1332,13 @@ function renderMain() {
       if (step._type) return;
       if (!step.t && !step.goto) return; // skip étapes vides
       const key = stepsKey + '_' + i;
-      const isChecked = !!checked[key];
       if (step.goto) {
-        html += `<div class="step-item goto-step ${isChecked?'checked':''}">
-          <div class="step-box" onclick="toggleStep('${key}')"><span class="step-tick">✓</span></div>
+        html += `<div class="step-item goto-step">
           <div class="step-label" onclick="gotoAnnexe('${step.goto}','${key}')" style="cursor:pointer;flex:1;">${step.t}</div>
           <span class="step-arrow" onclick="gotoAnnexe('${step.goto}','${key}')" style="cursor:pointer;">→</span>
         </div>`;
       } else {
-        html += `<div class="step-item ${isChecked?'checked':''} ${step.ref?'ref-step':''}" onclick="toggleStep('${key}')">
-          <div class="step-box"><span class="step-tick">✓</span></div>
+        html += `<div class="step-item ${step.ref?'ref-step':''}">
           <div class="step-label">${step.t}</div>
         </div>`;
       }
@@ -1459,8 +1441,6 @@ function renderMain() {
 }
 
 function gotoAnnexe(annexeId, checkKey) {
-  checked[checkKey] = true;
-  saveChecked();
   annexeHistory.push({ annexeId: currentAnnexeId, navPath: [...navPath] });
   currentAnnexeId = annexeId;
   navPath = [];
@@ -1505,21 +1485,6 @@ function jumpTo(level) {
 
 function toggleNote(key) {
   checked[key] = !checked[key];
-  saveChecked();
-  renderMain();
-}
-
-function toggleStep(key) {
-  checked[key] = !checked[key];
-  saveChecked();
-  renderMain();
-}
-
-function resetSteps(key, total) {
-  // Réinitialiser les étapes
-  for (let i = 0; i < total; i++) delete checked[key + '_' + i];
-  // Réinitialiser aussi les notes (jusqu'à 20 notes max)
-  for (let i = 0; i < 20; i++) delete checked[key + '_note_' + i];
   saveChecked();
   renderMain();
 }
