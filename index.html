@@ -364,7 +364,7 @@ function checkPin() {
     // Marquer la session comme autorisée puis rediriger vers l'app du rôle choisi
     sessionStorage.setItem('plw_auth', '1');
     sessionStorage.setItem('plw_role', selectedRole);
-    window.location.href = r.file;
+    window.location.replace(r.file);
   } else {
     for (let i = 0; i < 6; i++) {
       const d = document.getElementById('pd' + i);
