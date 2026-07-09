@@ -982,6 +982,33 @@ function resolveMediaSrc(val) {
   return val;
 }
 
+// ── Zoom plein écran sur les images (le reste de l'app bloque le zoom pour ne pas casser la mise en page) ──
+let _viewportOriginalContent = null;
+function openImageZoom(src, alt) {
+  if (!src) return;
+  const overlay = document.getElementById('imgZoomOverlay');
+  const img = document.getElementById('imgZoomTarget');
+  if (!overlay || !img) return;
+  img.src = src;
+  img.alt = alt || '';
+  overlay.style.display = 'flex';
+  // Autoriser temporairement le pincement-zoom (désactivé partout ailleurs dans l'app)
+  const vp = document.querySelector('meta[name="viewport"]');
+  if (vp) {
+    _viewportOriginalContent = vp.getAttribute('content');
+    vp.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover');
+  }
+}
+function closeImageZoom(e) {
+  if (e && e.target && e.target.id === 'imgZoomTarget') return; // ne pas fermer si on clique sur l'image elle-même (pour zoomer/déplacer)
+  const overlay = document.getElementById('imgZoomOverlay');
+  if (overlay) overlay.style.display = 'none';
+  const vp = document.querySelector('meta[name="viewport"]');
+  if (vp && _viewportOriginalContent) {
+    vp.setAttribute('content', _viewportOriginalContent);
+  }
+}
+
 // ── Initialiser les raccourcis par défaut sur les annexes A01-A23 ──
 (function initDefaultShortcuts() {
   const DEFAULT_SHORTCUTS = [
@@ -1321,7 +1348,7 @@ function renderMain() {
     if (node.img) {
       html += `<div style="margin-top:12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px;">
         ${node.imgName ? `<div style="font-size:11px;color:var(--muted);margin-bottom:6px;">🖼 ${node.imgName}</div>` : ''}
-        <img src="${resolveMediaSrc(node.img)}" alt="${node.imgName||''}" style="width:100%;border-radius:6px;border:1px solid var(--border);object-fit:contain;display:block;touch-action:pan-y;">
+        <img src="${resolveMediaSrc(node.img)}" alt="${node.imgName||''}" onclick="openImageZoom(this.src, this.alt)" style="width:100%;border-radius:6px;border:1px solid var(--border);object-fit:contain;display:block;touch-action:pan-y;cursor:zoom-in;">
       </div>`;
     }
     // Boutons de navigation en bas des choix
@@ -1387,21 +1414,18 @@ function renderMain() {
         if (step.img) {
           html += `<div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px;">
             ${step.imgName ? `<div style="font-size:11px;color:var(--muted);margin-bottom:6px;">🖼 ${step.imgName}</div>` : ''}
-            <img src="${resolveMediaSrc(step.img)}" alt="${step.imgName||step.t||''}" style="width:100%;border-radius:6px;border:1px solid var(--border);object-fit:contain;display:block;touch-action:pan-y;">
+            <img src="${resolveMediaSrc(step.img)}" alt="${step.imgName||step.t||''}" onclick="openImageZoom(this.src, this.alt)" style="width:100%;border-radius:6px;border:1px solid var(--border);object-fit:contain;display:block;touch-action:pan-y;cursor:zoom-in;">
           </div>`;
         }
         if (step.doc) {
           const docSrc = resolveMediaSrc(step.doc);
           const isPdf = /\.pdf$/i.test(step.docName || step.doc) || docSrc.startsWith('data:application/pdf');
-          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-          const useViewer = isPdf && (step.docMode || 'viewer') === 'viewer';
+          const wantsViewer = isPdf && (step.docMode || 'viewer') === 'viewer';
           html += `<div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px;">
             ${step.docName ? `<div style="font-size:11px;color:var(--muted);margin-bottom:6px;">📄 ${step.docName}</div>` : ''}
-            ${useViewer
-              ? `<iframe src="${docSrc}" style="width:100%;height:480px;border-radius:6px;border:1px solid var(--border);" title="${step.docName||'Document'}"></iframe>`
-              : isIOS
-                ? `<div style="display:inline-block;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:8px 14px;color:var(--muted);font-family:var(--mono);font-size:12px;;white-space:nowrap;">⚠️ Téléchargement uniquement sur PC/Mac</div>`
-                : `<a href="${docSrc}" download="${step.docName||'document'}" style="display:inline-block;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:8px 14px;color:var(--accent);font-family:var(--mono);font-size:12px;text-decoration:none;">⬇️ Télécharger ${step.docName||'document'}</a>`
+            ${wantsViewer
+              ? `<a href="${docSrc}" target="_blank" rel="noopener" style="display:inline-block;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:8px 14px;color:var(--accent);font-family:var(--mono);font-size:12px;text-decoration:none;">👁 Ouvrir ${step.docName||'le document'}</a>`
+              : `<a href="${docSrc}" download="${step.docName||'document'}" style="display:inline-block;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:8px 14px;color:var(--accent);font-family:var(--mono);font-size:12px;text-decoration:none;">⬇️ Télécharger ${step.docName||'document'}</a>`
             }
           </div>`;
         }
@@ -2037,7 +2061,7 @@ function renderNodeEditor(node, path) {
               ? `<span style="font-size:10px;color:var(--success);font-family:var(--mono);">✓ ${esc(s.docName||'')}</span>
                  ${(/\.pdf$/i.test(s.docName||s.doc||'') || s.doc.startsWith('data:application/pdf')) ? `
                  <select data-ps="${safePs}" data-si="${si}" onchange="edSetDocMode(this)" style="background:var(--bg);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:var(--mono);font-size:10px;padding:3px 6px;cursor:pointer;">
-                   <option value="viewer"   ${(s.docMode||'viewer')==='viewer'?'selected':''}>👁 Visionneuse</option>
+                   <option value="viewer"   ${(s.docMode||'viewer')==='viewer'?'selected':''}>👁 Ouvrir</option>
                    <option value="download" ${s.docMode==='download'?'selected':''}>⬇️ Téléchargement</option>
                  </select>` : ''}
                  <button class="btn-icon" style="color:var(--danger);" data-ps="${safePs}" data-si="${si}" onclick="edRemoveDoc(this)">🗑</button>`
@@ -3698,5 +3722,10 @@ if (currentVersion > storedVersion) {
   </div>
 </div>
 
+
+<div id="imgZoomOverlay" onclick="closeImageZoom(event)" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9999;align-items:center;justify-content:center;overflow:auto;-webkit-overflow-scrolling:touch;">
+  <button onclick="closeImageZoom(event)" style="position:fixed;top:16px;right:16px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.15);border:none;color:#fff;font-size:20px;cursor:pointer;z-index:10000;">✕</button>
+  <img id="imgZoomTarget" src="" alt="" style="max-width:none;width:auto;height:auto;margin:auto;touch-action:pinch-zoom;">
+</div>
 
 <iframe src="PLMedia.html" style="display: none; position: fixed;"></iframe></body></html>
