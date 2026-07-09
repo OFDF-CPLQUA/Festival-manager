@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>PLW'APP MEDIA</title></head>
+<body>
+<script>
+// PLW'APP MEDIA (legacy) — v107 — 260709
+const PLW_MEDIA = {};
+window.addEventListener('message', function(e) {
+  if (!e.data || e.data.type !== 'PLW_MEDIA_REQUEST') return;
+  e.source.postMessage({ type: 'PLW_MEDIA_RESPONSE', media: PLW_MEDIA }, '*');
+});
+</script>
+</body>
+</html>
